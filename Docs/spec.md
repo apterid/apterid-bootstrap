@@ -133,7 +133,7 @@ Function types are specified in the usual way:
 
 The `IOption<T>` type is defined as follows:
 
-    type IOption<T> =
+    type Option<T> =
       Some<T>
       None
 
@@ -221,7 +221,7 @@ Maps are of type `IMap<K,V>`, which is an alias for `IDictionary<K,V>`.
 Map elements can be accessed by key, and tested:
 
     foo = m[0]   // "foo"
-    bar = m[123] // None
+    bar = m?[123] // None
 
 ### Sets
 
