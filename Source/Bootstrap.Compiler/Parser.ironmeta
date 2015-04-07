@@ -1,0 +1,34 @@
+﻿// Apterid Parser
+
+ironmeta Parser<char, int> : IronMeta.Matcher.CharMatcher<int>
+{
+	SourceSpan = SourceElement+;
+
+	SourceElement = 		
+		Whitespace
+		| UsingStatement
+		| NamespaceDeclaration
+		| ModuleDeclaration
+		| TypeDeclaration
+		| FunctionDeclaration
+		| BindingDeclaration
+		| BindingDefinition
+		;
+
+	UsingStatement = ! "not implemented";
+	NamespaceDeclaration = ! "not implemented";
+	ModuleDeclaration = ! "not implemented";
+	TypeDeclaration = ! "not implemented";
+	FunctionDeclaration = ! "not implemented";
+	BindingAnnotation = ! "not implemented";
+	BindingDefinition = ! "not implemented";
+
+	Whitespace = (Comment | Spaces)+;
+
+	Comment = "//" (~EOL .)* EOL;
+
+	Spaces = .:c ?(Char.IsWhiteSpace(c));
+
+	EOL = '\r' '\n' | '\n' | '\r';
+	EOF = ~.;
+}
