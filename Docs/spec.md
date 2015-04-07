@@ -7,6 +7,7 @@ Apterid is a functional language for .NET.  The main design principle is to fit 
 The following primitive .NET types are available in Apterid:
 
 | Keyword | .NET type      | Example                          | Remarks                                    |
+| ------- | -------------- | -------------------------------- | ------------------------------------------ |
 | bool    | System.Boolean | **true** **false**               |                                            |
 | byte    | System.Byte    | 1b                               | Unsigned octet                             |
 | sbyte   | System.SByte   | 1bs                              | Signed octet                               |
@@ -102,18 +103,18 @@ As with structs, property setters must return a new object of the type.
 ## Variants
 
     type VariantExample =
-    | First<string>
-    | Second<int>
-    | Third<MyClassType>
+      First<string>
+      Second<int>
+      Third<MyClassType>
 
 Variant types are always struct types.
 
 You can pattern-match as follows:
 
     case foo of
-    | First f -> ...
-    | Second i -> ...
-    | Third o -> ...
+      First f -> ...
+      Second i -> ...
+      Third o -> ...
 
 ## Functions
 
@@ -133,8 +134,8 @@ Function types are specified in the usual way:
 The `IOption<T>` type is defined as follows:
 
     type IOption<T> =
-    | Some<T>
-    | None
+      Some<T>
+      None
 
 There is special syntax for defining option types:
 
@@ -163,7 +164,6 @@ Element access can test for an index and return an option:
     foo : char?
     foo = l1?[128] // None
 
-
 Lists may be sliced
 
     l1[0..1] // [ 'a', 'b' ]
@@ -177,7 +177,7 @@ A tuple is a struct with fields Item1 to ItemN.  There is special syntax for cre
 
     (1, 'v')
 
-This value is of type 'ITuple<int, char>'.  This is **not** the .NET `Tuple` type!
+This value is of type `ITuple<int, char>``.  This is **not** the .NET `Tuple` type!
 
 Tuple items may be accessed by index as well:
 
@@ -193,13 +193,14 @@ An array is a .NET array, which can be multidimensional or jagged.
     baz : double|| ||
 
     foo = | 1,2,3 |
-    bar = || 'a', 'b' |, | 'c', 'd' ||
+    bar = | 'a', 'b' |
+          | 'c', 'd' |
 
 Array elements can be accessed by index, sliced, and test:
 
-   foo[0]   // 1
-   bar[1..] // | 'c', 'd' |
-   foo?[1]  // Some 2
+    foo[0]   // 1
+    bar[1..] // | 'c', 'd' |
+    foo?[1]  // Some 2
 
 ### Strings
 
@@ -230,7 +231,7 @@ Sets are of type `ISet<T>`:
 
 ## Modules
 
-Modules are just static types; however, they are declared with the `module` keyword instead of `type`.
+Modules are just static classes; however, they are declared with the `module` keyword instead of `type`.
 
     module Something =
       Field1 = "foo"
