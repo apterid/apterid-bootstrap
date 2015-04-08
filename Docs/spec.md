@@ -1,6 +1,8 @@
 Apterid is a functional language for .NET.  The main design principle is to fit into the .NET ecosystem neatly, not to bolt an ML-style language on top of .NET.
 
-Another goal is to make it easy to debug -- currying is accomplished without delegates.
+It uses incremental and parallel parsing, analysis and generation.  The goal is not to immediately show errors in your whole file when you are in the middle of changing or adding something.
+
+Another goal is to make it easy to debug -- currying is accomplished without delegates.  Clean stack traces.
 
 # Identifiers
 
@@ -140,7 +142,7 @@ You can pattern-match as follows:
 
     if foo is
       First f -> ...
-      Second (i,f) -> ...
+      Second i f -> ...
       Third o -> ...
 
 ## Functions
@@ -233,9 +235,10 @@ An array is a .NET array, which can be multidimensional or jagged.
     bar : char|,|
     baz : double|| ||
 
-    foo = | 1,2,3 |
+    foo = | 1, 2, 3 |
     bar = | 'a', 'b' |
           | 'c', 'd' |
+    baz = | | 1.1, 2.2 |, | 3.3 | |
 
 Array elements can be accessed by index, sliced, and tested:
 
@@ -338,6 +341,8 @@ Functions can be named or unnamed.
 ## Calling .NET Methods
 
 You can call (and curry) methods from .NET libraries written in other languages as you would any other methods.
+
+Methods that return `()` (void) need to be called in a `do` expression.
 
 Methods with `ref` or `out` parameters should be called as if their types were as follows:
 
