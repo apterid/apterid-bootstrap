@@ -1,6 +1,6 @@
 Apterid is a functional language for .NET.  The main design principle is to fit into the .NET ecosystem neatly, not to bolt an ML-style language on top of .NET.
 
-It uses incremental and parallel parsing, analysis and generation.  The goal is not to immediately show errors in your whole file when you are in the middle of changing or adding something.
+It uses incremental and parallel parsing, analysis and generation so as to fit in nicely with Visual Studio.  The goal is not to immediately show errors in your whole file when you are in the middle of changing or adding something.
 
 Another goal is to make it easy to debug -- currying is accomplished without delegates.  Clean stack traces.
 
@@ -51,7 +51,7 @@ An enumeration is a set of identifiers for numerical values.  The numeric type u
       Alpha   = 1
       Beta    = 2
 
-The initializers can be expressions.
+The initializers can be numeric expressions that can use other enum values or static fields that are in scope.
 Uses of enum values must be qualified, e.g. `MyEnum.Alpha`.
 You can use the .NET `[Flags]` attribute on enums.
 
@@ -78,8 +78,10 @@ Record types are structs by default.
       field1 : int // public by default; initialized to 0
       private field2 = "baz"
 
-      internal Property1 : get = i => fmt "{0} {1}" field2 i; set = i str => { field2 = str; field1 = i }
-      Property2 : get : () -> int; set : int -> MyStructType
+      internal Property1 : 
+      	get = () => field2
+        set = str => { field2 = str }
+              
       private method1 = a b => a + b
       funcField : int -> double
 
