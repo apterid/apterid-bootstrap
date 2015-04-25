@@ -64,17 +64,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Parser.cs" />
-    <Compile Include="Parser.g.cs">
+    <Compile Include="Parser\LowLevel\Parser.cs" />
+    <Compile Include="Parser\LowLevel\Parser.g.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Parser.ironmeta</DependentUpon>
     </Compile>
-    <Compile Include="Variant.cs" />
+    <Compile Include="ProjectContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Parser.ironmeta">
+    <None Include="Parser\LowLevel\Parser.ironmeta">
       <Generator>IronMetaGenerator</Generator>
       <LastGenOutput>Parser.g.cs</LastGenOutput>
     </None>

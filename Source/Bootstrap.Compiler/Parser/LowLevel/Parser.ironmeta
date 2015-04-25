@@ -6,20 +6,16 @@ ironmeta Parser<char, int> : IronMeta.Matcher.CharMatcher<int>
 
 	SourceElement = 		
 		Whitespace
-		| UsingStatement
-		| NamespaceDeclaration
 		| ModuleDeclaration
+		| UsingStatement
 		| TypeDeclaration
-		| FunctionDeclaration
-		| BindingDeclaration
+		| BindingAnnotation
 		| BindingDefinition
 		;
 
 	UsingStatement = ! "not implemented";
-	NamespaceDeclaration = ! "not implemented";
 	ModuleDeclaration = ! "not implemented";
 	TypeDeclaration = ! "not implemented";
-	FunctionDeclaration = ! "not implemented";
 	BindingAnnotation = ! "not implemented";
 	BindingDefinition = ! "not implemented";
 
