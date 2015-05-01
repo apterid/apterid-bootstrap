@@ -80,8 +80,8 @@ Record types are structs by default.
       private field2 = "baz"
 
       internal Property1
-      	get = () => field2
-        set = str => { field2 = str }
+      	get () => field2
+        set str => { field2 = str }
 
       private method1 = a b => a + b
       funcField : int -> double
@@ -89,7 +89,7 @@ Record types are structs by default.
       static Method2 c d = c * d
     }
 
-The property setter must take arguments of all the types in the getter's signature, and return a value of the record type, which can be `this`.
+The property setter must take arguments of all the types in the getter's signature, and return a value of the record type, which can be `this`.  In other words, values of struct types are mutable.
 
 You can create a new record with altered values:
 
@@ -145,7 +145,7 @@ You can construct an object by using its constructor or a record expression:
       Second <int, float>
       Third <MyClassType>
 
-Variant types are always struct types.
+Variant types are implemented as struct types.
 
 You can pattern-match as follows:
 
@@ -160,6 +160,8 @@ Function types are defined in the usual way:
 
     f : int -> string -> bool
     f n s = (fmt "{0} {1}" n s) == "1 qux"
+
+If there is no type annotation for a function binding, the function can be polymorphic; you can bind the same name with different argument patterns.
 
 ## Aliases
 
@@ -227,11 +229,16 @@ Lists may be sliced
 
 ### Tuples
 
-A tuple is a struct with fields `Item1` to `ItemN`.  There is special syntax for creating them:
+A tuple is a struct with fields `Item1` to `ItemN`.  Tuple types are declared as:
 
-    (1, 'v')
+    (string, int)
 
-This value is of type `Apterid.Tuple<int, char>`, or just `int, char`.  This is **not** the .NET `Tuple` type; in particular, it is a struct type!
+And values are created analogously:
+
+    t : (int, char)
+    t = (1, 'v')
+
+This value is of type `Apterid.Tuple<int, char>`.  This is **not** the .NET `Tuple` type; in particular, it is a struct type!
 
 Tuple items may be accessed by index as well:
 
@@ -303,16 +310,17 @@ Modules are objects that can contain types, values and functions.
 These are public by default, but you can declare them private.
 References to public members of a module must be qualified, unless their names are imported into the module via the `using` statement.
 
-The module cannot contain raw expressions; a function of the same name as the module with one `()` parameter will be evaluated when the module's assembly is loaded.
+The module cannot contain bare expressions; a function of the same name as the module with one `()` parameter will be evaluated when the module's assembly is loaded.
 
 ### Namespaces
 
 Top-level module declarations can have namespaces:
 
     module Namespace.Module =
-        foo = 0
-        module Submodule = // cannot have a namespace
-            bar = 1
+      foo = 0
+
+      module Submodule = // cannot have a namespace
+        bar = 1
 
 There is no `namespace` keyword.
 
@@ -330,8 +338,9 @@ A binding assigns a name to a particular value in a particular scope.  The scope
 
     foo = 0
     bar = foo + 1
+    baz a = a * 3
 
-In the body of a function, bindings must appear before the expression that is the result of the function.
+In the body of a function, bindings must appear before the expression that is returned as the result of the function.
 
 ## Type Annotations
 
@@ -356,7 +365,7 @@ You can use simple structural matching for bindings:
 
 You can use the `_` identifier to match anything:
 
-    f ( a, _ ) = a + 1
+    f (a, _ ) = a + 1
 
 ## Function Arguments
 
@@ -372,8 +381,8 @@ You can use pattern matching in `if` expressions:
 
     if bar.Get() is
       [a, b] -> a * b
-      [a] -> a
-      [] -> 0
+      [a]    -> a
+      []     -> 0
 
 # Functions
 
@@ -384,7 +393,7 @@ Functions can be named or unnamed.
     j = g f 1            // 2
     k = g (x => x + 2) 1 // 3
 
-There may be more than one binding to a function in a given scope; the first version of the function whose parameter pattern matches its inputs will be used.
+There may be more than one binding to a function in a given scope; the first version of the function whose parameter pattern matches its inputs will be used when called.
 
     f [x, y] = x * y
     f [] = 0  
@@ -399,7 +408,7 @@ Methods that return `()` (void) need to be called in a `do` expression.
 
 Methods with `ref` or `out` parameters should be thought of as follows:
 
-    string Method(int n, ref double m, out char c)
+    string Method(int n, ref double m, out char c);
 
 becomes
 
@@ -410,7 +419,7 @@ where the result type is a tuple of the method's return type and any `ref` or `o
 
 # Operators
 
-Operators are static methods of some type or module, as usual (you do not use the `static` keyword).  You can use the usual C# operator names, e.g.:
+Operators are static methods of some type or module, as usual (you do not use the `static` keyword with `operator X` declarations).  You can use the usual C# operator names, e.g.:
 
     type Point =
     {
@@ -420,7 +429,7 @@ Operators are static methods of some type or module, as usual (you do not use th
         operator + : Point -> Point -> Point
         operator + a b = Point { X = a.X + b.X; Y = a.Y + b.Y }
 
-        op_Multiply a b = Point { X = a.X * b.X; Y = a.Y * b.Y }
+        static op_Multiply a b = Point { X = a.X * b.X; Y = a.Y * b.Y }
     }
 
 You can create arbitrary prefix, infix, and postfix operators:
@@ -436,7 +445,11 @@ You can create arbitrary prefix, infix, and postfix operators:
 
 These operators may be used anywhere the enclosing type's module is in scope; they may also be used qualified.
 
-# Parameterized Types
+# Inference and Parameterized Types
+
+Type inference does not extend beyond the scope of a function.  If there are unresolved types anywhere in a function, it will be implemented as a generic function.
+
+    foo a b = a + b  // T3 foo<T1, T2, T3>(T1 a, T2 b) { a + b }
 
 ## Generics
 
