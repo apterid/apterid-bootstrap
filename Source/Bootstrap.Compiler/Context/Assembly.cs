@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Apterid.Bootstrap.Compiler
+namespace Apterid.Bootstrap.Compiler.Context
 {
-    public partial class Parser : IronMeta.Matcher.CharMatcher<int>
+    class Assembly
     {
+        public System.Reflection.Assembly DotNetAssembly { get; set; }
     }
 }

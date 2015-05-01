@@ -1,0 +1,67 @@
+﻿// Apterid Low-Level Parser
+
+ironmeta LowLevel<char, Token> : IronMeta.Matcher.CharMatcher<Token>
+{
+	SourceSpan = SourceLine+;
+
+	SourceLine =
+		EndSpace
+		| ModuleDeclaration
+		| UsingStatement
+		| TypeDeclaration
+		| BindingAnnotation
+		| BindingDefinition
+		| Expression
+		;
+
+	////////////////////////////////////////////////////////////////////
+	// Modules
+
+	ModuleDeclaration = StartSpace "module" MidSpace Qualifier? Identifier MidSpace '=' EndSpace;
+
+	UsingStatement = ! "not implemented";
+	TypeDeclaration = ! "not implemented";
+	BindingAnnotation = ! "not implemented";
+
+	BindingDefinition = StartSpace Identifier MidSpace (BindingPattern MidSpace)? '=' MidSpace Expression? EndSpace;
+
+	Qualifier = (Identifier '.')+;
+
+	////////////////////////////////////////////////////////////////////
+	// Patterns
+
+	BindingPattern = Identifier;
+
+	////////////////////////////////////////////////////////////////////
+	// Expression
+
+	Expression = 
+		BindingRef
+		| Literal
+		;
+
+	BindingRef = Identifier;
+
+	Literal = IntLiteral;
+
+	IntLiteral = ['0'-'9']+;
+
+	////////////////////////////////////////////////////////////////////
+	// Lexer
+
+	Identifier = ['_' 'a'-'z' 'A'-'Z'] ['_' 'a'-'z' 'A'-'Z' '0'-'9']* '\''*;
+	Identifier = '`' (~'`' .)+ '`';
+
+	StartSpace = '\t' !"tabs are not allowed in Apterid source";
+	StartSpace = ' '+;
+
+	MidSpace = '\t' !"tabs are not allowed in Apterid source";
+	MidSpace = ' '+;
+
+	EndSpace = '\t' !"tabs are not allowed in Apterid source";
+	EndSpace = ' '+ (EOL | EOF);
+	EndSpace = ' '* "//" (~EOL .)* (EOL | EOF);
+
+	EOL = '\r' '\n' | '\n' | '\r';
+	EOF = ~.;
+}

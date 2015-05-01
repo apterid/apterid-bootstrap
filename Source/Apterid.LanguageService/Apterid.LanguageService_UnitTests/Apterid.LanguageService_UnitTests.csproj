@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Apterid.LanguageService_UnitTests</RootNamespace>
     <AssemblyName>Apterid.LanguageService_UnitTests</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -68,6 +69,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Key.snk" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Bootstrap.Compiler\Bootstrap.Compiler.csproj">
+      <Project>{79249092-20c7-4e8a-80ce-4f79458c0221}</Project>
+      <Name>Bootstrap.Compiler</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Apterid.LanguageService.csproj">
+      <Project>{8b4aff38-e231-4225-bb9f-488c712af531}</Project>
+      <Name>Apterid.LanguageService</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
