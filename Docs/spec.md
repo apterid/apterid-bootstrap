@@ -34,17 +34,34 @@ The following primitive .NET types are available in Apterid:
 | uint32     | System.UInt32              | 1u                               |                                            |
 | int64      | System.Int64               | 1l                               |                                            |
 | uint64     | System.UInt64              | 1lu                              |                                            |
+| zint       | System.Numerics.BigInteger | 1z                               | Arbitrarily large integer                  |
 | ptr        | System.IntPtr              |                                  | A native pointer as a signed integer       |
 | uptr       | System.UIntPtr             |                                  |                                            |
 | char       | System.Char                | 'a'                              | UTF-16 code point                          |
-| float      | System.Single              | 1.1f, 1e2f, 1.1e2f, -1.1e-2.2f   |                                            |
-| double     | System.Double              | 1.1, 1e2, 1.1e2, -1.1e-2.2       |                                            |
+| float      | System.Single              | 1.1f, 1e2f, 1.1e2f, -1.1e-2f     |                                            |
+| double     | System.Double              | 1.1, 1e2, 1.1e2, -1.1e-2         |                                            |
 | decimal    | System.Decimal             | 1.1m                             | Binary-coded decimal                       |
-| zint       | System.Numerics.BigInteger | 1z                               | Arbitrarily large integer                  |
-| imag       | Apterid.Math.Imaginary     | 1i                               | Imaginary number                           |
 | complex    | System.Numerics.Complex    | 1 + 2i                           | Complex number                             |
 | quaternion | System.Numerics.Quaternion | 1 + 2i + 3j + 4k                 |                                            |
 | ()         | System.Void                | ()                               | "unit" type                                |
+
+### Literals
+
+#### Boolean
+
+There are two literals for values of type `bool`: `true` and `false`.
+
+#### Integer Literals
+
+Integer literals can be:
+
+- The usual decimal form `1234` -- leading zeroes have no special significance.  There can be underscores in the literal to aid readability (`-123_456`).
+- Hexadecimal form `0x1f3B`.  Underscores may be used.
+- Arbitrary radix form `Nr1g2H3i4J`, where N is from 2 to 36.
+
+#### Floating-Point Literals
+
+Floating-point literals must have at least one decimal digit on either side of the decimal point: `0.123e-5`
 
 ## Enums
 
@@ -151,7 +168,7 @@ You can pattern-match as follows:
 
     if foo is
       First f -> ...
-      Second i f -> ...
+      Second i, f -> ...
       Third o -> ...
 
 ## Functions
@@ -412,9 +429,10 @@ Methods with `ref` or `out` parameters should be thought of as follows:
 
 becomes
 
-    Method : int -> double -> (string?, double?, char?)
+    Method : int -> double? -> (string?, double?, char?)
 
-where the result type is a tuple of the method's return type and any `ref` or `out` parameters' types.  `ref` parameters are included in the function's arguments, but not `out` parameters.
+where the result type is a tuple of the method's return type and `Option`s of any `ref` or `out` parameters' types.
+`ref` parameters are included in the function's arguments, but not `out` parameters.
 
 
 # Operators
@@ -453,12 +471,12 @@ Type inference does not extend beyond the scope of a function.  If there are unr
 
 ## Generics
 
-
+## Units of Measure
 
 ## Constraints
+
+# Monadic Expressions
 
 # Standard Library
 
 ## Collection Methods
-
-## Units of Measure
