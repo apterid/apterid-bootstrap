@@ -1,0 +1,23 @@
+﻿// Copyright © 2015 The Apterid Developers
+
+ironmeta ApteridParser<char, Syntax.Node>
+{
+
+    LineComment = ("//" (~EOL .)*):c (EOL | EOF):e -> { new[] { c, e } };
+
+
+    /////////////////////////////////////////////////////////////////
+    // End-of-Line and End-of-File
+
+    EOL = '\r'? '\n' ->
+        {
+            _memo.Positions.Add(_IM_Result.NextIndex);
+            return _IM_Result;
+        };
+
+    EOF = ~. ->
+        {
+            _memo.Positions.Add(_IM_Result.NextIndex);
+            return _IM_Result;
+        };
+}
