@@ -2,9 +2,82 @@
 
 ironmeta ApteridParser<char, Syntax.Node>
 {
+    ApteridSourceFile = SourceFileItem*:src EOF -> { src };
 
-    LineComment = ("//" (~EOL .)*):c (EOL | EOF):e -> { new[] { c, e } };
+    SourceFileItem = Directive | TopLevelModule | EndSpace+;
 
+    /////////////////////////////////////////////////////////////////
+    // Directives
+
+    Directive = '#' Whitespace? DirectiveExpression EndSpace;
+
+    DirectiveExpression = "if" SpaceOrComment ("true" | "false");
+    DirectiveExpression = "endif";
+
+    /////////////////////////////////////////////////////////////////
+    // Modules
+
+    TopLevelModule = 
+        Whitespace?:indent 
+        "module" SpaceOrComment QualifiedIdentifier SpaceOrComment? '=' EndSpace EOL
+        ModuleBody(indent)
+        (EndSpace | !"modules must be separated by an empty line");
+
+    ModuleBody :indent = ModuleLine(indent)+ | !"expected an indented module body";
+
+    ModuleLine :indent = EndSpace;
+    ModuleLine :indent = (Whitespace:ws ExpressionPart:e EndSpace) ?(ws.Length() > indent.Length());
+
+    /////////////////////////////////////////////////////////////////
+    // Expressions
+
+    ExpressionPart = Literal;
+
+    Literal = IntegerLiteral;
+
+    IntegerLiteral = DecimalInteger;
+
+    DecimalInteger = /[0-9](_?[0-9])?/ -> 
+        {
+            var value = long.Parse(_IM_Result.Result().Text.Replace("_", ""));
+            return Make<Syntax.Literal<long>>(_IM_Result, n => n.Value = value);
+        };
+
+    /////////////////////////////////////////////////////////////////
+    // Lexicon
+    
+    Identifier = /_|_[_0-9a-zA-Z]+|[a-zA-Z][_0-9a-zA-Z]*/ -> { Make<Syntax.Identifier>(_IM_Result) };
+
+    QualifiedIdentifier = (Identifier '.')*:q Identifier:i ->
+        {
+            if (q.Results.Any())
+                return Make<Syntax.QualifiedIdentifier>(i, n => n.Qualifiers = q.ResultsOf<Syntax.Identifier>());
+            else
+                return i;
+        };
+
+    /////////////////////////////////////////////////////////////////
+    // Comments
+
+    SpaceOrComment = (Whitespace | InlineComment)+;
+    EndSpace = (Whitespace? (LineComment | (InlineComment | Whitespace)* EOL));
+
+    InlineComment = "/*" (EOL | ~"*/" .)* "*/" -> { Make<Syntax.InlineComment>(_IM_Result) };
+    InlineComment = "/*" (EOL | ~(EOF | "*/") .)* EOF !"unterminated comment";
+
+    LineComment = ("//" (~EOL .)*):ec (EOL | EOF):eol ->
+        {
+            new[]
+            {
+                Make<Syntax.EndComment>(ec),
+                Make<Syntax.EndOfLine>(eol),
+            }
+        };
+
+    /////////////////////////////////////////////////////////////////
+    // Whitespace
+
+    Whitespace = [' ' '\t']+ -> { Make<Syntax.Whitespace>(_IM_Result) };
 
     /////////////////////////////////////////////////////////////////
     // End-of-Line and End-of-File
@@ -12,12 +85,12 @@ ironmeta ApteridParser<char, Syntax.Node>
     EOL = '\r'? '\n' ->
         {
             _memo.Positions.Add(_IM_Result.NextIndex);
-            return _IM_Result;
+            return Make<Syntax.EndOfLine>(_IM_Result);
         };
 
     EOF = ~. ->
         {
             _memo.Positions.Add(_IM_Result.NextIndex);
-            return _IM_Result;
+            return Make<Syntax.EndOfFile>(_IM_Result);
         };
 }

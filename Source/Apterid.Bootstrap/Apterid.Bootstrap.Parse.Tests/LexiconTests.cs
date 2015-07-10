@@ -15,7 +15,7 @@ namespace Apterid.Bootstrap.Parse.Tests
             var m1 = parser.GetMatch(s1, parser.LineComment);
             Assert.IsTrue(m1.Success);
             Assert.AreEqual(0, m1.StartIndex);
-            Assert.AreEqual(10, m1.NextIndex);
+            Assert.AreEqual(11, m1.NextIndex);
 
             const string s2 = "// comment";
             var m2 = parser.GetMatch(s2, parser.LineComment);

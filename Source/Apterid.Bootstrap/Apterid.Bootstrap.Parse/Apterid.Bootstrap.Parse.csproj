@@ -59,7 +59,10 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SourceText.cs" />
+    <Compile Include="Syntax\Literal.cs" />
     <Compile Include="Syntax\Node.cs" />
+    <Compile Include="Syntax\Space.cs" />
+    <Compile Include="Syntax\Token.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ApteridParser.ironmeta">

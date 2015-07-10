@@ -9,6 +9,6 @@ namespace Apterid.Bootstrap.Parse
     public class SourceText
     {
         public string Identifier { get; set; }
-        public IEnumerable<string> Buffer { get; set; }
+        public IEnumerable<char> Buffer { get; set; }
     }
 }
