@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Numerics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Apterid.Bootstrap.Parse.Tests
@@ -9,7 +10,63 @@ namespace Apterid.Bootstrap.Parse.Tests
         ApteridParser parser = new ApteridParser();
 
         [TestMethod]
-        public void Parser_Lexicon_TestLineComment()
+        public void Parser_Lexicon_IntegerLiteral()
+        {
+            const string s1 = "123";
+            var m1 = parser.GetMatch(s1, parser.DecimalInteger);
+            Assert.IsTrue(m1.Success);
+            Assert.AreEqual(123, (int)((Syntax.Literal<BigInteger>)m1.Result).Value);
+
+            const string s2 = "-34_56";
+            var m2 = parser.GetMatch(s2, parser.DecimalInteger);
+            Assert.IsTrue(m2.Success);
+            Assert.AreEqual(-3456, (int)((Syntax.Literal<BigInteger>)m2.Result).Value);
+        }
+
+        [TestMethod]
+        public void Parser_Lexicon_Identifier()
+        {
+            const string s1 = "_";
+            var m1 = parser.GetMatch(s1, parser.Identifier);
+            Assert.IsTrue(m1.Success);
+
+            const string s2 = "_1a";
+            var m2 = parser.GetMatch(s2, parser.Identifier);
+            Assert.IsTrue(m2.Success);
+
+            const string s4 = "a3_b4";
+            var m4 = parser.GetMatch(s4, parser.Identifier);
+            Assert.IsTrue(m4.Success);
+
+            const string s3 = "123b_c";
+            var m3 = parser.GetMatch(s3, parser.Identifier);
+            Assert.IsFalse(m3.Success);
+
+            const string s5 = " ";
+            var m5 = parser.GetMatch(s5, parser.Identifier);
+            Assert.IsFalse(m5.Success);
+
+            const string s6 = "";
+            var m6 = parser.GetMatch(s6, parser.Identifier);
+            Assert.IsFalse(m6.Success);
+        }
+
+        [TestMethod]
+        public void Parser_Lexicon_InlineComment()
+        {
+            const string s1 = "/* baz */ foo */";
+            var m1 = parser.GetMatch(s1, parser.InlineComment);
+            Assert.IsTrue(m1.Success);
+            Assert.AreEqual(0, m1.StartIndex);
+            Assert.AreEqual(9, m1.NextIndex);
+
+            const string s2 = "foo */";
+            var m2 = parser.GetMatch(s2, parser.InlineComment);
+            Assert.IsFalse(m2.Success);
+        }
+
+        [TestMethod]
+        public void Parser_Lexicon_LineComment()
         {
             const string s1 = "// comment\nblahblahblah";
             var m1 = parser.GetMatch(s1, parser.LineComment);

@@ -35,13 +35,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="IronMeta.Library, Version=4.0.5659.37095, Culture=neutral, PublicKeyToken=53410376b33c6719, processorArchitecture=MSIL">
-      <HintPath>..\packages\IronMeta.4.1.0\lib\net45\IronMeta.Library.dll</HintPath>
+    <Reference Include="IronMeta.Library, Version=4.1.5684.20336, Culture=neutral, PublicKeyToken=53410376b33c6719, processorArchitecture=MSIL">
+      <HintPath>..\packages\IronMeta.4.1.3\lib\net45\IronMeta.Library.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System" />
-    <Reference Include="Verophyle.Regexp, Version=1.0.5659.35452, Culture=neutral, PublicKeyToken=74cddc3ca888ce35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Verophyle.Regexp.1.0.0\lib\net45\Verophyle.Regexp.dll</HintPath>
+    <Reference Include="System.Numerics" />
+    <Reference Include="Verophyle.Regexp, Version=1.1.5684.13780, Culture=neutral, PublicKeyToken=74cddc3ca888ce35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Verophyle.Regexp.1.1.0\lib\net45\Verophyle.Regexp.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
@@ -51,11 +55,7 @@
         <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
       </ItemGroup>
     </When>
-    <Otherwise>
-      <ItemGroup>
-        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework" />
-      </ItemGroup>
-    </Otherwise>
+    <Otherwise />
   </Choose>
   <ItemGroup>
     <Compile Include="LexiconTests.cs" />
@@ -68,6 +68,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <Choose>

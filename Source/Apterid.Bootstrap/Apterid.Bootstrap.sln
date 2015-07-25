@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.22823.1
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apterid.Bootstrap.Compile", "Apterid.Bootstrap.Compile\Apterid.Bootstrap.Compile.csproj", "{42D5B408-B7F5-41B8-9E6E-D45D96608FCB}"
 EndProject
@@ -10,6 +10,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apterid.Bootstrap.Generate", "Apterid.Bootstrap.Generate\Apterid.Bootstrap.Generate.csproj", "{37EE6B64-13C2-4F69-9125-72B6CE6D9EA5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apterid.Bootstrap.Parse.Tests", "Apterid.Bootstrap.Parse.Tests\Apterid.Bootstrap.Parse.Tests.csproj", "{398E63A5-3B2B-4061-8C52-E3E933D73FE9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apterid.Tools.VisualStudioExtension", "..\Apterid.Tools\Apterid.Tools.VisualStudioExtension\Apterid.Tools.VisualStudioExtension.csproj", "{23BBFF68-23B0-41B0-B69A-389394D5A035}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{04CB9292-29D1-483E-BD50-6BDBA3987F6F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{ABED5269-F38B-4DBA-9AA6-E28E2A7CAE34}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,8 +39,16 @@ Global
 		{398E63A5-3B2B-4061-8C52-E3E933D73FE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{398E63A5-3B2B-4061-8C52-E3E933D73FE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{398E63A5-3B2B-4061-8C52-E3E933D73FE9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23BBFF68-23B0-41B0-B69A-389394D5A035}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23BBFF68-23B0-41B0-B69A-389394D5A035}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23BBFF68-23B0-41B0-B69A-389394D5A035}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23BBFF68-23B0-41B0-B69A-389394D5A035}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{398E63A5-3B2B-4061-8C52-E3E933D73FE9} = {04CB9292-29D1-483E-BD50-6BDBA3987F6F}
+		{23BBFF68-23B0-41B0-B69A-389394D5A035} = {ABED5269-F38B-4DBA-9AA6-E28E2A7CAE34}
 	EndGlobalSection
 EndGlobal
