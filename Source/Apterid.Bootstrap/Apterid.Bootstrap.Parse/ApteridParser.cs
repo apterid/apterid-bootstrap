@@ -13,14 +13,14 @@ namespace Apterid.Bootstrap.Parse
     {
         public SourceText SourceText { get; set; }
 
-        protected Syntax.Node Make<T>(SyntaxItem item, Action<T> post = null)
+        protected T Make<T>(SyntaxItem item, Action<T> post = null)
             where T : Syntax.Node, new()
         {
-            var node = new T();
-            node.SourceText = this.SourceText;
-            node.Item = item;
-            node.StartIndex = item.StartIndex;
-            node.NextIndex = item.NextIndex;
+            var node = new T()
+            {
+                SourceText = this.SourceText,
+                Item = item,
+            };
 
             if (post != null)
                 post(node);

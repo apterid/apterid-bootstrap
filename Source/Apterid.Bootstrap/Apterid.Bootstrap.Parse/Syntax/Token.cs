@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using IronMeta.Matcher;
 
 namespace Apterid.Bootstrap.Parse.Syntax
 {
@@ -22,6 +23,8 @@ namespace Apterid.Bootstrap.Parse.Syntax
     {
         IList<Identifier> qualifiers;
 
+        public Identifier Identifier { get; set; }
+
         public IEnumerable<Identifier> Qualifiers
         {
             get
@@ -32,6 +35,11 @@ namespace Apterid.Bootstrap.Parse.Syntax
             {
                 qualifiers = value.ToList();
             }
+        }
+
+        public override string Text
+        {
+            get { return Identifier.Text; }
         }
     }
 }

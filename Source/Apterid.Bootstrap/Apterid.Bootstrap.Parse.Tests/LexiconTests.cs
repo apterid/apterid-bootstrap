@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Numerics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -24,19 +25,41 @@ namespace Apterid.Bootstrap.Parse.Tests
         }
 
         [TestMethod]
+        public void Parser_Lexicon_QualifiedIdentifier()
+        {
+            const string s1 = "a.b";
+            var parser = new ApteridParser
+            {
+                SourceText = new SourceText { Buffer = s1 }
+            };
+
+            var m1 = parser.GetMatch(s1, parser.QualifiedIdentifier);
+            Assert.IsTrue(m1.Success);
+            Assert.IsInstanceOfType(m1.Result, typeof(Syntax.QualifiedIdentifier));
+
+            var r1 = m1.Result as Syntax.QualifiedIdentifier;
+            Assert.AreEqual("b", r1.Text);
+            Assert.AreEqual(1, r1.Qualifiers.Count());
+            Assert.AreEqual("a", r1.Qualifiers.First().Text);
+        }
+
+        [TestMethod]
         public void Parser_Lexicon_Identifier()
         {
             const string s1 = "_";
             var m1 = parser.GetMatch(s1, parser.Identifier);
             Assert.IsTrue(m1.Success);
+            Assert.AreEqual(s1.Length, m1.NextIndex);
 
             const string s2 = "_1a";
             var m2 = parser.GetMatch(s2, parser.Identifier);
             Assert.IsTrue(m2.Success);
+            Assert.AreEqual(s2.Length, m2.NextIndex);
 
             const string s4 = "a3_b4";
             var m4 = parser.GetMatch(s4, parser.Identifier);
             Assert.IsTrue(m4.Success);
+            Assert.AreEqual(s4.Length, m4.NextIndex);
 
             const string s3 = "123b_c";
             var m3 = parser.GetMatch(s3, parser.Identifier);
@@ -49,6 +72,11 @@ namespace Apterid.Bootstrap.Parse.Tests
             const string s6 = "";
             var m6 = parser.GetMatch(s6, parser.Identifier);
             Assert.IsFalse(m6.Success);
+
+            const string s7 = "a";
+            var m7 = parser.GetMatch(s7, parser.Identifier);
+            Assert.IsTrue(m7.Success);
+            Assert.AreEqual(s7.Length, m7.NextIndex);
         }
 
         [TestMethod]

@@ -10,21 +10,31 @@ namespace Apterid.Bootstrap.Parse.Syntax
     public abstract class Node
     {
         IList<Node> children;
-        string text;
+
+        int? start, next;
+        protected string text;
 
         public SourceText SourceText { get; set; }
         public MatchItem<char, Node> Item { get; set; }
         public int Indent { get; set; }
 
-        public int StartIndex { get; set; }
-        public int NextIndex { get; set; }
-        public int Length { get { return Math.Min(0, NextIndex - StartIndex); } }
+        public int StartIndex
+        {
+            get { return start ?? (start = Item.StartIndex).Value; }
+            set { start = value; }
+        }
+        public int NextIndex
+        {
+            get { return next ?? (next = Item.NextIndex).Value; }
+            set { next = value; }
+        }
+        public int Length { get { return Math.Max(0, NextIndex - StartIndex); } }
 
         public Node Prev { get; set; }
         public Node Next { get; set; }
         public IList<Node> Children { get { return children ?? (children = new List<Node>()); } }
 
-        public string Text
+        public virtual string Text
         {
             get
             {

@@ -6,14 +6,14 @@ ironmeta ApteridParser<char, Syntax.Node>
 {
     ApteridSourceFile = SourceFilePart*:src EOF -> { src };
 
-    SourceFilePart = Directive | TopLevelModule | EndSpace+;
+    SourceFilePart = Directive | TopLevelModule | EndSpace+ | ErrorSection+;
 
     /////////////////////////////////////////////////////////////////
     // Directives
 
     Directive = '#' WS? DirectiveExpression EndSpace;
 
-    DirectiveExpression = "if" SpaceOrComment ("true" | "false");
+    DirectiveExpression = "if" SpaceOrComment Identifier;
     DirectiveExpression = "endif";
 
     /////////////////////////////////////////////////////////////////
@@ -37,6 +37,9 @@ ironmeta ApteridParser<char, Syntax.Node>
     ModulePart :indent = EndSpace;
     ModulePart :indent = WS:ws ModuleItem(indent) EndSpace ?(ws.Length() == indent.Length());
     ModulePart :indent = WS:ws ModuleItem(indent) EndSpace !"parts of a module must indented and aligned";
+    ModulePart :indent = WS:ws ErrorSection 
+        ?(ws.Length() == indent.Length()) -> 
+        { Make<Syntax.ErrorSection>(_IM_Result) };
 
     ModuleItem :indent = Function(indent);
 
@@ -69,11 +72,11 @@ ironmeta ApteridParser<char, Syntax.Node>
 
     QualifiedIdentifier = (Identifier '.')+:q Identifier:i ->
         {
-            if (q.Results.Any())
-                return Make<Syntax.QualifiedIdentifier>(i, 
-                    n => n.Qualifiers = q.ResultsOf<Syntax.Identifier>());
-            else
-                return i;
+            return Make<Syntax.QualifiedIdentifier>(_IM_Result, n => 
+                {
+                    n.Identifier = Make<Syntax.Identifier>(i);
+                    n.Qualifiers = q.ResultsOf<Syntax.Identifier>();
+                });
         };
 
     /////////////////////////////////////////////////////////////////
@@ -87,12 +90,18 @@ ironmeta ApteridParser<char, Syntax.Node>
 
     LineComment = ("//" (~EOL .)*):ec (EOL | EOF):eol ->
         {
-            new[]
+            new Syntax.Node[]
             {
                 Make<Syntax.EndComment>(ec),
                 Make<Syntax.EndOfLine>(eol),
             }
         };
+
+    /////////////////////////////////////////////////////////////////
+    // ErrorSection
+
+    ErrorSection = (~DoubleReturn .)+ DoubleReturn -> { Make<Syntax.ErrorSection>(_IM_Result) };
+    DoubleReturn = EOL WS? (EOL | EOF);
 
     /////////////////////////////////////////////////////////////////
     // Whitespace

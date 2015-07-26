@@ -30,8 +30,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="IronMeta.Library, Version=4.1.5684.20336, Culture=neutral, PublicKeyToken=53410376b33c6719, processorArchitecture=MSIL">
-      <HintPath>..\packages\IronMeta.4.1.3\lib\net45\IronMeta.Library.dll</HintPath>
+    <Reference Include="IronMeta.Library, Version=4.1.5684.22219, Culture=neutral, PublicKeyToken=53410376b33c6719, processorArchitecture=MSIL">
+      <HintPath>..\packages\IronMeta.4.1.4\lib\net45\IronMeta.Library.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -60,6 +60,7 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SourceText.cs" />
+    <Compile Include="Syntax\ErrorSection.cs" />
     <Compile Include="Syntax\Literal.cs" />
     <Compile Include="Syntax\Node.cs" />
     <Compile Include="Syntax\Space.cs" />
