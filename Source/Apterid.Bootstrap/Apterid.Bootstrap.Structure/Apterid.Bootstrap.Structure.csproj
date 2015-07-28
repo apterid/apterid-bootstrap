@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{05D5FED0-FB8C-4D8D-AFE9-9FEA00DCA49C}</ProjectGuid>
+    <ProjectGuid>{1EC37F3A-EB7A-4F0E-8778-317D4A832519}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Apterid.Bootstrap.Parse</RootNamespace>
-    <AssemblyName>Apterid.Bootstrap.Parse</AssemblyName>
+    <RootNamespace>Apterid.Bootstrap.Structure</RootNamespace>
+    <AssemblyName>Apterid.Bootstrap.Structure</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -30,52 +30,35 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="IronMeta.Library, Version=4.1.5684.22219, Culture=neutral, PublicKeyToken=53410376b33c6719, processorArchitecture=MSIL">
-      <HintPath>..\packages\IronMeta.4.1.4\lib\net45\IronMeta.Library.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Numerics" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="Verophyle.Regexp, Version=1.1.5684.13780, Culture=neutral, PublicKeyToken=74cddc3ca888ce35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Verophyle.Regexp.1.1.0\lib\net45\Verophyle.Regexp.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="ApteridParser.cs" />
-    <Compile Include="ApteridParser.g.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ApteridParser.ironmeta</DependentUpon>
-    </Compile>
+    <Compile Include="Builder.cs" />
+    <Compile Include="BuildError.cs" />
+    <Compile Include="Context.cs" />
+    <Compile Include="Function.cs" />
+    <Compile Include="Module.cs" />
+    <Compile Include="Project.cs" />
+    <Compile Include="Reference.cs" />
+    <Compile Include="Solution.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SourceText.cs" />
-    <Compile Include="Syntax\ErrorSection.cs" />
-    <Compile Include="Syntax\Function.cs" />
-    <Compile Include="Syntax\Literal.cs" />
-    <Compile Include="Syntax\Module.cs" />
-    <Compile Include="Syntax\Node.cs" />
-    <Compile Include="Syntax\Source.cs" />
-    <Compile Include="Syntax\Space.cs" />
-    <Compile Include="Syntax\Token.cs" />
+    <Compile Include="SourceFile.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
-    <None Include="ApteridParser.ironmeta">
-      <Generator>IronMetaGenerator</Generator>
-      <LastGenOutput>ApteridParser.g.cs</LastGenOutput>
-    </None>
-    <None Include="packages.config" />
+    <ProjectReference Include="..\Apterid.Bootstrap.Parse\Apterid.Bootstrap.Parse.csproj">
+      <Project>{05d5fed0-fb8c-4d8d-afe9-9fea00dca49c}</Project>
+      <Name>Apterid.Bootstrap.Parse</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

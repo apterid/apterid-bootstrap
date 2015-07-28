@@ -4,9 +4,9 @@ using System.Numerics;
 
 ironmeta ApteridParser<char, Syntax.Node>
 {
-    ApteridSourceFile = SourceFilePart*:src EOF -> { src };
+    ApteridSource = SourcePart*:src EOF -> { src };
 
-    SourceFilePart = Directive | TopLevelModule | EndSpace+ | ErrorSection+;
+    SourcePart = Directive | TopLevelModule | EndSpace+ | ErrorSection+;
 
     /////////////////////////////////////////////////////////////////
     // Directives
@@ -37,16 +37,16 @@ ironmeta ApteridParser<char, Syntax.Node>
     ModulePart :indent = EndSpace;
     ModulePart :indent = WS:ws ModuleItem(indent) EndSpace ?(ws.Length() == indent.Length());
     ModulePart :indent = WS:ws ModuleItem(indent) EndSpace !"parts of a module must indented and aligned";
+    ModulePart :indent = Directive;
     ModulePart :indent = WS:ws ErrorSection 
-        ?(ws.Length() == indent.Length()) -> 
-        { Make<Syntax.ErrorSection>(_IM_Result) };
+        ?(ws.Length() == indent.Length()) -> { Make<Syntax.ErrorSection>(_IM_Result) };
 
-    ModuleItem :indent = Function(indent);
+    ModuleItem :indent = Binding(indent);
 
     /////////////////////////////////////////////////////////////////
-    // Functions
+    // Bindings
 
-    Function :indent = Identifier:name WS? '=' WS? Expression;
+    Binding :indent = Identifier:name WS? '=' WS? Expression;
 
     /////////////////////////////////////////////////////////////////
     // Expressions
