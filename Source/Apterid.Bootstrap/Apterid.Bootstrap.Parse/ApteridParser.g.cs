@@ -1,5 +1,5 @@
 ﻿//
-// IronMeta ApteridParser Parser; Generated 2015-07-28 22:20:08Z UTC
+// IronMeta ApteridParser Parser; Generated 2015-08-03 03:36:36Z UTC
 //
 
 using System;
@@ -345,18 +345,71 @@ namespace Apterid.Bootstrap.Parse
             // AND 2
             int _start_i2 = _index;
 
+            // AND 3
+            int _start_i3 = _index;
+
+            // AND 4
+            int _start_i4 = _index;
+
             // LITERAL "if"
             _ParseLiteralString(_memo, ref _index, "if");
+
+            // AND shortcut
+            if (_memo.Results.Peek() == null) { _memo.Results.Push(null); goto label4; }
+
+            // CALLORVAR SpaceOrComment
+            _ApteridParser_Item _r6;
+
+            _r6 = _MemoCall(_memo, "SpaceOrComment", _index, SpaceOrComment, null);
+
+            if (_r6 != null) _index = _r6.NextIndex;
+
+        label4: // AND
+            var _r4_2 = _memo.Results.Pop();
+            var _r4_1 = _memo.Results.Pop();
+
+            if (_r4_1 != null && _r4_2 != null)
+            {
+                _memo.Results.Push( new _ApteridParser_Item(_start_i4, _index, _memo.InputEnumerable, _r4_1.Results.Concat(_r4_2.Results).Where(_NON_NULL), true) );
+            }
+            else
+            {
+                _memo.Results.Push(null);
+                _index = _start_i4;
+            }
+
+            // AND shortcut
+            if (_memo.Results.Peek() == null) { _memo.Results.Push(null); goto label3; }
+
+            // LITERAL '!'
+            _ParseLiteralChar(_memo, ref _index, '!');
+
+            // QUES
+            if (_memo.Results.Peek() == null) { _memo.Results.Pop(); _memo.Results.Push(new _ApteridParser_Item(_index, _memo.InputEnumerable)); }
+
+        label3: // AND
+            var _r3_2 = _memo.Results.Pop();
+            var _r3_1 = _memo.Results.Pop();
+
+            if (_r3_1 != null && _r3_2 != null)
+            {
+                _memo.Results.Push( new _ApteridParser_Item(_start_i3, _index, _memo.InputEnumerable, _r3_1.Results.Concat(_r3_2.Results).Where(_NON_NULL), true) );
+            }
+            else
+            {
+                _memo.Results.Push(null);
+                _index = _start_i3;
+            }
 
             // AND shortcut
             if (_memo.Results.Peek() == null) { _memo.Results.Push(null); goto label2; }
 
             // CALLORVAR SpaceOrComment
-            _ApteridParser_Item _r4;
+            _ApteridParser_Item _r9;
 
-            _r4 = _MemoCall(_memo, "SpaceOrComment", _index, SpaceOrComment, null);
+            _r9 = _MemoCall(_memo, "SpaceOrComment", _index, SpaceOrComment, null);
 
-            if (_r4 != null) _index = _r4.NextIndex;
+            if (_r9 != null) _index = _r9.NextIndex;
 
         label2: // AND
             var _r2_2 = _memo.Results.Pop();
@@ -376,11 +429,11 @@ namespace Apterid.Bootstrap.Parse
             if (_memo.Results.Peek() == null) { _memo.Results.Push(null); goto label1; }
 
             // CALLORVAR Identifier
-            _ApteridParser_Item _r5;
+            _ApteridParser_Item _r10;
 
-            _r5 = _MemoCall(_memo, "Identifier", _index, Identifier, null);
+            _r10 = _MemoCall(_memo, "Identifier", _index, Identifier, null);
 
-            if (_r5 != null) _index = _r5.NextIndex;
+            if (_r10 != null) _index = _r10.NextIndex;
 
         label1: // AND
             var _r1_2 = _memo.Results.Pop();

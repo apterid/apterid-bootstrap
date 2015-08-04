@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Apterid.Bootstrap.Structure
+namespace Apterid.Bootstrap.Compile
 {
-    public class Context
+    class BuildError
     {
     }
 }

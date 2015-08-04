@@ -54,6 +54,9 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="BuildContext.cs" />
+    <Compile Include="Builder.cs" />
+    <Compile Include="BuildError.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -70,6 +73,10 @@
     <ProjectReference Include="..\Apterid.Bootstrap.Parse\Apterid.Bootstrap.Parse.csproj">
       <Project>{05d5fed0-fb8c-4d8d-afe9-9fea00dca49c}</Project>
       <Name>Apterid.Bootstrap.Parse</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Apterid.Bootstrap.Runtime\Apterid.Bootstrap.Runtime.csproj">
+      <Project>{5acde00a-f542-4e2d-912c-36ae4b87230b}</Project>
+      <Name>Apterid.Bootstrap.Runtime</Name>
     </ProjectReference>
     <ProjectReference Include="..\Apterid.Bootstrap.Structure\Apterid.Bootstrap.Structure.csproj">
       <Project>{1ec37f3a-eb7a-4f0e-8778-317d4a832519}</Project>

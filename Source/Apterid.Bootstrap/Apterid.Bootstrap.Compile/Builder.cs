@@ -3,16 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Apterid.Bootstrap.Parse;
 
-namespace Apterid.Bootstrap.Structure
+using Apterid.Bootstrap.Parse;
+using Apterid.Bootstrap.Structure;
+
+namespace Apterid.Bootstrap.Compile
 {
-    public class Builder
+    class Builder
     {
-        public Context Context { get; protected set; }
+        public BuildContext Context { get; protected set; }
         public IList<Solution> Solutions { get; protected set; }
 
-        public Builder(Context context)
+        public Builder(BuildContext context)
         {
             Context = context;
         }

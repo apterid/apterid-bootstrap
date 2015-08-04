@@ -13,7 +13,7 @@ ironmeta ApteridParser<char, Syntax.Node>
 
     Directive = '#' WS? DirectiveExpression EndSpace;
 
-    DirectiveExpression = "if" SpaceOrComment Identifier;
+    DirectiveExpression = "if" SpaceOrComment '!'? SpaceOrComment Identifier;
     DirectiveExpression = "endif";
 
     /////////////////////////////////////////////////////////////////

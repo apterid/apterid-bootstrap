@@ -43,9 +43,7 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Builder.cs" />
-    <Compile Include="BuildError.cs" />
-    <Compile Include="Context.cs" />
+    <Compile Include="Binding.cs" />
     <Compile Include="Function.cs" />
     <Compile Include="Module.cs" />
     <Compile Include="Project.cs" />

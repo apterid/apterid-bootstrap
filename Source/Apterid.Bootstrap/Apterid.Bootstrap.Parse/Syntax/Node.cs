@@ -30,9 +30,10 @@ namespace Apterid.Bootstrap.Parse.Syntax
         }
         public int Length { get { return Math.Max(0, NextIndex - StartIndex); } }
 
+        public Node Parent { get; set; }
+        public IList<Node> Children { get { return children ?? (children = new List<Node>()); } }
         public Node Prev { get; set; }
         public Node Next { get; set; }
-        public IList<Node> Children { get { return children ?? (children = new List<Node>()); } }
 
         public virtual string Text
         {
@@ -46,6 +47,23 @@ namespace Apterid.Bootstrap.Parse.Syntax
                         text = string.Concat(SourceText.Buffer.Skip(StartIndex).Take(Length));
                 }
                 return text;
+            }
+        }
+
+        public static void Connect(Node root)
+        {
+            var stack = new Stack<Node>();
+            stack.Push(root);
+
+            Node prev = null;
+            Node parent = null;
+            while (stack.Count > 0)
+            {
+                var cur = stack.Peek();
+                if (cur.Children.Any())
+                {
+                    
+                }
             }
         }
     }

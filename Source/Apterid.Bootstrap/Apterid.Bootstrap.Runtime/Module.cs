@@ -8,7 +8,7 @@ namespace Apterid
 {
     /// <summary>
     /// Base class for Apterid modules.
-    /// Apterid modules are abstract classes with only static members that inherit from Apterid.Module.
+    /// Apterid modules are final classes with only static members that inherit from Apterid.Module.
     /// </summary>
     public abstract class Module
     {
