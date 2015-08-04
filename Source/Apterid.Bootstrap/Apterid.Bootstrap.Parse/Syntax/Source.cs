@@ -8,9 +8,17 @@ namespace Apterid.Bootstrap.Parse.Syntax
 {
     public class Source : Node
     {
+        public Source(NodeArgs args, params Node[] children)
+            : base(args, children)
+        {
+        }
     }
 
     public class Directive : Node
     {
+        public Directive(NodeArgs args, params Node[] children)
+            : base(args, children)
+        {
+        }
     }
 }

@@ -7,34 +7,51 @@ using IronMeta.Matcher;
 
 namespace Apterid.Bootstrap.Parse.Syntax
 {
-    public abstract class Token : Node
+    public abstract class Token : Leaf
     {
+        protected Token(NodeArgs args)
+            : base(args)
+        {
+        }
+    }
+
+    public class Punct : Token
+    {
+        public Punct(NodeArgs args)
+            : base(args)
+        {
+        }
     }
 
     public class Keyword : Token
     {
+        public Keyword(NodeArgs args)
+            : base(args)
+        {
+        }
     }
 
     public class Identifier : Token
     {
+        public Identifier(NodeArgs args)
+            : base(args)
+        {
+        }
     }
 
-    public class QualifiedIdentifier : Identifier
+    public class QualifiedIdentifier : Node
     {
-        IList<Identifier> qualifiers;
+        public IEnumerable<Identifier> Qualifiers { get; private set; }
+        public Identifier Identifier { get; private set; }
 
-        public Identifier Identifier { get; set; }
-
-        public IEnumerable<Identifier> Qualifiers
+        public QualifiedIdentifier(NodeArgs args, params Node[] children)
+            : base(args, children)
         {
-            get
-            {
-                return qualifiers ?? (qualifiers = new List<Identifier>());
-            }
-            set
-            {
-                qualifiers = value.ToList();
-            }
+            this.Qualifiers = children
+                .Take(children.Length - 1)
+                .OfType<Syntax.Identifier>()
+                .ToArray();
+            this.Identifier = (Identifier)children.Last();
         }
 
         public override string Text

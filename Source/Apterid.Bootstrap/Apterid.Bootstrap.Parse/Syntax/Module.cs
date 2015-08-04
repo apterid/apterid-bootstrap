@@ -8,5 +8,9 @@ namespace Apterid.Bootstrap.Parse.Syntax
 {
     public class Module : Node
     {
+        public Module(NodeArgs args, params Node[] children)
+            : base(args, children)
+        {
+        }
     }
 }

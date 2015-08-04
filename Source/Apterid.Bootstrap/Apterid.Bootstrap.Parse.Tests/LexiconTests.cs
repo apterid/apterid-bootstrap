@@ -27,7 +27,7 @@ namespace Apterid.Bootstrap.Parse.Tests
         [TestMethod]
         public void Parser_Lexicon_QualifiedIdentifier()
         {
-            const string s1 = "a.b";
+            const string s1 = "a.b.c";
             var parser = new ApteridParser
             {
                 SourceText = new SourceText { Buffer = s1 }
@@ -38,9 +38,16 @@ namespace Apterid.Bootstrap.Parse.Tests
             Assert.IsInstanceOfType(m1.Result, typeof(Syntax.QualifiedIdentifier));
 
             var r1 = m1.Result as Syntax.QualifiedIdentifier;
-            Assert.AreEqual("b", r1.Text);
-            Assert.AreEqual(1, r1.Qualifiers.Count());
-            Assert.AreEqual("a", r1.Qualifiers.First().Text);
+            Assert.AreEqual(5, r1.Children.Length);
+            Assert.IsInstanceOfType(r1.Children[0], typeof(Syntax.Identifier));
+            Assert.IsInstanceOfType(r1.Children[1], typeof(Syntax.Punct));
+            Assert.IsInstanceOfType(r1.Children[2], typeof(Syntax.Identifier));
+            Assert.IsInstanceOfType(r1.Children[3], typeof(Syntax.Punct));
+            Assert.IsInstanceOfType(r1.Children[4], typeof(Syntax.Identifier));
+
+            Assert.AreEqual(2, r1.Qualifiers.Count());
+            Assert.AreEqual("a", r1.Qualifiers.ElementAt(0).Text);
+            Assert.AreEqual("b", r1.Qualifiers.ElementAt(1).Text);
         }
 
         [TestMethod]

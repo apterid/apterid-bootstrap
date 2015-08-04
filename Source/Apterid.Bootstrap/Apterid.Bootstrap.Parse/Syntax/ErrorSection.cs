@@ -8,5 +8,9 @@ namespace Apterid.Bootstrap.Parse.Syntax
 {
     public class ErrorSection : Node
     {
+        public ErrorSection(NodeArgs args, params Node[] children)
+            : base(args, children)
+        {
+        }
     }
 }

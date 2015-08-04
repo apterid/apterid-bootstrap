@@ -7,33 +7,50 @@ using IronMeta.Matcher;
 
 namespace Apterid.Bootstrap.Parse.Syntax
 {
+    public struct NodeArgs
+    {
+        public SourceText SourceText;
+        public MatchItem<char, Node> Item;
+    }
+
     public abstract class Node
     {
-        IList<Node> children;
+        Node[] children;
 
         int? start, next;
         protected string text;
 
-        public SourceText SourceText { get; set; }
-        public MatchItem<char, Node> Item { get; set; }
-        public int Indent { get; set; }
+        public SourceText SourceText { get; private set; }
+        public MatchItem<char, Node> Item { get; private set; }
 
         public int StartIndex
         {
             get { return start ?? (start = Item.StartIndex).Value; }
-            set { start = value; }
+            private set { start = value; }
         }
         public int NextIndex
         {
             get { return next ?? (next = Item.NextIndex).Value; }
-            set { next = value; }
+            private set { next = value; }
         }
         public int Length { get { return Math.Max(0, NextIndex - StartIndex); } }
 
-        public Node Parent { get; set; }
-        public IList<Node> Children { get { return children ?? (children = new List<Node>()); } }
-        public Node Prev { get; set; }
-        public Node Next { get; set; }
+        public Node Parent { get; private set; }
+        public Node[] Children
+        {
+            get { return children ?? (children = new Node[0]); }
+            private set { children = value; }
+        }
+
+        public Node(NodeArgs args, params Node[] children)
+        {
+            this.SourceText = args.SourceText;
+            this.Item = args.Item;
+            this.Children = children;
+
+            foreach (var child in this.Children)
+                child.Parent = this;
+        }
 
         public virtual string Text
         {
@@ -49,21 +66,37 @@ namespace Apterid.Bootstrap.Parse.Syntax
                 return text;
             }
         }
+    }
 
-        public static void Connect(Node root)
+    public abstract class Leaf : Node
+    {
+        public Leaf PrevLeaf { get; private set; }
+        public Leaf NextLeaf { get; private set; }
+
+        public Leaf(NodeArgs args)
+            : base(args)
         {
-            var stack = new Stack<Node>();
-            stack.Push(root);
+        }
 
-            Node prev = null;
-            Node parent = null;
-            while (stack.Count > 0)
+        public static void ConnectLeaves(Node root)
+        {
+            Leaf prev = null;
+            ConnectLeaves(root, ref prev);
+        }
+
+        static void ConnectLeaves(Node node, ref Leaf prev)
+        {
+            Leaf leaf = node as Leaf;
+            if (leaf != null)
             {
-                var cur = stack.Peek();
-                if (cur.Children.Any())
-                {
-                    
-                }
+                leaf.PrevLeaf = prev;
+                if (prev != null) prev.NextLeaf = leaf;
+                prev = leaf;
+            }
+            else
+            {
+                foreach (var child in node.Children)
+                    ConnectLeaves(child, ref prev);
             }
         }
     }

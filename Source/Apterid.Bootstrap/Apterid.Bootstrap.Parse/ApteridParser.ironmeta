@@ -4,54 +4,56 @@ using System.Numerics;
 
 ironmeta ApteridParser<char, Syntax.Node>
 {
-    ApteridSource = SourcePart*:src EOF -> { src };
+    ApteridSource = SourcePart* EOF;
 
-    SourcePart = Directive | TopLevelModule | EndSpace+ | ErrorSection+;
+    SourcePart = Directive | TopLevelModule | SE+ | ErrorSection+;
 
     /////////////////////////////////////////////////////////////////
     // Directives
 
-    Directive = '#' WS? DirectiveExpression EndSpace;
+    Directive = '#' WS? DirectiveExpression;
 
-    DirectiveExpression = "if" SpaceOrComment '!'? SpaceOrComment Identifier;
+    DirectiveExpression = "if" SC '!'? SC Identifier;
     DirectiveExpression = "endif";
 
     /////////////////////////////////////////////////////////////////
     // Modules
 
     TopLevelModule = 
-        WS?:indent 
-        "module" SpaceOrComment QualifiedIdentifier SpaceOrComment? '=' EndSpace EOL
-        ModuleBody(indent)
-        (EndSpace | !"modules must be separated by an empty line");
+        SC?:indent Keyword("module") SC QualifiedIdentifier SC? EQ SE
+        ModuleBody(indent);
 
-    ModuleBody :outer = 
-          EndSpace*
-          (
-            (WS:inner ModuleItem(inner) EndSpace) ?(inner.Length() > outer.Length())
-            | !"parts of a module must be indented"
-          )
-          ModulePart(inner)*
-        | !"a module cannot be empty";
+    ModuleBody :outer =
+        (
+            (SC:inner SE) ?(inner.Length() > outer.Length())
+            | !"the contents of a module must be indented -- even comments"
+        )*
+        (
+            (SC:inner ModuleItem(inner) SE) ?(inner.Length() > outer.Length()) 
+            | !"the contents of a module must be indented"
+        )
+        ModulePart(inner)*;
 
-    ModulePart :indent = EndSpace;
-    ModulePart :indent = WS:ws ModuleItem(indent) EndSpace ?(ws.Length() == indent.Length());
-    ModulePart :indent = WS:ws ModuleItem(indent) EndSpace !"parts of a module must indented and aligned";
-    ModulePart :indent = Directive;
-    ModulePart :indent = WS:ws ErrorSection 
-        ?(ws.Length() == indent.Length()) -> { Make<Syntax.ErrorSection>(_IM_Result) };
+    // these all include the initial indent and go to the end of the part's last line
+    ModulePart :indent = SE;
+    ModulePart :indent = (SC:ws ModuleItem(indent) SE) ?(ws.Length() == indent.Length());
+    ModulePart :indent = (SC:ws ModuleItem(indent) SE) !"parts of a module must indented and aligned";
+    ModulePart :indent = Directive SE;
+    ModulePart :indent = ErrorSection;
+
+    /////////////////////////
 
     ModuleItem :indent = Binding(indent);
 
     /////////////////////////////////////////////////////////////////
     // Bindings
 
-    Binding :indent = Identifier:name WS? '=' WS? Expression;
+    Binding = Identifier:name WS? EQ WS? Expression SE;
 
     /////////////////////////////////////////////////////////////////
     // Expressions
 
-    Expression :indent = Literal;
+    Expression = Literal;
 
     Literal = IntegerLiteral;
 
@@ -61,29 +63,29 @@ ironmeta ApteridParser<char, Syntax.Node>
         {
             var str = new string(_IM_Result.Inputs.ToArray());
             var value = BigInteger.Parse(str.Replace("_", ""));
-            return Make<Syntax.Literal<BigInteger>>(_IM_Result, n => n.Value = value);
+            return Make<Syntax.Literal<BigInteger>>(_IM_Result, new { value = value });
         };
 
     /////////////////////////////////////////////////////////////////
     // Lexicon
-    
-    Identifier = /_|_[_0-9a-zA-Z]+|[a-zA-Z][_0-9a-zA-Z]*/ -> 
-        { Make<Syntax.Identifier>(_IM_Result) };
 
-    QualifiedIdentifier = (Identifier '.')+:q Identifier:i ->
-        {
-            return Make<Syntax.QualifiedIdentifier>(_IM_Result, n => 
-                {
-                    n.Identifier = Make<Syntax.Identifier>(i);
-                    n.Qualifiers = q.ResultsOf<Syntax.Identifier>();
-                });
-        };
+    Keyword :text = text -> { Make<Syntax.Keyword>(_IM_Result) };
+    
+    Identifier = /_|_[_0-9a-zA-Z]+|[a-zA-Z][_0-9a-zA-Z]*/ -> { Make<Syntax.Identifier>(_IM_Result) };
+
+    QualifiedIdentifier = (Identifier DOT)+ Identifier:i -> { return Make<Syntax.QualifiedIdentifier>(_IM_Result); };
 
     /////////////////////////////////////////////////////////////////
-    // Comments
+    // Punctuation
 
-    SpaceOrComment = (WS | InlineComment)+;
-    EndSpace = (WS? (LineComment | (InlineComment | WS)* EOL));
+    DOT = '.' -> { Make<Syntax.Punct>(_IM_Result) };
+    EQ  = '=' -> { Make<Syntax.Punct>(_IM_Result) };
+
+    /////////////////////////////////////////////////////////////////
+    // Comments & Whitespace
+
+    SC = (WS | InlineComment)+;                     // space or inline comment
+    SE = (InlineComment | WS)* (LineComment | EOL); // space or comment at the end of a line (includes the EOL)
 
     InlineComment = "/*" (EOL | ~"*/" .)* "*/" -> { Make<Syntax.InlineComment>(_IM_Result) };
     InlineComment = "/*" (EOL | ~(EOF | "*/") .)* EOF !"unterminated comment";
@@ -97,16 +99,14 @@ ironmeta ApteridParser<char, Syntax.Node>
             }
         };
 
+    WS = ' '+ -> { Make<Syntax.Whitespace>(_IM_Result) };
+    WS = '\t'+ !"tabs are not allowed in Apterid source";
+
     /////////////////////////////////////////////////////////////////
     // ErrorSection
 
-    ErrorSection = (~DoubleReturn .)+ DoubleReturn -> { Make<Syntax.ErrorSection>(_IM_Result) };
+    ErrorSection :indent = (~DoubleReturn .)+ DoubleReturn -> { Make<Syntax.ErrorSection>(_IM_Result) };
     DoubleReturn = EOL WS? (EOL | EOF);
-
-    /////////////////////////////////////////////////////////////////
-    // Whitespace
-
-    WS = [' ' '\t']+ -> { Make<Syntax.Whitespace>(_IM_Result) };
 
     /////////////////////////////////////////////////////////////////
     // End-of-Line and End-of-File
