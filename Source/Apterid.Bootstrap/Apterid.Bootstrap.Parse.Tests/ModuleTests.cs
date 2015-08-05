@@ -13,12 +13,12 @@ namespace Apterid.Bootstrap.Parse.Tests
         public void Parser_Module_SimpleModule()
         {
             var s = @"
-module Qualified.Simple =
+module Qualified.One =
     f1 = 123
     
     f2 = 314 /* comment */
 
-module Qualified.Complex =
+module Qualified.Two =
     // comment
     f3 = 3345    
     f4 = -12345

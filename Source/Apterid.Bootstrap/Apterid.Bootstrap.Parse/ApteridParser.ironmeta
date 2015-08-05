@@ -29,7 +29,7 @@ ironmeta ApteridParser<char, Syntax.Node>
             | !"the contents of a module must be indented -- even comments"
         )*
         (
-            (SC:inner ModuleItem(inner) SE) ?(inner.Length() > outer.Length()) 
+            (SC:inner ModuleItem(inner)) ?(inner.Length() > outer.Length()) 
             | !"the contents of a module must be indented"
         )
         ModulePart(inner)*;

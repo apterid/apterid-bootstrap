@@ -66,6 +66,15 @@ namespace Apterid.Bootstrap.Parse.Syntax
                 return text;
             }
         }
+
+        public static void Renumber(Node node, int delta)
+        {
+            node.StartIndex += delta;
+            node.NextIndex += delta;
+
+            foreach (var child in node.Children)
+                Renumber(child, delta);
+        }
     }
 
     public abstract class Leaf : Node
