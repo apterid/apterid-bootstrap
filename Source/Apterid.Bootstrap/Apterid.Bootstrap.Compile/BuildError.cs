@@ -6,7 +6,13 @@ using System.Threading.Tasks;
 
 namespace Apterid.Bootstrap.Compile
 {
-    class BuildError
+    public class BuildError
     {
+        public string Message { get; set; }
+
+        public BuildError(string message)
+        {
+            Message = message;
+        }
     }
 }

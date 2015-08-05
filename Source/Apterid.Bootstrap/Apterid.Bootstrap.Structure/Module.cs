@@ -11,7 +11,7 @@ namespace Apterid.Bootstrap.Structure
     /// </summary>
     public class Module
     {
-        public Project Project { get; set; }
+        public Assembly Project { get; set; }
         public IList<Function> Functions { get; set; }
     }
 }

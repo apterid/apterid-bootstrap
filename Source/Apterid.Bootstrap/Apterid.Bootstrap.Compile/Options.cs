@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Apterid.Bootstrap.Common;
 
 namespace Apterid.Bootstrap.Compile
 {
-    class Options
+    public class Options
     {
         public enum OutputMode
         {
@@ -15,7 +16,7 @@ namespace Apterid.Bootstrap.Compile
         }
 
         public OutputMode Mode { get; set; }
-        public string Output { get; set; }
+        public string OutputPath { get; set; }
 
         public IList<string> Sources { get; set; }
         public IList<string> References { get; set; }
@@ -32,7 +33,7 @@ namespace Apterid.Bootstrap.Compile
         const string OutputSwitch = "-o";
         const string ReferenceSwitch = "-r";
 
-        public const string Usage = @"usage: Apterid.Bootstrap.Compile [-m Library|Executable] -o OutputFile [-r DllReference] SourceFiles...";
+        public const string Usage = @"Usage: Apterid.Bootstrap.Compile [-m Library|Executable] -o OutputFile [-r DllReference]... SourceFiles...";
 
         public Options(string[] argv)
         {
@@ -40,21 +41,22 @@ namespace Apterid.Bootstrap.Compile
             References = new List<string>();
 
             OptionState state = OptionState.GetSources;
+            OutputMode? mode = null;
 
             foreach (var arg in argv)
             {
                 switch (state)
                 {
                     case OptionState.GetMode:
-                        OutputMode mode;
-                        if (Enum.TryParse<OutputMode>(arg, out mode))
-                            Mode = mode;
+                        OutputMode m;
+                        if (Enum.TryParse<OutputMode>(arg, out m))
+                            mode = m;
                         else
-                            throw new ArgumentException(string.Format("Unknown compiler output mode '{0}'", arg));
+                            throw new CmdLineException(string.Format(ErrorMessages.EC_0005_CmdLine_UnknownOutputMode, arg));
                         state = OptionState.GetSources;
                         break;
                     case OptionState.GetOutput:
-                        Output = arg;
+                        OutputPath = arg;
                         state = OptionState.GetSources;
                         break;
                     case OptionState.GetReference:
@@ -72,6 +74,20 @@ namespace Apterid.Bootstrap.Compile
                             Sources.Add(arg);
                         break;
                 }
+            }
+
+            // sanity checks
+            if (string.IsNullOrWhiteSpace(OutputPath))
+                throw new CmdLineException(ErrorMessages.EC_0004_CmdLine_NoOutputPath);
+
+            if (mode == null)
+            {
+                if (OutputPath.ToUpper().EndsWith(".DLL"))
+                    mode = OutputMode.Library;
+                else if (OutputPath.ToUpper().EndsWith(".EXE"))
+                    mode = OutputMode.Executable;
+                else
+                    throw new CmdLineException(string.Format(ErrorMessages.EC_0005_CmdLine_UnknownOutputMode, "?"));
             }
         }
     }

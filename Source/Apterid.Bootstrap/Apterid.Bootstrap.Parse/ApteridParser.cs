@@ -66,13 +66,13 @@ namespace Apterid.Bootstrap.Parse
                     if (typeof(Syntax.NodeArgs).IsAssignableFrom(parm.ParameterType))
                     {
                         if (parm.Name != "args")
-                            throw new InternalException(ErrorMessages.EI_0001_MakeNodeArgs);
+                            throw new InternalException(ErrorMessages.EI_0001_ParserImpl_MakeNodeArgs);
                         arguments.Add(nodeArgs);
                     }
                     else if (typeof(Syntax.Node[]).IsAssignableFrom(parm.ParameterType))
                     {
                         if (parm.Name != "children")
-                            throw new InternalException(ErrorMessages.EI_0002_MakeNodeChildren);
+                            throw new InternalException(ErrorMessages.EI_0002_ParserImpl_MakeNodeChildren);
                         arguments.Add(children);
                     }
                     else if (parmValues.TryGetValue(parm.Name, out parmValue))
@@ -91,7 +91,7 @@ namespace Apterid.Bootstrap.Parse
                 return (T)ctor.Invoke(arguments.ToArray());
             }
 
-            throw new InternalException(string.Format(ErrorMessages.EI_0003_MakeNodeNoCtor, typeof(T).FullName));
+            throw new InternalException(string.Format(ErrorMessages.EI_0003_ParserImpl_MakeNodeNoCtor, typeof(T).FullName));
         }
     }
 

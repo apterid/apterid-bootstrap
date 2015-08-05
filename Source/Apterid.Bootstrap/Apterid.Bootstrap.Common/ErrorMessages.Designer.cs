@@ -61,29 +61,56 @@ namespace Apterid.Bootstrap.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Source file does not exist: {0}..
+        /// </summary>
+        public static string EB_0006_Builder_SourceDoesNotExist {
+            get {
+                return ResourceManager.GetString("EB_0006_Builder_SourceDoesNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You must specify an output path..
+        /// </summary>
+        public static string EC_0004_CmdLine_NoOutputPath {
+            get {
+                return ResourceManager.GetString("EC_0004_CmdLine_NoOutputPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown compiler output mode &apos;{0}&apos;..
+        /// </summary>
+        public static string EC_0005_CmdLine_UnknownOutputMode {
+            get {
+                return ResourceManager.GetString("EC_0005_CmdLine_UnknownOutputMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A node constructor&apos;s NodeArgs parameter must be named &quot;args&quot;..
         /// </summary>
-        public static string EI_0001_MakeNodeArgs {
+        public static string EI_0001_ParserImpl_MakeNodeArgs {
             get {
-                return ResourceManager.GetString("EI_0001_MakeNodeArgs", resourceCulture);
+                return ResourceManager.GetString("EI_0001_ParserImpl_MakeNodeArgs", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to A node constructor&apos;s Node[] parameter must be named &quot;children&quot;..
         /// </summary>
-        public static string EI_0002_MakeNodeChildren {
+        public static string EI_0002_ParserImpl_MakeNodeChildren {
             get {
-                return ResourceManager.GetString("EI_0002_MakeNodeChildren", resourceCulture);
+                return ResourceManager.GetString("EI_0002_ParserImpl_MakeNodeChildren", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Unable to find a constructor for {0}..
         /// </summary>
-        public static string EI_0003_MakeNodeNoCtor {
+        public static string EI_0003_ParserImpl_MakeNodeNoCtor {
             get {
-                return ResourceManager.GetString("EI_0003_MakeNodeNoCtor", resourceCulture);
+                return ResourceManager.GetString("EI_0003_ParserImpl_MakeNodeNoCtor", resourceCulture);
             }
         }
     }

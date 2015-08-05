@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Apterid.Bootstrap.Structure
 {
-    public class Solution
+    public class Assembly
     {
-        public IList<Project> Projects { get; set; }
+        public IList<SourceFile> SourceFiles { get; set; }
+        public IList<Module> Modules { get; set; }
     }
 }

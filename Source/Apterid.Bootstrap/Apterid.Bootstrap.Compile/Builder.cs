@@ -1,29 +1,59 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
-
-using Apterid.Bootstrap.Parse;
-using Apterid.Bootstrap.Structure;
+using Apterid.Bootstrap.Common;
 
 namespace Apterid.Bootstrap.Compile
 {
     class Builder
     {
         public BuildContext Context { get; protected set; }
-        public IList<Solution> Solutions { get; protected set; }
 
-        public Builder(BuildContext context)
+        public Builder()
         {
-            Context = context;
+            Context = new BuildContext();
         }
 
-        public IList<BuildError> UpdateBuild(IEnumerable<SourceText> sources)
+        public void UpdateAssembly(BuildAssembly buildAssembly, bool force = false)
         {
-            var errors = new List<BuildError>();
+            var cancelSource = new CancellationTokenSource();
 
-            return errors;
+            // output file info
+            var outputFileInfo = new FileInfo(buildAssembly.Options.OutputPath);
+
+            // parse files
+            var parseTasks = buildAssembly.Options.Sources
+                .Select(sourcePath => 
+                    new BuildTask(() => 
+                        ParseSourceFile(buildAssembly, outputFileInfo, sourcePath, force), 
+                        cancelSource.Token));
+
+            var parse = new BuildTask(parseTasks, cancelSource.Token);
+
+            //
+            
+        }
+
+        BuildStatus ParseSourceFile(
+            BuildAssembly buildAssembly, 
+            FileInfo outputFileInfo, 
+            string sourcePath, bool force)
+        {
+            // verify that the source file exists
+            var sourceInfo = new FileInfo(sourcePath);
+            if (!sourceInfo.Exists)
+            {
+                buildAssembly.AddError(string.Format(ErrorMessages.EB_0006_Builder_SourceDoesNotExist, sourceInfo.FullName));
+                return BuildStatus.Completed;
+            }
+
+            // see if it already exists in our assembly
+
+            return BuildStatus.Completed;
         }
     }
 }

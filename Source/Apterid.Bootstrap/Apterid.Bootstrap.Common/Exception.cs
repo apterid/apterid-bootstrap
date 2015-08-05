@@ -9,17 +9,18 @@ namespace Apterid.Bootstrap.Common
     public enum ErrorCode
     {
         Internal,
+        CommandLine,
         Unknown
     }
 
     public class ApteridException : Exception
     {
-        public ErrorCode Code { get; private set; }
+        public ErrorCode Code { get; }
 
         public ApteridException(ErrorCode code, string message, Exception innerException)
             : base(message, innerException)
         {
-            this.Code = code;
+            Code = code;
         }
 
         public ApteridException(ErrorCode code, string message)
@@ -52,6 +53,14 @@ namespace Apterid.Bootstrap.Common
 
         public InternalException()
             : base(ErrorCode.Internal)
+        {
+        }
+    }
+
+    public class CmdLineException : ApteridException
+    {
+        public CmdLineException(string message)
+            : base(ErrorCode.CommandLine, message)
         {
         }
     }

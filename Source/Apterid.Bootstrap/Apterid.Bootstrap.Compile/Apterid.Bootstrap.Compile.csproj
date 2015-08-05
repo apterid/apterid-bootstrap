@@ -57,15 +57,21 @@
     <Compile Include="BuildContext.cs" />
     <Compile Include="Builder.cs" />
     <Compile Include="BuildError.cs" />
+    <Compile Include="BuildTask.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tasks\ParseSourceFile.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Apterid.Bootstrap.Common\Apterid.Bootstrap.Common.csproj">
+      <Project>{297b34ba-c406-44db-bc9e-7463efe53385}</Project>
+      <Name>Apterid.Bootstrap.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Apterid.Bootstrap.Generate\Apterid.Bootstrap.Generate.csproj">
       <Project>{37ee6b64-13c2-4f69-9125-72b6ce6d9ea5}</Project>
       <Name>Apterid.Bootstrap.Generate</Name>
