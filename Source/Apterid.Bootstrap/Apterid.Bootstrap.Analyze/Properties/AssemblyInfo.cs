@@ -4,7 +4,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("Apterid.Bootstrap.Structure")]
+[assembly: AssemblyTitle("Apterid.Bootstrap.Analyze")]
 [assembly: AssemblyDescription("Bootstrap C# compiler middle end: transforms parse tree into abstract structure.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCulture("")]

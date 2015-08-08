@@ -17,7 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{04CB9292
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{ABED5269-F38B-4DBA-9AA6-E28E2A7CAE34}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apterid.Bootstrap.Structure", "Apterid.Bootstrap.Structure\Apterid.Bootstrap.Structure.csproj", "{1EC37F3A-EB7A-4F0E-8778-317D4A832519}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apterid.Bootstrap.Analyze", "Apterid.Bootstrap.Analyze\Apterid.Bootstrap.Analyze.csproj", "{1EC37F3A-EB7A-4F0E-8778-317D4A832519}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apterid.Bootstrap.Runtime", "Apterid.Bootstrap.Runtime\Apterid.Bootstrap.Runtime.csproj", "{5ACDE00A-F542-4E2D-912C-36AE4B87230B}"
 EndProject

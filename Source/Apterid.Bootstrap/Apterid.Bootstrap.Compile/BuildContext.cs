@@ -29,7 +29,7 @@ namespace Apterid.Bootstrap.Compile
         public FileInfo OutputFileInfo { get; set; }
         public IList<BuildError> Errors { get; set; }
 
-        public Structure.Assembly StructureAssembly { get; set; }
+        public Analyze.Assembly StructureAssembly { get; set; }
 
         public void AddError(string message)
         {

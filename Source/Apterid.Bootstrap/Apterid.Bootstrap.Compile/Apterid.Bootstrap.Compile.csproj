@@ -84,9 +84,9 @@
       <Project>{5acde00a-f542-4e2d-912c-36ae4b87230b}</Project>
       <Name>Apterid.Bootstrap.Runtime</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Apterid.Bootstrap.Structure\Apterid.Bootstrap.Structure.csproj">
+    <ProjectReference Include="..\Apterid.Bootstrap.Analyze\Apterid.Bootstrap.Analyze.csproj">
       <Project>{1ec37f3a-eb7a-4f0e-8778-317d4a832519}</Project>
-      <Name>Apterid.Bootstrap.Structure</Name>
+      <Name>Apterid.Bootstrap.Analyze</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

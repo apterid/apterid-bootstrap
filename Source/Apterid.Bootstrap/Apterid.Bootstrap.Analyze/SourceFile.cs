@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using Apterid.Bootstrap.Parse;
 
-namespace Apterid.Bootstrap.Structure
+namespace Apterid.Bootstrap.Analyze
 {
     public class SourceFile : SourceText
     {

@@ -7,8 +7,8 @@
     <ProjectGuid>{1EC37F3A-EB7A-4F0E-8778-317D4A832519}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Apterid.Bootstrap.Structure</RootNamespace>
-    <AssemblyName>Apterid.Bootstrap.Structure</AssemblyName>
+    <RootNamespace>Apterid.Bootstrap.Analyze</RootNamespace>
+    <AssemblyName>Apterid.Bootstrap.Analyze</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
