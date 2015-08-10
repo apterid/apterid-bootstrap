@@ -9,7 +9,7 @@ using Apterid.Bootstrap.Common;
 
 namespace Apterid.Bootstrap.Compile.Tasks
 {
-    class ParseSourceFile : BuildTask
+    public class ParseSourceFile : BuildTask
     {
         public BuildContext Context { get; set; }
         public BuildAssembly BuildAssembly { get; set; }
@@ -17,10 +17,12 @@ namespace Apterid.Bootstrap.Compile.Tasks
 
         bool force;
 
-        public ParseSourceFile(string sourcePath, bool force, CancellationToken cancel)
+        public ParseSourceFile(BuildContext context, BuildAssembly buildAssembly, string sourcePath, bool force, CancellationToken cancel)
             : base(cancel)
         {
-            SourceFileInfo = new FileInfo(sourcePath);
+            this.Context = context;
+            this.BuildAssembly = buildAssembly;
+            this.SourceFileInfo = new FileInfo(sourcePath);
             this.force = force;
         }
 
@@ -30,7 +32,7 @@ namespace Apterid.Bootstrap.Compile.Tasks
             if (!SourceFileInfo.Exists)
             {
                 BuildAssembly.AddError(string.Format(ErrorMessages.EB_0006_Builder_SourceDoesNotExist, SourceFileInfo.FullName));
-                return Task.FromResult(BuildStatus.Completed);
+                return Task.FromResult(BuildStatus.Failed);
             }
 
 

@@ -13,6 +13,7 @@ namespace Apterid.Bootstrap.Compile
         NotStarted,
         InProgress,
         Completed,
+        Failed,
         Canceled,
     }
 
