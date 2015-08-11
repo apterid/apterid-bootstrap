@@ -54,8 +54,9 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="BuildAssembly.cs" />
     <Compile Include="BuildContext.cs" />
-    <Compile Include="Builder.cs" />
+    <Compile Include="ApteridBuilder.cs" />
     <Compile Include="BuildError.cs" />
     <Compile Include="BuildTask.cs" />
     <Compile Include="Options.cs" />
