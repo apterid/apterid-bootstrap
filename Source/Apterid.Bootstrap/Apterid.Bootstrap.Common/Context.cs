@@ -7,8 +7,15 @@ using System.Threading.Tasks;
 
 namespace Apterid.Bootstrap.Common
 {
+    public enum OutputMode
+    {
+        Library,
+        Executable,
+    }
+
     public class Context
     {
+        public bool ForceRecompile { get; set; }
         public IList<Reference> References { get; set; }
     }
 }

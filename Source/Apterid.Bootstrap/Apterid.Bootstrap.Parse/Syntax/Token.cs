@@ -47,11 +47,11 @@ namespace Apterid.Bootstrap.Parse.Syntax
         public QualifiedIdentifier(NodeArgs args, params Node[] children)
             : base(args, children)
         {
-            this.Qualifiers = children
+            Qualifiers = children
                 .Take(children.Length - 1)
-                .OfType<Syntax.Identifier>()
+                .OfType<Identifier>()
                 .ToArray();
-            this.Identifier = (Identifier)children.Last();
+            Identifier = (Identifier)children.Last();
         }
 
         public override string Text

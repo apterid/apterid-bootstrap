@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Apterid.Bootstrap.Parse.Syntax
 {
-    public class Function : Node
+    public class Pattern : Node
     {
-        public Function(NodeArgs args, params Node[] children)
+        public Pattern(NodeArgs args, params Node[] children)
             : base(args, children)
         {
         }

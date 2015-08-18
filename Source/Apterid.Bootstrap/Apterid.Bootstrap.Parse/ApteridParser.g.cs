@@ -1,5 +1,5 @@
 ﻿//
-// IronMeta ApteridParser Parser; Generated 2015-08-05 02:57:46Z UTC
+// IronMeta ApteridParser Parser; Generated 2015-08-18 22:58:00Z UTC
 //
 
 using System;
@@ -71,55 +71,63 @@ namespace Apterid.Bootstrap.Parse
         public void ApteridSource(_ApteridParser_Memo _memo, int _index, _ApteridParser_Args _args)
         {
 
-            // AND 0
-            int _start_i0 = _index;
-
-            // STAR 1
+            // AND 1
             int _start_i1 = _index;
-            var _res1 = Enumerable.Empty<Syntax.Node>();
-        label1:
+
+            // STAR 2
+            int _start_i2 = _index;
+            var _res2 = Enumerable.Empty<Syntax.Node>();
+        label2:
 
             // CALLORVAR SourcePart
-            _ApteridParser_Item _r2;
-
-            _r2 = _MemoCall(_memo, "SourcePart", _index, SourcePart, null);
-
-            if (_r2 != null) _index = _r2.NextIndex;
-
-            // STAR 1
-            var _r1 = _memo.Results.Pop();
-            if (_r1 != null)
-            {
-                _res1 = _res1.Concat(_r1.Results);
-                goto label1;
-            }
-            else
-            {
-                _memo.Results.Push(new _ApteridParser_Item(_start_i1, _index, _memo.InputEnumerable, _res1.Where(_NON_NULL), true));
-            }
-
-            // AND shortcut
-            if (_memo.Results.Peek() == null) { _memo.Results.Push(null); goto label0; }
-
-            // CALLORVAR EOF
             _ApteridParser_Item _r3;
 
-            _r3 = _MemoCall(_memo, "EOF", _index, EOF, null);
+            _r3 = _MemoCall(_memo, "SourcePart", _index, SourcePart, null);
 
             if (_r3 != null) _index = _r3.NextIndex;
 
-        label0: // AND
-            var _r0_2 = _memo.Results.Pop();
-            var _r0_1 = _memo.Results.Pop();
-
-            if (_r0_1 != null && _r0_2 != null)
+            // STAR 2
+            var _r2 = _memo.Results.Pop();
+            if (_r2 != null)
             {
-                _memo.Results.Push( new _ApteridParser_Item(_start_i0, _index, _memo.InputEnumerable, _r0_1.Results.Concat(_r0_2.Results).Where(_NON_NULL), true) );
+                _res2 = _res2.Concat(_r2.Results);
+                goto label2;
+            }
+            else
+            {
+                _memo.Results.Push(new _ApteridParser_Item(_start_i2, _index, _memo.InputEnumerable, _res2.Where(_NON_NULL), true));
+            }
+
+            // AND shortcut
+            if (_memo.Results.Peek() == null) { _memo.Results.Push(null); goto label1; }
+
+            // CALLORVAR EOF
+            _ApteridParser_Item _r4;
+
+            _r4 = _MemoCall(_memo, "EOF", _index, EOF, null);
+
+            if (_r4 != null) _index = _r4.NextIndex;
+
+        label1: // AND
+            var _r1_2 = _memo.Results.Pop();
+            var _r1_1 = _memo.Results.Pop();
+
+            if (_r1_1 != null && _r1_2 != null)
+            {
+                _memo.Results.Push( new _ApteridParser_Item(_start_i1, _index, _memo.InputEnumerable, _r1_1.Results.Concat(_r1_2.Results).Where(_NON_NULL), true) );
             }
             else
             {
                 _memo.Results.Push(null);
-                _index = _start_i0;
+                _index = _start_i1;
+            }
+
+            // ACT
+            var _r0 = _memo.Results.Peek();
+            if (_r0 != null)
+            {
+                _memo.Results.Pop();
+                _memo.Results.Push( new _ApteridParser_Item(_r0.StartIndex, _r0.NextIndex, _memo.InputEnumerable, _Thunk(_IM_Result => { return Make<Syntax.Source>(_IM_Result); }, _r0), true) );
             }
 
         }
@@ -424,9 +432,8 @@ namespace Apterid.Bootstrap.Parse
         {
 
             _ApteridParser_Item indent = null;
-
-            // AND 0
-            int _start_i0 = _index;
+            _ApteridParser_Item name = null;
+            _ApteridParser_Item body = null;
 
             // AND 1
             int _start_i1 = _index;
@@ -446,12 +453,15 @@ namespace Apterid.Bootstrap.Parse
             // AND 6
             int _start_i6 = _index;
 
+            // AND 7
+            int _start_i7 = _index;
+
             // CALLORVAR SC
-            _ApteridParser_Item _r9;
+            _ApteridParser_Item _r10;
 
-            _r9 = _MemoCall(_memo, "SC", _index, SC, null);
+            _r10 = _MemoCall(_memo, "SC", _index, SC, null);
 
-            if (_r9 != null) _index = _r9.NextIndex;
+            if (_r10 != null) _index = _r10.NextIndex;
 
             // QUES
             if (_memo.Results.Peek() == null) { _memo.Results.Pop(); _memo.Results.Push(new _ApteridParser_Item(_index, _memo.InputEnumerable)); }
@@ -460,16 +470,40 @@ namespace Apterid.Bootstrap.Parse
             indent = _memo.Results.Peek();
 
             // AND shortcut
-            if (_memo.Results.Peek() == null) { _memo.Results.Push(null); goto label6; }
+            if (_memo.Results.Peek() == null) { _memo.Results.Push(null); goto label7; }
 
             // CALL Keyword
-            var _start_i10 = _index;
-            _ApteridParser_Item _r10;
-            var _arg10_0 = "module";
+            var _start_i11 = _index;
+            _ApteridParser_Item _r11;
+            var _arg11_0 = "module";
 
-            _r10 = _MemoCall(_memo, "Keyword", _index, Keyword, new _ApteridParser_Item[] { new _ApteridParser_Item(_arg10_0) });
+            _r11 = _MemoCall(_memo, "Keyword", _index, Keyword, new _ApteridParser_Item[] { new _ApteridParser_Item(_arg11_0) });
 
-            if (_r10 != null) _index = _r10.NextIndex;
+            if (_r11 != null) _index = _r11.NextIndex;
+
+        label7: // AND
+            var _r7_2 = _memo.Results.Pop();
+            var _r7_1 = _memo.Results.Pop();
+
+            if (_r7_1 != null && _r7_2 != null)
+            {
+                _memo.Results.Push( new _ApteridParser_Item(_start_i7, _index, _memo.InputEnumerable, _r7_1.Results.Concat(_r7_2.Results).Where(_NON_NULL), true) );
+            }
+            else
+            {
+                _memo.Results.Push(null);
+                _index = _start_i7;
+            }
+
+            // AND shortcut
+            if (_memo.Results.Peek() == null) { _memo.Results.Push(null); goto label6; }
+
+            // CALLORVAR SC
+            _ApteridParser_Item _r12;
+
+            _r12 = _MemoCall(_memo, "SC", _index, SC, null);
+
+            if (_r12 != null) _index = _r12.NextIndex;
 
         label6: // AND
             var _r6_2 = _memo.Results.Pop();
@@ -488,12 +522,15 @@ namespace Apterid.Bootstrap.Parse
             // AND shortcut
             if (_memo.Results.Peek() == null) { _memo.Results.Push(null); goto label5; }
 
-            // CALLORVAR SC
-            _ApteridParser_Item _r11;
+            // CALLORVAR QualifiedIdentifier
+            _ApteridParser_Item _r14;
 
-            _r11 = _MemoCall(_memo, "SC", _index, SC, null);
+            _r14 = _MemoCall(_memo, "QualifiedIdentifier", _index, QualifiedIdentifier, null);
 
-            if (_r11 != null) _index = _r11.NextIndex;
+            if (_r14 != null) _index = _r14.NextIndex;
+
+            // BIND name
+            name = _memo.Results.Peek();
 
         label5: // AND
             var _r5_2 = _memo.Results.Pop();
@@ -512,12 +549,15 @@ namespace Apterid.Bootstrap.Parse
             // AND shortcut
             if (_memo.Results.Peek() == null) { _memo.Results.Push(null); goto label4; }
 
-            // CALLORVAR QualifiedIdentifier
-            _ApteridParser_Item _r12;
+            // CALLORVAR SC
+            _ApteridParser_Item _r16;
 
-            _r12 = _MemoCall(_memo, "QualifiedIdentifier", _index, QualifiedIdentifier, null);
+            _r16 = _MemoCall(_memo, "SC", _index, SC, null);
 
-            if (_r12 != null) _index = _r12.NextIndex;
+            if (_r16 != null) _index = _r16.NextIndex;
+
+            // QUES
+            if (_memo.Results.Peek() == null) { _memo.Results.Pop(); _memo.Results.Push(new _ApteridParser_Item(_index, _memo.InputEnumerable)); }
 
         label4: // AND
             var _r4_2 = _memo.Results.Pop();
@@ -536,15 +576,12 @@ namespace Apterid.Bootstrap.Parse
             // AND shortcut
             if (_memo.Results.Peek() == null) { _memo.Results.Push(null); goto label3; }
 
-            // CALLORVAR SC
-            _ApteridParser_Item _r14;
+            // CALLORVAR EQ
+            _ApteridParser_Item _r17;
 
-            _r14 = _MemoCall(_memo, "SC", _index, SC, null);
+            _r17 = _MemoCall(_memo, "EQ", _index, EQ, null);
 
-            if (_r14 != null) _index = _r14.NextIndex;
-
-            // QUES
-            if (_memo.Results.Peek() == null) { _memo.Results.Pop(); _memo.Results.Push(new _ApteridParser_Item(_index, _memo.InputEnumerable)); }
+            if (_r17 != null) _index = _r17.NextIndex;
 
         label3: // AND
             var _r3_2 = _memo.Results.Pop();
@@ -563,12 +600,12 @@ namespace Apterid.Bootstrap.Parse
             // AND shortcut
             if (_memo.Results.Peek() == null) { _memo.Results.Push(null); goto label2; }
 
-            // CALLORVAR EQ
-            _ApteridParser_Item _r15;
+            // CALLORVAR SE
+            _ApteridParser_Item _r18;
 
-            _r15 = _MemoCall(_memo, "EQ", _index, EQ, null);
+            _r18 = _MemoCall(_memo, "SE", _index, SE, null);
 
-            if (_r15 != null) _index = _r15.NextIndex;
+            if (_r18 != null) _index = _r18.NextIndex;
 
         label2: // AND
             var _r2_2 = _memo.Results.Pop();
@@ -587,12 +624,16 @@ namespace Apterid.Bootstrap.Parse
             // AND shortcut
             if (_memo.Results.Peek() == null) { _memo.Results.Push(null); goto label1; }
 
-            // CALLORVAR SE
-            _ApteridParser_Item _r16;
+            // CALL ModuleBody
+            var _start_i20 = _index;
+            _ApteridParser_Item _r20;
 
-            _r16 = _MemoCall(_memo, "SE", _index, SE, null);
+            _r20 = _MemoCall(_memo, "ModuleBody", _index, ModuleBody, new _ApteridParser_Item[] { indent });
 
-            if (_r16 != null) _index = _r16.NextIndex;
+            if (_r20 != null) _index = _r20.NextIndex;
+
+            // BIND body
+            body = _memo.Results.Peek();
 
         label1: // AND
             var _r1_2 = _memo.Results.Pop();
@@ -608,29 +649,12 @@ namespace Apterid.Bootstrap.Parse
                 _index = _start_i1;
             }
 
-            // AND shortcut
-            if (_memo.Results.Peek() == null) { _memo.Results.Push(null); goto label0; }
-
-            // CALL ModuleBody
-            var _start_i17 = _index;
-            _ApteridParser_Item _r17;
-
-            _r17 = _MemoCall(_memo, "ModuleBody", _index, ModuleBody, new _ApteridParser_Item[] { indent });
-
-            if (_r17 != null) _index = _r17.NextIndex;
-
-        label0: // AND
-            var _r0_2 = _memo.Results.Pop();
-            var _r0_1 = _memo.Results.Pop();
-
-            if (_r0_1 != null && _r0_2 != null)
+            // ACT
+            var _r0 = _memo.Results.Peek();
+            if (_r0 != null)
             {
-                _memo.Results.Push( new _ApteridParser_Item(_start_i0, _index, _memo.InputEnumerable, _r0_1.Results.Concat(_r0_2.Results).Where(_NON_NULL), true) );
-            }
-            else
-            {
-                _memo.Results.Push(null);
-                _index = _start_i0;
+                _memo.Results.Pop();
+                _memo.Results.Push( new _ApteridParser_Item(_r0.StartIndex, _r0.NextIndex, _memo.InputEnumerable, _Thunk(_IM_Result => { return Make<Syntax.Module>(_IM_Result, new { name = name.Results.SingleOrDefault(), body = body.Results }); }, _r0), true) );
             }
 
         }
@@ -1258,9 +1282,7 @@ namespace Apterid.Bootstrap.Parse
         {
 
             _ApteridParser_Item name = null;
-
-            // AND 0
-            int _start_i0 = _index;
+            _ApteridParser_Item body = null;
 
             // AND 1
             int _start_i1 = _index;
@@ -1274,28 +1296,55 @@ namespace Apterid.Bootstrap.Parse
             // AND 4
             int _start_i4 = _index;
 
+            // AND 5
+            int _start_i5 = _index;
+
             // CALLORVAR Identifier
-            _ApteridParser_Item _r6;
+            _ApteridParser_Item _r7;
 
-            _r6 = _MemoCall(_memo, "Identifier", _index, Identifier, null);
+            _r7 = _MemoCall(_memo, "Identifier", _index, Identifier, null);
 
-            if (_r6 != null) _index = _r6.NextIndex;
+            if (_r7 != null) _index = _r7.NextIndex;
 
             // BIND name
             name = _memo.Results.Peek();
 
             // AND shortcut
-            if (_memo.Results.Peek() == null) { _memo.Results.Push(null); goto label4; }
+            if (_memo.Results.Peek() == null) { _memo.Results.Push(null); goto label5; }
 
             // CALLORVAR WS
-            _ApteridParser_Item _r8;
+            _ApteridParser_Item _r9;
 
-            _r8 = _MemoCall(_memo, "WS", _index, WS, null);
+            _r9 = _MemoCall(_memo, "WS", _index, WS, null);
 
-            if (_r8 != null) _index = _r8.NextIndex;
+            if (_r9 != null) _index = _r9.NextIndex;
 
             // QUES
             if (_memo.Results.Peek() == null) { _memo.Results.Pop(); _memo.Results.Push(new _ApteridParser_Item(_index, _memo.InputEnumerable)); }
+
+        label5: // AND
+            var _r5_2 = _memo.Results.Pop();
+            var _r5_1 = _memo.Results.Pop();
+
+            if (_r5_1 != null && _r5_2 != null)
+            {
+                _memo.Results.Push( new _ApteridParser_Item(_start_i5, _index, _memo.InputEnumerable, _r5_1.Results.Concat(_r5_2.Results).Where(_NON_NULL), true) );
+            }
+            else
+            {
+                _memo.Results.Push(null);
+                _index = _start_i5;
+            }
+
+            // AND shortcut
+            if (_memo.Results.Peek() == null) { _memo.Results.Push(null); goto label4; }
+
+            // CALLORVAR EQ
+            _ApteridParser_Item _r10;
+
+            _r10 = _MemoCall(_memo, "EQ", _index, EQ, null);
+
+            if (_r10 != null) _index = _r10.NextIndex;
 
         label4: // AND
             var _r4_2 = _memo.Results.Pop();
@@ -1314,12 +1363,15 @@ namespace Apterid.Bootstrap.Parse
             // AND shortcut
             if (_memo.Results.Peek() == null) { _memo.Results.Push(null); goto label3; }
 
-            // CALLORVAR EQ
-            _ApteridParser_Item _r9;
+            // CALLORVAR WS
+            _ApteridParser_Item _r12;
 
-            _r9 = _MemoCall(_memo, "EQ", _index, EQ, null);
+            _r12 = _MemoCall(_memo, "WS", _index, WS, null);
 
-            if (_r9 != null) _index = _r9.NextIndex;
+            if (_r12 != null) _index = _r12.NextIndex;
+
+            // QUES
+            if (_memo.Results.Peek() == null) { _memo.Results.Pop(); _memo.Results.Push(new _ApteridParser_Item(_index, _memo.InputEnumerable)); }
 
         label3: // AND
             var _r3_2 = _memo.Results.Pop();
@@ -1338,15 +1390,15 @@ namespace Apterid.Bootstrap.Parse
             // AND shortcut
             if (_memo.Results.Peek() == null) { _memo.Results.Push(null); goto label2; }
 
-            // CALLORVAR WS
-            _ApteridParser_Item _r11;
+            // CALLORVAR Expression
+            _ApteridParser_Item _r14;
 
-            _r11 = _MemoCall(_memo, "WS", _index, WS, null);
+            _r14 = _MemoCall(_memo, "Expression", _index, Expression, null);
 
-            if (_r11 != null) _index = _r11.NextIndex;
+            if (_r14 != null) _index = _r14.NextIndex;
 
-            // QUES
-            if (_memo.Results.Peek() == null) { _memo.Results.Pop(); _memo.Results.Push(new _ApteridParser_Item(_index, _memo.InputEnumerable)); }
+            // BIND body
+            body = _memo.Results.Peek();
 
         label2: // AND
             var _r2_2 = _memo.Results.Pop();
@@ -1365,12 +1417,12 @@ namespace Apterid.Bootstrap.Parse
             // AND shortcut
             if (_memo.Results.Peek() == null) { _memo.Results.Push(null); goto label1; }
 
-            // CALLORVAR Expression
-            _ApteridParser_Item _r12;
+            // CALLORVAR SE
+            _ApteridParser_Item _r15;
 
-            _r12 = _MemoCall(_memo, "Expression", _index, Expression, null);
+            _r15 = _MemoCall(_memo, "SE", _index, SE, null);
 
-            if (_r12 != null) _index = _r12.NextIndex;
+            if (_r15 != null) _index = _r15.NextIndex;
 
         label1: // AND
             var _r1_2 = _memo.Results.Pop();
@@ -1386,28 +1438,12 @@ namespace Apterid.Bootstrap.Parse
                 _index = _start_i1;
             }
 
-            // AND shortcut
-            if (_memo.Results.Peek() == null) { _memo.Results.Push(null); goto label0; }
-
-            // CALLORVAR SE
-            _ApteridParser_Item _r13;
-
-            _r13 = _MemoCall(_memo, "SE", _index, SE, null);
-
-            if (_r13 != null) _index = _r13.NextIndex;
-
-        label0: // AND
-            var _r0_2 = _memo.Results.Pop();
-            var _r0_1 = _memo.Results.Pop();
-
-            if (_r0_1 != null && _r0_2 != null)
+            // ACT
+            var _r0 = _memo.Results.Peek();
+            if (_r0 != null)
             {
-                _memo.Results.Push( new _ApteridParser_Item(_start_i0, _index, _memo.InputEnumerable, _r0_1.Results.Concat(_r0_2.Results).Where(_NON_NULL), true) );
-            }
-            else
-            {
-                _memo.Results.Push(null);
-                _index = _start_i0;
+                _memo.Results.Pop();
+                _memo.Results.Push( new _ApteridParser_Item(_r0.StartIndex, _r0.NextIndex, _memo.InputEnumerable, _Thunk(_IM_Result => { return Make<Syntax.Binding>(_IM_Result, new { name = name.Results.SingleOrDefault(), pattern = (Syntax.Pattern)null, body = body.Results }); }, _r0), true) );
             }
 
         }
@@ -1549,7 +1585,7 @@ namespace Apterid.Bootstrap.Parse
             // AND 1
             int _start_i1 = _index;
 
-            // PLUS 2
+            // STAR 2
             int _start_i2 = _index;
             var _res2 = Enumerable.Empty<Syntax.Node>();
         label2:
@@ -1588,7 +1624,7 @@ namespace Apterid.Bootstrap.Parse
                 _index = _start_i3;
             }
 
-            // PLUS 2
+            // STAR 2
             var _r2 = _memo.Results.Pop();
             if (_r2 != null)
             {
@@ -1597,10 +1633,7 @@ namespace Apterid.Bootstrap.Parse
             }
             else
             {
-                if (_index > _start_i2)
-                    _memo.Results.Push(new _ApteridParser_Item(_start_i2, _index, _memo.InputEnumerable, _res2.Where(_NON_NULL), true));
-                else
-                    _memo.Results.Push(null);
+                _memo.Results.Push(new _ApteridParser_Item(_start_i2, _index, _memo.InputEnumerable, _res2.Where(_NON_NULL), true));
             }
 
             // AND shortcut

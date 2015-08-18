@@ -63,9 +63,9 @@ namespace Apterid.Bootstrap.Common {
         /// <summary>
         ///   Looks up a localized string similar to Source file does not exist: {0}..
         /// </summary>
-        public static string EB_0006_Builder_SourceDoesNotExist {
+        public static string EB_0006_Compiler_SourceDoesNotExist {
             get {
-                return ResourceManager.GetString("EB_0006_Builder_SourceDoesNotExist", resourceCulture);
+                return ResourceManager.GetString("EB_0006_Compiler_SourceDoesNotExist", resourceCulture);
             }
         }
         
@@ -111,6 +111,15 @@ namespace Apterid.Bootstrap.Common {
         public static string EI_0003_ParserImpl_MakeNodeNoCtor {
             get {
                 return ResourceManager.GetString("EI_0003_ParserImpl_MakeNodeNoCtor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to parse..
+        /// </summary>
+        public static string EP_0007_Parser_SyntaxError {
+            get {
+                return ResourceManager.GetString("EP_0007_Parser_SyntaxError", resourceCulture);
             }
         }
     }

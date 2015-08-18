@@ -13,7 +13,7 @@ namespace Apterid.Bootstrap.Parse
 
     public partial class ApteridParser
     {
-        public SourceText SourceText { get; set; }
+        public SourceFile SourceFile { get; set; }
 
         protected T Make<T>(SyntaxItem item)
             where T : Syntax.Node
@@ -44,7 +44,7 @@ namespace Apterid.Bootstrap.Parse
             where T : Syntax.Node
         {
             var nodeArgs = new Syntax.NodeArgs();
-            nodeArgs.SourceText = this.SourceText;
+            nodeArgs.SourceFile = this.SourceFile;
             nodeArgs.Item = item;
 
             var parmValues = parms != null

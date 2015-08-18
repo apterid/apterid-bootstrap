@@ -9,12 +9,6 @@ namespace Apterid.Bootstrap.Compile
 {
     public class Options
     {
-        public enum OutputMode
-        {
-            Library,
-            Executable,
-        }
-
         public OutputMode Mode { get; set; }
         public string OutputPath { get; set; }
 

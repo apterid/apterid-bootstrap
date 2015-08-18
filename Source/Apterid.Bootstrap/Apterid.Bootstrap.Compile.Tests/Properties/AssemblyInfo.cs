@@ -4,12 +4,12 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("Apterid.Bootstrap.Analyze")]
-[assembly: AssemblyDescription("Bootstrap C# semantic analysis: transforms parse tree into abstract structure.")]
+[assembly: AssemblyTitle("Apterid.Bootstrap.Compile.Tests")]
+[assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCulture("")]
 
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("1ec37f3a-eb7a-4f0e-8778-317d4a832519")]
+[assembly: Guid("d1b6c42f-6000-4e28-b26f-38ccf823a4fc")]

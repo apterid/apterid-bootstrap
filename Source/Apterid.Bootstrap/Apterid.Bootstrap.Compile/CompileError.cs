@@ -7,11 +7,12 @@ using Apterid.Bootstrap.Parse;
 
 namespace Apterid.Bootstrap.Compile
 {
-    public class BuildError
+    public class CompileError
     {
         public string Message { get; set; }
         public Exception Exception { get; set; }
-        public SourceText SourceText { get; set; }
+        public SourceFile SourceFile { get; set; }
+        public Parse.Syntax.Node ErrorNode { get; set; }
         public int ErrorIndex { get; set; }
     }
 }

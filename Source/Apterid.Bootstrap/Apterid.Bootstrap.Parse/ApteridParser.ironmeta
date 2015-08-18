@@ -4,7 +4,7 @@ using System.Numerics;
 
 ironmeta ApteridParser<char, Syntax.Node>
 {
-    ApteridSource = SourcePart* EOF;
+    ApteridSource = SourcePart* EOF -> { Make<Syntax.Source>(_IM_Result) };
 
     SourcePart = Directive | TopLevelModule | SE+ | ErrorSection+;
 
@@ -19,9 +19,8 @@ ironmeta ApteridParser<char, Syntax.Node>
     /////////////////////////////////////////////////////////////////
     // Modules
 
-    TopLevelModule = 
-        SC?:indent Keyword("module") SC QualifiedIdentifier SC? EQ SE
-        ModuleBody(indent);
+    TopLevelModule = SC?:indent Keyword("module") SC QualifiedIdentifier:name SC? EQ SE ModuleBody(indent):body ->
+        { Make<Syntax.Module>(_IM_Result, new { name = name.Results.SingleOrDefault(), body = body.Results }) };
 
     ModuleBody :outer =
         (
@@ -48,7 +47,10 @@ ironmeta ApteridParser<char, Syntax.Node>
     /////////////////////////////////////////////////////////////////
     // Bindings
 
-    Binding = Identifier:name WS? EQ WS? Expression SE;
+    Binding = Identifier:name WS? EQ WS? Expression:body SE ->
+        { 
+            Make<Syntax.Binding>(_IM_Result, new { name = name.Results.SingleOrDefault(), pattern = (Syntax.Pattern)null, body = body.Results })
+        };
 
     /////////////////////////////////////////////////////////////////
     // Expressions
@@ -73,7 +75,7 @@ ironmeta ApteridParser<char, Syntax.Node>
     
     Identifier = /_|_[_0-9a-zA-Z]+|[a-zA-Z][_0-9a-zA-Z]*/ -> { Make<Syntax.Identifier>(_IM_Result) };
 
-    QualifiedIdentifier = (Identifier DOT)+ Identifier:i -> { return Make<Syntax.QualifiedIdentifier>(_IM_Result); };
+    QualifiedIdentifier = (Identifier DOT)* Identifier:i -> { return Make<Syntax.QualifiedIdentifier>(_IM_Result); };
 
     /////////////////////////////////////////////////////////////////
     // Punctuation

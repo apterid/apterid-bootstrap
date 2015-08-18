@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apterid.Bootstrap.Runtime",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apterid.Bootstrap.Common", "Apterid.Bootstrap.Common\Apterid.Bootstrap.Common.csproj", "{297B34BA-C406-44DB-BC9E-7463EFE53385}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apterid.Bootstrap.Compile.Tests", "Apterid.Bootstrap.Compile.Tests\Apterid.Bootstrap.Compile.Tests.csproj", "{D1B6C42F-6000-4E28-B26F-38CCF823A4FC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,6 +63,10 @@ Global
 		{297B34BA-C406-44DB-BC9E-7463EFE53385}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{297B34BA-C406-44DB-BC9E-7463EFE53385}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{297B34BA-C406-44DB-BC9E-7463EFE53385}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1B6C42F-6000-4E28-B26F-38CCF823A4FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1B6C42F-6000-4E28-B26F-38CCF823A4FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1B6C42F-6000-4E28-B26F-38CCF823A4FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1B6C42F-6000-4E28-B26F-38CCF823A4FC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -68,5 +74,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{398E63A5-3B2B-4061-8C52-E3E933D73FE9} = {04CB9292-29D1-483E-BD50-6BDBA3987F6F}
 		{23BBFF68-23B0-41B0-B69A-389394D5A035} = {ABED5269-F38B-4DBA-9AA6-E28E2A7CAE34}
+		{D1B6C42F-6000-4E28-B26F-38CCF823A4FC} = {04CB9292-29D1-483E-BD50-6BDBA3987F6F}
 	EndGlobalSection
 EndGlobal

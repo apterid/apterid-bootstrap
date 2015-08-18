@@ -30,7 +30,7 @@ namespace Apterid.Bootstrap.Parse.Tests
             const string s1 = "a.b.c";
             var parser = new ApteridParser
             {
-                SourceText = new SourceText { Buffer = s1 }
+                SourceFile = new MemorySourceFile(s1)
             };
 
             var m1 = parser.GetMatch(s1, parser.QualifiedIdentifier);

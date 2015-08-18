@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("Apterid.Bootstrap.Compile")]
-[assembly: AssemblyDescription("Bootstrap C# command-line executable for the Apterid language compiler.")]
+[assembly: AssemblyDescription("Bootstrap C# library and command-line executable for the Apterid language compiler.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCulture("")]
 

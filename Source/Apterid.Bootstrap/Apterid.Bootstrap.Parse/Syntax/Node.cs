@@ -9,7 +9,7 @@ namespace Apterid.Bootstrap.Parse.Syntax
 {
     public struct NodeArgs
     {
-        public SourceText SourceText;
+        public SourceFile SourceFile;
         public MatchItem<char, Node> Item;
     }
 
@@ -20,7 +20,7 @@ namespace Apterid.Bootstrap.Parse.Syntax
         int? start, next;
         protected string text;
 
-        public SourceText SourceText { get; private set; }
+        public SourceFile SourceFile { get; private set; }
         public MatchItem<char, Node> Item { get; private set; }
 
         public int StartIndex
@@ -44,7 +44,7 @@ namespace Apterid.Bootstrap.Parse.Syntax
 
         public Node(NodeArgs args, params Node[] children)
         {
-            this.SourceText = args.SourceText;
+            this.SourceFile = args.SourceFile;
             this.Item = args.Item;
             this.Children = children;
 
@@ -58,10 +58,10 @@ namespace Apterid.Bootstrap.Parse.Syntax
             {
                 if (text == null)
                 {
-                    if (SourceText == null || SourceText.Buffer == null)
+                    if (SourceFile == null || SourceFile.Buffer == null)
                         text = "";
                     else
-                        text = string.Concat(SourceText.Buffer.Skip(StartIndex).Take(Length));
+                        text = string.Concat(SourceFile.Buffer.Skip(StartIndex).Take(Length));
                 }
                 return text;
             }
@@ -74,39 +74,6 @@ namespace Apterid.Bootstrap.Parse.Syntax
 
             foreach (var child in node.Children)
                 Renumber(child, delta);
-        }
-    }
-
-    public abstract class Leaf : Node
-    {
-        public Leaf PrevLeaf { get; private set; }
-        public Leaf NextLeaf { get; private set; }
-
-        public Leaf(NodeArgs args)
-            : base(args)
-        {
-        }
-
-        public static void ConnectLeaves(Node root)
-        {
-            Leaf prev = null;
-            ConnectLeaves(root, ref prev);
-        }
-
-        static void ConnectLeaves(Node node, ref Leaf prev)
-        {
-            Leaf leaf = node as Leaf;
-            if (leaf != null)
-            {
-                leaf.PrevLeaf = prev;
-                if (prev != null) prev.NextLeaf = leaf;
-                prev = leaf;
-            }
-            else
-            {
-                foreach (var child in node.Children)
-                    ConnectLeaves(child, ref prev);
-            }
         }
     }
 }

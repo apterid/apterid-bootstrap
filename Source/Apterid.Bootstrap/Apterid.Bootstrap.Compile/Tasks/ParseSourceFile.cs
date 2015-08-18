@@ -5,82 +5,92 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Apterid.Bootstrap.Common;
 using Apterid.Bootstrap.Parse;
 
 namespace Apterid.Bootstrap.Compile.Tasks
 {
-    public class ParseSourceFile : BuildTask
+    public class ParseSourceFile : CompileTask
     {
-        public BuildContext Context { get; set; }
-        public BuildAssembly BuildAssembly { get; set; }
-        public FileInfo SourceFileInfo { get; set; }
+        SourceFile sourceFile;
 
-        bool force;
-
-        public ParseSourceFile(BuildContext context, BuildAssembly buildAssembly, string sourcePath, bool force, CancellationToken cancel)
-            : base(cancel)
+        public ParseSourceFile(CompileContext context, CompileAssembly assembly, CancellationTokenSource cancelSource, SourceFile sourceFile)
+            : base(context, assembly, cancelSource)
         {
-            this.Context = context;
-            this.BuildAssembly = buildAssembly;
-            this.SourceFileInfo = new FileInfo(sourcePath);
-            this.force = force;
+            this.sourceFile = sourceFile;
         }
 
-        public override Task<BuildStatus> OnProcess()
+        public ParseSourceFile(CompileTask parent, SourceFile sourceFile)
+            : base(parent)
+        {
+            this.sourceFile = sourceFile;
+        }
+
+        public override Task<CompileStatus> OnProcess()
         {
             // verify that the source file exists
-            if (!SourceFileInfo.Exists)
+            if (!sourceFile.Exists)
             {
-                BuildAssembly.AddError(string.Format(ErrorMessages.EB_0006_Builder_SourceDoesNotExist, SourceFileInfo.FullName));
-                return Task.FromResult(BuildStatus.Failed);
+                Assembly.AddError(string.Format(ErrorMessages.EB_0006_Compiler_SourceDoesNotExist, sourceFile.Name));
+                return Task.FromResult(CompileStatus.Failed);
             }
 
             // see if we actually need to build the file
-            if (BuildAssembly.Options.ForceRecompile 
-                || !BuildAssembly.OutputFileInfo.Exists
-                || BuildAssembly.OutputFileInfo.LastWriteTimeUtc < SourceFileInfo.LastWriteTimeUtc)
+            if (!Context.ForceRecompile
+                && Assembly.OutputFileInfo.Exists 
+                && Assembly.OutputFileInfo.LastWriteTimeUtc >= sourceFile.LastWriteTimeUtc)
             {
-                return Task.FromResult(BuildStatus.Completed);
+                return Task.FromResult(CompileStatus.Completed);
             }
 
             // parse
             try
             {
-                var sourceText = new SourceText(SourceFileInfo.FullName, File.ReadAllText(SourceFileInfo.FullName));
-                BuildAssembly.Sources.Add(sourceText);
-
                 var parser = new ApteridParser(handle_left_recursion: true)
                 {
-                    SourceText = sourceText
+                    SourceFile = sourceFile
                 };
 
-                var match = parser.GetMatch(sourceText.Buffer, parser.ApteridSource);
+                var match = parser.GetMatch(sourceFile.Buffer, parser.ApteridSource);
 
                 if (match.Success)
                 {
-                    sourceText.ParseTree = match.Result;
+                    sourceFile.ParseTree = match.Result;
 
+                    foreach (var errorSection in sourceFile.GetNodes<Parse.Syntax.ErrorSection>())
+                    {
+                        var error = new CompileError
+                        {
+                            SourceFile = sourceFile,
+                            Message = ErrorMessages.EP_0007_Parser_SyntaxError,
+                            ErrorNode = errorSection,
+                            ErrorIndex = errorSection.StartIndex
+                        };
+                        Assembly.AddError(error);
+                    }
 
-
+                    return Assembly.Errors.Any()
+                        ? Task.FromResult(CompileStatus.Failed)
+                        : Task.FromResult(CompileStatus.Completed);
                 }
                 else
                 {
-                    var error = new BuildError
+                    var error = new CompileError
                     {
-                        SourceText = sourceText,
+                        SourceFile = sourceFile,
                         Message = match.Error,
                         ErrorIndex = match.ErrorIndex
                     };
 
-                    BuildAssembly.AddError(error);
-                    return Task.FromResult(BuildStatus.Failed);
+                    Assembly.AddError(error);
+                    return Task.FromResult(CompileStatus.Failed);
                 }
             }
             catch (Exception e)
             {
-                BuildAssembly.AddError(new BuildError { Exception = e });
-                return Task.FromResult(BuildStatus.Failed);
+                Assembly.AddError(new CompileError { Exception = e });
+                return Task.FromResult(CompileStatus.Failed);
             }
         }
     }
