@@ -30,9 +30,9 @@ namespace Apterid.Bootstrap.Compile
             var parseTasks = buildAssembly.Options.Sources
                 .Select(sourcePath => new Tasks.ParseSourceFile(Context, buildAssembly, sourcePath, force, cancelSource.Token));
 
-            var parse = new BuildTask(parseTasks, cancelSource.Token);
+            var parseAll = new BuildTask(parseTasks, cancelSource.Token);
 
-            //
+            // analyze
             
         }
     }

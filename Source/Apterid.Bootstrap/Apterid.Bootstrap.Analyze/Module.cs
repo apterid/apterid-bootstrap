@@ -6,12 +6,9 @@ using System.Threading.Tasks;
 
 namespace Apterid.Bootstrap.Analyze
 {
-    /// <summary>
-    /// Stores information about a module.
-    /// </summary>
-    public class Module
+    public class Module : Scope
     {
-        public Assembly Project { get; set; }
-        public IList<Function> Functions { get; set; }
+        public IList<Type> Types { get; set; }
+        public IList<Binding> Bindings { get; set; }
     }
 }

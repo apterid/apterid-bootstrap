@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Apterid.Bootstrap.Common;
+using Apterid.Bootstrap.Parse;
 
 namespace Apterid.Bootstrap.Compile.Tasks
 {
@@ -35,9 +36,52 @@ namespace Apterid.Bootstrap.Compile.Tasks
                 return Task.FromResult(BuildStatus.Failed);
             }
 
+            // see if we actually need to build the file
+            if (BuildAssembly.Options.ForceRecompile 
+                || !BuildAssembly.OutputFileInfo.Exists
+                || BuildAssembly.OutputFileInfo.LastWriteTimeUtc < SourceFileInfo.LastWriteTimeUtc)
+            {
+                return Task.FromResult(BuildStatus.Completed);
+            }
+
+            // parse
+            try
+            {
+                var sourceText = new SourceText(SourceFileInfo.FullName, File.ReadAllText(SourceFileInfo.FullName));
+                BuildAssembly.Sources.Add(sourceText);
+
+                var parser = new ApteridParser(handle_left_recursion: true)
+                {
+                    SourceText = sourceText
+                };
+
+                var match = parser.GetMatch(sourceText.Buffer, parser.ApteridSource);
+
+                if (match.Success)
+                {
+                    sourceText.ParseTree = match.Result;
 
 
-            return Task.FromResult(BuildStatus.Completed);
+
+                }
+                else
+                {
+                    var error = new BuildError
+                    {
+                        SourceText = sourceText,
+                        Message = match.Error,
+                        ErrorIndex = match.ErrorIndex
+                    };
+
+                    BuildAssembly.AddError(error);
+                    return Task.FromResult(BuildStatus.Failed);
+                }
+            }
+            catch (Exception e)
+            {
+                BuildAssembly.AddError(new BuildError { Exception = e });
+                return Task.FromResult(BuildStatus.Failed);
+            }
         }
     }
 }

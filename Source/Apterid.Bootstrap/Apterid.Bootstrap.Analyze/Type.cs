@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Apterid.Bootstrap.Analyze
 {
-    public class Reference
+    public class Type
     {
-        public Assembly Assembly { get; set; }
+        public IList<Binding> Bindings { get; set; }
     }
 }

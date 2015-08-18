@@ -43,13 +43,16 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Application.cs" />
+    <Compile Include="ApteridAnalyzer.cs" />
+    <Compile Include="Assembly.cs" />
     <Compile Include="Binding.cs" />
     <Compile Include="Function.cs" />
     <Compile Include="Module.cs" />
-    <Compile Include="Assembly.cs" />
-    <Compile Include="Reference.cs" />
+    <Compile Include="Pattern.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SourceFile.cs" />
+    <Compile Include="Scope.cs" />
+    <Compile Include="Type.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Apterid.Bootstrap.Parse\Apterid.Bootstrap.Parse.csproj">

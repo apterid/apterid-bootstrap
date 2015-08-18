@@ -18,6 +18,8 @@ namespace Apterid.Bootstrap.Compile
         public OutputMode Mode { get; set; }
         public string OutputPath { get; set; }
 
+        public bool ForceRecompile { get; set; }
+
         public IList<string> Sources { get; set; }
         public IList<string> References { get; set; }
 

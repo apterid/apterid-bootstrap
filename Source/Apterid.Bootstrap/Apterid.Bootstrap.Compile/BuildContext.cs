@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Apterid.Bootstrap.Compile
 {
-    public class BuildContext
+    public class BuildContext : Common.Context
     {
         public IList<BuildAssembly> Assemblies { get; set; }
 
