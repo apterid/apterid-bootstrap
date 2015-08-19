@@ -52,7 +52,6 @@
     <Compile Include="CompileAssembly.cs" />
     <Compile Include="CompileContext.cs" />
     <Compile Include="ApteridCompiler.cs" />
-    <Compile Include="CompileError.cs" />
     <Compile Include="CompileTask.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="PhysicalSourceFile.cs" />

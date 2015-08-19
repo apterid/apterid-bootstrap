@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Apterid.Bootstrap.Analyze
 {
-    public class Function : Scope
+    public class Annotation
     {
     }
 }

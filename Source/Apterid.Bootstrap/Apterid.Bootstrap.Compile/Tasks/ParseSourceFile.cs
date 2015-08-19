@@ -60,7 +60,7 @@ namespace Apterid.Bootstrap.Compile.Tasks
 
                     foreach (var errorSection in sourceFile.GetNodes<Parse.Syntax.ErrorSection>())
                     {
-                        var error = new CompileError
+                        var error = new ApteridError
                         {
                             SourceFile = sourceFile,
                             Message = ErrorMessages.EP_0007_Parser_SyntaxError,
@@ -76,7 +76,7 @@ namespace Apterid.Bootstrap.Compile.Tasks
                 }
                 else
                 {
-                    var error = new CompileError
+                    var error = new ApteridError
                     {
                         SourceFile = sourceFile,
                         Message = match.Error,
@@ -89,7 +89,7 @@ namespace Apterid.Bootstrap.Compile.Tasks
             }
             catch (Exception e)
             {
-                Assembly.AddError(new CompileError { Exception = e });
+                Assembly.AddError(new ApteridError { Exception = e });
                 return Task.FromResult(CompileStatus.Failed);
             }
         }

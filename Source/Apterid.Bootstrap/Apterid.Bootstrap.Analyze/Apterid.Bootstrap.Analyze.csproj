@@ -38,11 +38,11 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Application.cs" />
+    <Compile Include="Annotation.cs" />
     <Compile Include="ApteridAnalyzer.cs" />
     <Compile Include="Assembly.cs" />
     <Compile Include="Binding.cs" />
-    <Compile Include="Function.cs" />
+    <Compile Include="Expression.cs" />
     <Compile Include="Module.cs" />
     <Compile Include="Pattern.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -50,6 +50,10 @@
     <Compile Include="Type.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Apterid.Bootstrap.Common\Apterid.Bootstrap.Common.csproj">
+      <Project>{297b34ba-c406-44db-bc9e-7463efe53385}</Project>
+      <Name>Apterid.Bootstrap.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Apterid.Bootstrap.Parse\Apterid.Bootstrap.Parse.csproj">
       <Project>{05d5fed0-fb8c-4d8d-afe9-9fea00dca49c}</Project>
       <Name>Apterid.Bootstrap.Parse</Name>

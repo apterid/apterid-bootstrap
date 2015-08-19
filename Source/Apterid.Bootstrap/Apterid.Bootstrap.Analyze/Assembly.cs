@@ -11,5 +11,6 @@ namespace Apterid.Bootstrap.Analyze
     {
         public IList<SourceFile> Sources { get; set; }
         public IList<Module> Modules { get; set; }
+        public IList<ApteridError> Errors { get; set; }
     }
 }

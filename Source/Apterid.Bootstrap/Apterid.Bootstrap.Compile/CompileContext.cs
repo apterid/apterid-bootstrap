@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Apterid.Bootstrap.Parse;
 
 namespace Apterid.Bootstrap.Compile
 {
@@ -11,14 +12,14 @@ namespace Apterid.Bootstrap.Compile
     {
         public IList<CompileAssembly> Assemblies { get; set; }
 
-        public IEnumerable<CompileError> Errors
+        public IEnumerable<ApteridError> Errors
         {
             get
             {
                 if (Assemblies != null)
                     return Assemblies.SelectMany(ba => ba.Errors);
                 else
-                    return Enumerable.Empty<CompileError>();
+                    return Enumerable.Empty<ApteridError>();
             }
         }
     }

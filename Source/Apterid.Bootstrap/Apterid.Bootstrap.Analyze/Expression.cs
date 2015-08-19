@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Apterid.Bootstrap.Analyze
 {
-    public class Application
+    public class Expression : Scope
     {
     }
 }

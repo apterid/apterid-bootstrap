@@ -9,6 +9,6 @@ namespace Apterid.Bootstrap.Analyze
     public class Binding
     {
         public Pattern Pattern { get; set; }
-        public Function Function { get; set; }
+        public Expression Function { get; set; }
     }
 }

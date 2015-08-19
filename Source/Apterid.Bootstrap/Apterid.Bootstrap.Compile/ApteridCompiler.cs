@@ -26,6 +26,11 @@ namespace Apterid.Bootstrap.Compile
             Context = context;
         }
 
+        public void AddAssembly(CompileAssembly assembly)
+        {
+
+        }
+
         public Task<CompileStatus> UpdateAssemblies()
         {
             var cancelSource = new CancellationTokenSource();

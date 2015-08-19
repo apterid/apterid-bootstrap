@@ -10,14 +10,14 @@ namespace Apterid.Bootstrap.Compile.Tests
     public class ParseTests
     {
         [TestMethod]
-        public void Compiler_Parse_SimpleModule_001()
+        public void Compiler_Parse_SimpleModule()
         {
             var source = @"
 module One =
   f = 123
 ";
 
-            using (var ta = new TestAssembly(nameof(Compiler_Parse_SimpleModule_001), source))
+            using (var ta = new TestAssembly(nameof(Compiler_Parse_SimpleModule), source))
             {
                 var sourceFile = ta.Assembly.SourceFiles.First();
                 var parse = new Compile.Tasks.ParseSourceFile(ta.Context, ta.Assembly, null, sourceFile);
