@@ -7,44 +7,36 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using Apterid.Bootstrap.Common;
+using Apterid.Bootstrap.Compile.Steps;
 
 namespace Apterid.Bootstrap.Compile
 {
     public class ApteridCompiler
     {
-        public CompileContext Context { get; protected set; }
+        public CompilerContext Context { get; protected set; }
 
         public ApteridCompiler()
         {
-            Context = new CompileContext();
+            Context = new CompilerContext();
         }
 
-        public ApteridCompiler(CompileContext context)
+        public ApteridCompiler(CompilerContext context)
         {
             if (context == null) throw new ArgumentNullException(nameof(context));
-
             Context = context;
         }
 
-        public void AddAssembly(CompileAssembly assembly)
+        public StepResult UpdateAllAssemblies()
         {
+            var compileStep = new CompilerStep(Context)
+            {
+                SubSteps = Context.Assemblies
+                    .Select(a => new UpdateAssemblyStep(Context, a))
+                    .Cast<CompilerStep>()
+                    .ToList()
+            };
 
-        }
-
-        public Task<CompileStatus> UpdateAssemblies()
-        {
-            var cancelSource = new CancellationTokenSource();
-            var assemblyTasks = Context.Assemblies.Select(a => new Tasks.UpdateAssembly(Context, a, cancelSource));
-            var compileTask = new CompileTask(Context, null, cancelSource, assemblyTasks);
-            return compileTask.Process();
-        }
-
-        public Task<CompileStatus> UpdateAssembly(CompileAssembly assembly, CancellationTokenSource cancelSource = null)
-        {
-            if (cancelSource == null)
-                cancelSource = new CancellationTokenSource();
-            var assemblyTask = new Tasks.UpdateAssembly(Context, assembly, cancelSource);
-            return assemblyTask.Process();
+            return compileStep.Run();
         }
     }
 }

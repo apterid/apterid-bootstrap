@@ -13,12 +13,12 @@ namespace Apterid.Bootstrap.Analyze
     {
         public Context Context { get; }
 
-        public IList<Assembly> Assemblies { get; }
+        public IList<AnalyzerAssembly> Assemblies { get; }
 
-        public ApteridAnalyzer(Context context, IList<Assembly> assemblies)
+        public ApteridAnalyzer(Context context, IList<AnalyzerAssembly> assemblies)
         {
             Context = context;
-            Assemblies = new List<Assembly>(assemblies);
+            Assemblies = new List<AnalyzerAssembly>(assemblies);
             // TODO: make dummy assemblies from references
         }
 

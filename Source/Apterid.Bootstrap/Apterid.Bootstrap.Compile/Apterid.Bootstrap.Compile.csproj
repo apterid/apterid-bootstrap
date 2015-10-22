@@ -50,16 +50,16 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="CompileAssembly.cs" />
-    <Compile Include="CompileContext.cs" />
+    <Compile Include="CompilerAssembly.cs" />
+    <Compile Include="CompilerContext.cs" />
     <Compile Include="ApteridCompiler.cs" />
-    <Compile Include="CompileTask.cs" />
+    <Compile Include="CompilerStep.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="PhysicalSourceFile.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Tasks\ParseSourceFile.cs" />
-    <Compile Include="Tasks\UpdateAssembly.cs" />
+    <Compile Include="Steps\ParseSourceFileStep.cs" />
+    <Compile Include="Steps\UpdateAssemblyStep.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

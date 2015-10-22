@@ -49,7 +49,7 @@
     </Compile>
     <Compile Include="Annotation.cs" />
     <Compile Include="ApteridAnalyzer.cs" />
-    <Compile Include="Assembly.cs" />
+    <Compile Include="AnalyzerAssembly.cs" />
     <Compile Include="Binding.cs" />
     <Compile Include="Expression.cs" />
     <Compile Include="Module.cs" />

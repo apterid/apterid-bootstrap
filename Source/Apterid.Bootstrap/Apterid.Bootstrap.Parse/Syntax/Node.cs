@@ -9,7 +9,7 @@ namespace Apterid.Bootstrap.Parse.Syntax
 {
     public struct NodeArgs
     {
-        public SourceFile SourceFile;
+        public ParserSourceFile SourceFile;
         public MatchItem<char, Node> Item;
     }
 
@@ -20,7 +20,7 @@ namespace Apterid.Bootstrap.Parse.Syntax
         int? start, next;
         protected string text;
 
-        public SourceFile SourceFile { get; private set; }
+        public ParserSourceFile SourceFile { get; private set; }
         public MatchItem<char, Node> Item { get; private set; }
 
         public int StartIndex

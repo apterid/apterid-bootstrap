@@ -13,7 +13,7 @@ namespace Apterid.Bootstrap.Parse
 
     public partial class ApteridParser
     {
-        public SourceFile SourceFile { get; set; }
+        public ParserSourceFile SourceFile { get; set; }
 
         protected T Make<T>(SyntaxItem item)
             where T : Syntax.Node

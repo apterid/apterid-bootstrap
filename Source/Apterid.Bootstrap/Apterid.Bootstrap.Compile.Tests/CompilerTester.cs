@@ -8,15 +8,15 @@ using Apterid.Bootstrap.Parse;
 
 namespace Apterid.Bootstrap.Compile.Tests
 {
-    class TestAssembly : IDisposable
+    class CompilerTester : IDisposable
     {
         FileInfo[] sourceInfo;
 
-        public CompileAssembly Assembly { get; private set; }
-        public CompileContext Context { get; private set; }
-        public ApteridCompiler Compiler { get; private set; }
+        public CompilerAssembly Assembly { get; }
+        public CompilerContext Context { get; }
+        public ApteridCompiler Compiler { get; }
 
-        public TestAssembly(string name, params string[] sources)
+        public CompilerTester(string name, params string[] sources)
         {
             var apath = Path.Combine(Path.GetTempPath(), name + ".DLL");
 
@@ -28,19 +28,19 @@ namespace Apterid.Bootstrap.Compile.Tests
                 })
                 .ToArray();
 
-            Assembly = new CompileAssembly
+            Assembly = new CompilerAssembly
             {
                 OutputFileInfo = new FileInfo(apath),
                 SourceFiles = sourceInfo
                     .Select(info => new PhysicalSourceFile(info.FullName))
-                    .OfType<SourceFile>()
+                    .OfType<ParserSourceFile>()
                     .ToList(),
             };
 
-            Context = new CompileContext
+            Context = new CompilerContext
             {
                 ForceRecompile = true,
-                Assemblies = new List<CompileAssembly> { Assembly, },
+                Assemblies = new List<CompilerAssembly> { Assembly, },
             };
 
             Compiler = new ApteridCompiler(Context);

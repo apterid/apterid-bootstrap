@@ -8,13 +8,8 @@ using Apterid.Bootstrap.Parse.Syntax;
 
 namespace Apterid.Bootstrap.Parse
 {
-    public abstract class SourceFile
+    public abstract class ParserSourceFile : Common.SourceFile
     {
-        public string Name { get; protected set; }
-        public virtual bool Exists { get; }
-        public virtual DateTime LastWriteTimeUtc { get; }
-
-        public abstract IEnumerable<char> Buffer { get; }
         public Node ParseTree { get; set; }
 
         public IEnumerable<T> GetNodes<T>()
@@ -36,7 +31,7 @@ namespace Apterid.Bootstrap.Parse
         }
     }
 
-    public class MemorySourceFile : SourceFile
+    public class MemorySourceFile : ParserSourceFile
     {
         string source;
 

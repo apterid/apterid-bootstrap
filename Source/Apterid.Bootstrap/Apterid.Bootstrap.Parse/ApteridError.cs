@@ -10,7 +10,7 @@ namespace Apterid.Bootstrap.Parse
     {
         public string Message { get; set; }
         public Exception Exception { get; set; }
-        public SourceFile SourceFile { get; set; }
+        public ParserSourceFile SourceFile { get; set; }
         public Syntax.Node ErrorNode { get; set; }
         public int ErrorIndex { get; set; }
     }
