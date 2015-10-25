@@ -24,13 +24,21 @@ namespace Apterid.Bootstrap.Compile
 
     public class CompilerStep
     {
-        public CompilerContext Context { get; set; }
+        public CompileContext Context { get; }
+        public CompileUnit CompileUnit { get; protected set; }
+
         public List<CompilerStep> SubSteps { get; set; }
         public CompilerStep Continuation { get; set; }
 
-        public CompilerStep(CompilerContext context)
+        public CompilerStep(CompileContext context)
         {
             Context = context;
+        }
+
+        public CompilerStep(CompileContext context, CompileUnit compileUnit)
+            : this(context)
+        {
+            CompileUnit = compileUnit;
         }
 
         public virtual StepResult Run()

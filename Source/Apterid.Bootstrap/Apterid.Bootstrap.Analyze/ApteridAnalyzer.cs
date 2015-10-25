@@ -13,17 +13,25 @@ namespace Apterid.Bootstrap.Analyze
     {
         public Context Context { get; }
 
-        public IList<AnalyzerAssembly> Assemblies { get; }
-
-        public ApteridAnalyzer(Context context, IList<AnalyzerAssembly> assemblies)
+        public ApteridAnalyzer(Context context)
         {
             Context = context;
-            Assemblies = new List<AnalyzerAssembly>(assemblies);
             // TODO: make dummy assemblies from references
         }
 
-        public void Analyze()
+        public void Analyze(AnalyzeUnit analyzeUnit, ParserSourceFile sourceFile)
         {
+            var moduleNodes = sourceFile.GetNodes<Parse.Syntax.Module>();
+            foreach (var moduleNode in moduleNodes)
+            {
+                var module = new Module();
+
+                analyzeUnit.Modules.Add(module);
+            }
         }
+    }
+
+    public class AnalyzeException : ApteridException
+    {
     }
 }

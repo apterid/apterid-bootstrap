@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="EA_0009_Analyzer_DuplicateSourceFile" xml:space="preserve">
+    <value>Duplicate source file "{0}".</value>
+  </data>
   <data name="EB_0006_Compiler_SourceDoesNotExist" xml:space="preserve">
     <value>Source file does not exist: {0}.</value>
   </data>
@@ -125,6 +128,9 @@
   </data>
   <data name="EC_0005_CmdLine_UnknownOutputMode" xml:space="preserve">
     <value>Unknown compiler output mode '{0}'.</value>
+  </data>
+  <data name="EC_0008_Compiler_DuplicateOutputFileInfo" xml:space="preserve">
+    <value>Duplicate output file "{0}".</value>
   </data>
   <data name="EI_0001_ParserImpl_MakeNodeArgs" xml:space="preserve">
     <value>A node constructor's NodeArgs parameter must be named "args".</value>

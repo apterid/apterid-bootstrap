@@ -54,7 +54,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ApteridParser.ironmeta</DependentUpon>
     </Compile>
-    <Compile Include="ApteridError.cs" />
+    <Compile Include="ParseError.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ParserSourceFile.cs" />
     <Compile Include="Syntax\ErrorSection.cs" />

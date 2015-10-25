@@ -13,10 +13,7 @@ namespace Apterid.Bootstrap.Parse.Syntax
         public Identifier Name { get; private set; }
         public IEnumerable<Identifier> Qualifiers
         {
-            get
-            {
-                return qualId != null ? qualId.Qualifiers : Enumerable.Empty<Identifier>();
-            }
+            get { return qualId != null ? qualId.Qualifiers : Enumerable.Empty<Identifier>(); }
         }
 
         public IEnumerable<Node> Body { get; private set; }

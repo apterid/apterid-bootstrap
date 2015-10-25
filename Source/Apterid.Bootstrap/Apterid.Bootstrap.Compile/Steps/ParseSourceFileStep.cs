@@ -10,16 +10,11 @@ namespace Apterid.Bootstrap.Compile.Steps
 {
     public class ParseSourceFileStep : CompilerStep
     {
-        public CompilerAssembly Assembly { get; }
         public ParserSourceFile SourceFile { get; }
 
-        public ParseSourceFileStep(
-            CompilerContext context, 
-            CompilerAssembly assembly,
-            ParserSourceFile sourceFile)
-            : base(context)
+        public ParseSourceFileStep(CompileContext context, CompileUnit compileUnit, ParserSourceFile sourceFile)
+            : base(context, compileUnit)
         {
-            Assembly = assembly;
             SourceFile = sourceFile;
         }
 
@@ -28,14 +23,15 @@ namespace Apterid.Bootstrap.Compile.Steps
             // verify that the source file exists
             if (!SourceFile.Exists)
             {
-                Assembly.AddError(string.Format(ErrorMessages.EB_0006_Compiler_SourceDoesNotExist, SourceFile.Name));
+                CompileUnit.AddError<ParseError>(
+                    string.Format(ErrorMessages.EB_0006_Compiler_SourceDoesNotExist, SourceFile.Name));
                 return Failed();
             }
 
             // if the source file is older than the output file, do nothing
             if (!Context.ForceRecompile
-                && Assembly.OutputFileInfo.Exists
-                && Assembly.OutputFileInfo.LastWriteTimeUtc >= SourceFile.LastWriteTimeUtc)
+                && CompileUnit.OutputFileInfo.Exists
+                && CompileUnit.OutputFileInfo.LastWriteTimeUtc >= SourceFile.LastWriteTimeUtc)
             {
                 return Succeeded();
             }
@@ -43,10 +39,9 @@ namespace Apterid.Bootstrap.Compile.Steps
             // parse
             try
             {
-                var parser = new ApteridParser(handle_left_recursion: true)
-                {
-                    SourceFile = SourceFile,
-                };
+                var parser = new ApteridParser(handle_left_recursion: true);
+                parser.SourceFile = SourceFile;
+                SourceFile.Parser = parser;
 
                 var match = parser.GetMatch(SourceFile.Buffer, parser.ApteridSource);
 
@@ -58,34 +53,34 @@ namespace Apterid.Bootstrap.Compile.Steps
                     var errorSections = SourceFile.GetNodes<Parse.Syntax.ErrorSection>();
                     foreach (var es in errorSections)
                     {
-                        var error = new ApteridError
+                        var error = new ParseError
                         {
                             SourceFile = SourceFile,
                             Message = ErrorMessages.EP_0007_Parser_SyntaxError,
                             ErrorNode = es,
                             ErrorIndex = es.StartIndex
                         };
-                        Assembly.AddError(error);
+                        CompileUnit.AddError(error);
                     }
 
-                    return Assembly.Errors.Any() ? Failed() : Succeeded();
+                    return CompileUnit.Errors.Any() ? Failed() : Succeeded();
                 }
                 else
                 {
-                    var error = new ApteridError
+                    var error = new ParseError
                     {
                         SourceFile = SourceFile,
                         Message = match.Error,
                         ErrorIndex = match.ErrorIndex
                     };
 
-                    Assembly.AddError(error);
+                    CompileUnit.AddError(error);
                     return Failed();
                 }
             }
             catch (Exception e)
             {
-                Assembly.AddError(new ApteridError { Exception = e });
+                CompileUnit.AddError(new ParseError { Exception = e });
                 return Failed();
             }
         }

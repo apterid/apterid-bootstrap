@@ -7,10 +7,8 @@ using Apterid.Bootstrap.Parse;
 
 namespace Apterid.Bootstrap.Analyze
 {
-    public class AnalyzerAssembly
+    public class AnalyzeUnit
     {
-        public IList<ParserSourceFile> Sources { get; set; }
-        public IList<Module> Modules { get; set; }
-        public IList<ApteridError> Errors { get; set; }
+        public IList<Module> Modules { get; } = new List<Module>();
     }
 }

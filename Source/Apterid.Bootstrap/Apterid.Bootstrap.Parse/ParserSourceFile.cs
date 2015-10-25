@@ -30,10 +30,6 @@ namespace Apterid.Bootstrap.Parse
             foreach (var n in node.Children.SelectMany(child => GetNodes<T>(child)))
                 yield return n;
         }
-
-        public IEnumerable<ApteridError> Errors
-        {
-        }
     }
 
     public class MemorySourceFile : ParserSourceFile

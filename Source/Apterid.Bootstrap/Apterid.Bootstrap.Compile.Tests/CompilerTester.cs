@@ -5,22 +5,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Apterid.Bootstrap.Analyze;
+using Apterid.Bootstrap.Common;
 using Apterid.Bootstrap.Parse;
 
 namespace Apterid.Bootstrap.Compile.Tests
 {
     class CompilerTester : IDisposable
     {
-        FileInfo[] sourceInfo;
+        FileInfo[] sourceInfos;
 
-        public CompilerContext Context { get; }
-        public CompilerAssembly Assembly { get; }
+        public ApteridCompiler Compiler { get; }
 
         public CompilerTester(string name, params string[] sources)
         {
             var outputPath = Path.Combine(Path.GetTempPath(), name + ".DLL");
 
-            sourceInfo = sources.Select(s =>
+            sourceInfos = sources.Select(s =>
                 {
                     var spath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + ".apterid");
                     File.WriteAllText(spath, s);
@@ -28,38 +28,30 @@ namespace Apterid.Bootstrap.Compile.Tests
                 })
                 .ToArray();
 
-            Assembly = new CompilerAssembly
-            {
-                OutputFileInfo = new FileInfo(outputPath),
-                SourceFiles = sourceInfo
-                    .Select(info => new PhysicalSourceFile(info.FullName))
-                    .OfType<ParserSourceFile>()
-                    .ToList(),
-            };
+            Compiler = new ApteridCompiler(forceRecompile: true);
 
-            Context = new CompilerContext
-            {
-                ForceRecompile = true,
-                Assemblies = new List<CompilerAssembly> { Assembly, },
-            };
-
-            Context.Compiler = new ApteridCompiler(Context);
+            Compiler.AddCompileUnit(
+                OutputMode.Library,
+                new FileInfo(outputPath),
+                sourceInfos.Select(info => new PhysicalSourceFile(info.FullName)));
         }
 
         public void Dispose()
         {
-            if (Assembly != null 
-                && Assembly.OutputFileInfo != null 
-                && Assembly.OutputFileInfo.Exists)
+            if (Compiler != null)
             {
-                Assembly.OutputFileInfo.Delete();
+                foreach (var unit in Compiler.Context.CompileUnits)
+                {
+                    if (unit.OutputFileInfo != null && unit.OutputFileInfo.Exists)
+                        unit.OutputFileInfo.Delete();
+                }
             }
 
-            if (sourceInfo != null)
+            if (sourceInfos != null)
             {
                 try
                 {
-                    foreach (var info in sourceInfo)
+                    foreach (var info in sourceInfos)
                     {
                         if (info.Exists)
                             info.Delete();
@@ -67,7 +59,7 @@ namespace Apterid.Bootstrap.Compile.Tests
                 }
                 finally
                 {
-                    sourceInfo = null;
+                    sourceInfos = null;
                 }
             }
         }

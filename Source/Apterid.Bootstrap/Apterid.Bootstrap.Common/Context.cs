@@ -16,6 +16,8 @@ namespace Apterid.Bootstrap.Common
     public class Context
     {
         public bool ForceRecompile { get; set; }
-        public IList<Reference> References { get; set; }
+
+        public IDictionary<string, SourceFile> Sources { get; set; }
+        public IDictionary<string, Reference> References { get; set; }
     }
 }

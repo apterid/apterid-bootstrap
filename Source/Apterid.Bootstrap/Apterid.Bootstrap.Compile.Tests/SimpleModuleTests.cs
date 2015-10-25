@@ -19,10 +19,14 @@ module One =
         [TestMethod]
         public void Compiler_Parse_SimpleModule()
         {
-            using (var ta = new CompilerTester(nameof(Compiler_Parse_SimpleModule), Source))
+            using (var tester = new CompilerTester(nameof(Compiler_Parse_SimpleModule), Source))
             {
-                var sourceFile = ta.Assembly.SourceFiles.First();
-                var parse = new ParseSourceFileStep(ta.Context, ta.Assembly, sourceFile);
+                var compiler = tester.Compiler;
+                var context = compiler.Context;
+                var compileUnit = context.CompileUnits.First();
+                var sourceFile = compileUnit.SourceFiles.First();
+
+                var parse = new ParseSourceFileStep(tester.Compiler.Context, compileUnit, sourceFile);
                 var result = parse.Run();
                 Assert.AreEqual(StepStatus.Succeeded, result.Status);
 

@@ -61,6 +61,15 @@ namespace Apterid.Bootstrap.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Duplicate source file &quot;{0}&quot;..
+        /// </summary>
+        public static string EA_0009_Analyzer_DuplicateSourceFile {
+            get {
+                return ResourceManager.GetString("EA_0009_Analyzer_DuplicateSourceFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Source file does not exist: {0}..
         /// </summary>
         public static string EB_0006_Compiler_SourceDoesNotExist {
@@ -84,6 +93,15 @@ namespace Apterid.Bootstrap.Common {
         public static string EC_0005_CmdLine_UnknownOutputMode {
             get {
                 return ResourceManager.GetString("EC_0005_CmdLine_UnknownOutputMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Duplicate output file &quot;{0}&quot;..
+        /// </summary>
+        public static string EC_0008_Compiler_DuplicateOutputFileInfo {
+            get {
+                return ResourceManager.GetString("EC_0008_Compiler_DuplicateOutputFileInfo", resourceCulture);
             }
         }
         
