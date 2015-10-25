@@ -8,19 +8,25 @@ using System.Threading;
 
 namespace Apterid.Bootstrap.Compile
 {
-    public enum StepResult
+    public enum StepStatus
     {
-        NotStarted,
+        Continue,
         Succeeded,
-        Deferred,
         Failed,
         Canceled,
+    }
+
+    public struct StepResult
+    {
+        public StepStatus Status;
+        public CompilerStep Continuation;
     }
 
     public class CompilerStep
     {
         public CompilerContext Context { get; set; }
-        public IList<CompilerStep> SubSteps { get; set; }
+        public List<CompilerStep> SubSteps { get; set; }
+        public CompilerStep Continuation { get; set; }
 
         public CompilerStep(CompilerContext context)
         {
@@ -30,39 +36,70 @@ namespace Apterid.Bootstrap.Compile
         public virtual StepResult Run()
         {
             return SubSteps != null && SubSteps.Any()
-                ? RunSubSteps().Result
-                : StepResult.Succeeded;
+                ? new StepResult { Status = RunSubSteps().Result, Continuation = Continuation }
+                : Succeeded();
         }
 
-        protected async Task<StepResult> RunSubSteps()
+        protected async Task<StepStatus> RunSubSteps()
         {
-            bool succeeded = true;
-            var remainingSteps = SubSteps;
-            do
+            var tasks = SubSteps.Select(StartTask).ToList();
+
+            while (tasks.Any())
             {
-                var tasks = remainingSteps.Select(s => 
-                    Task<Tuple<CompilerStep, StepResult>>.Factory.StartNew(
-                        () => Tuple.Create(s, s.Run()),
-                        Context.CancelSource.Token,
-                        TaskCreationOptions.AttachedToParent,
-                        TaskScheduler.Current));
+                var task = await Task.WhenAny(tasks);
+                tasks.Remove(task);
 
-                var results = await Task.WhenAll(tasks);
                 if (Context.CancelSource.IsCancellationRequested)
-                    return StepResult.Canceled;
+                    return StepStatus.Canceled;
 
-                succeeded = results
-                    .Where(sr => sr.Item2 != StepResult.Deferred)
-                    .All(sr => sr.Item2 == StepResult.Succeeded);
+                switch (task.Result.Status)
+                {
+                    case StepStatus.Canceled:
+                        return StepStatus.Canceled;
 
-                remainingSteps = results
-                    .Where(sr => sr.Item2 == StepResult.Deferred)
-                    .Select(sr => sr.Item1)
-                    .ToArray();
+                    case StepStatus.Failed:
+                        Context.CancelSource.Cancel();
+                        return StepStatus.Failed;
+
+                    case StepStatus.Continue:
+                        if (task.Result.Continuation != null)
+                            tasks.Add(StartTask(task.Result.Continuation));
+                        break;
+
+                    case StepStatus.Succeeded:
+                        break;
+                }
             }
-            while (remainingSteps.Any());
 
-            return succeeded ? StepResult.Succeeded : StepResult.Failed;
+            return StepStatus.Succeeded;
+        }
+
+        Task<StepResult> StartTask(CompilerStep step)
+        {
+            return Task<StepResult>.Factory.StartNew(
+                step.Run, 
+                Context.CancelSource.Token, 
+                TaskCreationOptions.AttachedToParent, 
+                TaskScheduler.Current);
+        }
+
+        protected StepResult Succeeded()
+        {
+            return new StepResult
+            {
+                Status = Continuation != null ? StepStatus.Continue : StepStatus.Succeeded,
+                Continuation = Continuation
+            };
+        }
+
+        protected StepResult Failed()
+        {
+            return new StepResult { Status = StepStatus.Failed };
+        }
+
+        protected StepResult Cancelled()
+        {
+            return new StepResult { Status = StepStatus.Canceled };
         }
     }
 }

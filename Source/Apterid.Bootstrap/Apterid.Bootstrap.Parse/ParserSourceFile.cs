@@ -10,6 +10,7 @@ namespace Apterid.Bootstrap.Parse
 {
     public abstract class ParserSourceFile : Common.SourceFile
     {
+        public ApteridParser Parser { get; set; }
         public Node ParseTree { get; set; }
 
         public IEnumerable<T> GetNodes<T>()
@@ -28,6 +29,10 @@ namespace Apterid.Bootstrap.Parse
 
             foreach (var n in node.Children.SelectMany(child => GetNodes<T>(child)))
                 yield return n;
+        }
+
+        public IEnumerable<ApteridError> Errors
+        {
         }
     }
 

@@ -13,30 +13,24 @@ namespace Apterid.Bootstrap.Compile
 {
     public class ApteridCompiler
     {
-        public CompilerContext Context { get; protected set; }
+        public CompilerContext Context { get; }
 
-        public ApteridCompiler()
-        {
-            Context = new CompilerContext();
-        }
-
-        public ApteridCompiler(CompilerContext context)
-        {
-            if (context == null) throw new ArgumentNullException(nameof(context));
-            Context = context;
-        }
-
-        public StepResult UpdateAllAssemblies()
+        public StepStatus UpdateAllAssemblies()
         {
             var compileStep = new CompilerStep(Context)
             {
                 SubSteps = Context.Assemblies
                     .Select(a => new UpdateAssemblyStep(Context, a))
-                    .Cast<CompilerStep>()
+                    .OfType<CompilerStep>()
                     .ToList()
             };
 
-            return compileStep.Run();
+            return compileStep.Run().Status;
+        }
+
+        public ApteridCompiler(CompilerContext context)
+        {
+            Context = context;
         }
     }
 }

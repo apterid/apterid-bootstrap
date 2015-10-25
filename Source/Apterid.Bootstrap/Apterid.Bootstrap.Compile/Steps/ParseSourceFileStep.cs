@@ -29,7 +29,7 @@ namespace Apterid.Bootstrap.Compile.Steps
             if (!SourceFile.Exists)
             {
                 Assembly.AddError(string.Format(ErrorMessages.EB_0006_Compiler_SourceDoesNotExist, SourceFile.Name));
-                return StepResult.Failed;
+                return Failed();
             }
 
             // if the source file is older than the output file, do nothing
@@ -37,7 +37,7 @@ namespace Apterid.Bootstrap.Compile.Steps
                 && Assembly.OutputFileInfo.Exists
                 && Assembly.OutputFileInfo.LastWriteTimeUtc >= SourceFile.LastWriteTimeUtc)
             {
-                return StepResult.Succeeded;
+                return Succeeded();
             }
 
             // parse
@@ -68,9 +68,7 @@ namespace Apterid.Bootstrap.Compile.Steps
                         Assembly.AddError(error);
                     }
 
-                    return Assembly.Errors.Any()
-                        ? StepResult.Failed
-                        : StepResult.Succeeded;
+                    return Assembly.Errors.Any() ? Failed() : Succeeded();
                 }
                 else
                 {
@@ -82,13 +80,13 @@ namespace Apterid.Bootstrap.Compile.Steps
                     };
 
                     Assembly.AddError(error);
-                    return StepResult.Failed;
+                    return Failed();
                 }
             }
             catch (Exception e)
             {
                 Assembly.AddError(new ApteridError { Exception = e });
-                return StepResult.Failed;
+                return Failed();
             }
         }
     }

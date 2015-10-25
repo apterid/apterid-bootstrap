@@ -55,7 +55,7 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="ParseTests.cs" />
+    <Compile Include="SimpleModuleTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CompilerTester.cs" />
   </ItemGroup>

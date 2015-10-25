@@ -16,8 +16,15 @@ namespace Apterid.Bootstrap.Compile.Steps
             Assembly = assembly;
 
             SubSteps = Assembly.SourceFiles
-                .Select(sf => new ParseSourceFileStep(Context, Assembly, sf))
-                .ToArray();
+                .Select(sf =>
+                {
+                    var parseStep = new ParseSourceFileStep(Context, Assembly, sf);
+                    //var analyzeStep = 
+
+                    return parseStep;
+                })
+                .OfType<CompilerStep>()
+                .ToList();
         }
     }
 }

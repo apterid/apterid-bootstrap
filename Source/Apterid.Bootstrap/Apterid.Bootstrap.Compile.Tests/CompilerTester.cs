@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Apterid.Bootstrap.Analyze;
 using Apterid.Bootstrap.Parse;
 
 namespace Apterid.Bootstrap.Compile.Tests
@@ -12,17 +13,16 @@ namespace Apterid.Bootstrap.Compile.Tests
     {
         FileInfo[] sourceInfo;
 
-        public CompilerAssembly Assembly { get; }
         public CompilerContext Context { get; }
-        public ApteridCompiler Compiler { get; }
+        public CompilerAssembly Assembly { get; }
 
         public CompilerTester(string name, params string[] sources)
         {
-            var apath = Path.Combine(Path.GetTempPath(), name + ".DLL");
+            var outputPath = Path.Combine(Path.GetTempPath(), name + ".DLL");
 
             sourceInfo = sources.Select(s =>
                 {
-                    var spath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + ".DLL");
+                    var spath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + ".apterid");
                     File.WriteAllText(spath, s);
                     return new FileInfo(spath);
                 })
@@ -30,7 +30,7 @@ namespace Apterid.Bootstrap.Compile.Tests
 
             Assembly = new CompilerAssembly
             {
-                OutputFileInfo = new FileInfo(apath),
+                OutputFileInfo = new FileInfo(outputPath),
                 SourceFiles = sourceInfo
                     .Select(info => new PhysicalSourceFile(info.FullName))
                     .OfType<ParserSourceFile>()
@@ -43,12 +43,14 @@ namespace Apterid.Bootstrap.Compile.Tests
                 Assemblies = new List<CompilerAssembly> { Assembly, },
             };
 
-            Compiler = new ApteridCompiler(Context);
+            Context.Compiler = new ApteridCompiler(Context);
         }
 
         public void Dispose()
         {
-            if (Assembly != null && Assembly.OutputFileInfo != null && Assembly.OutputFileInfo.Exists)
+            if (Assembly != null 
+                && Assembly.OutputFileInfo != null 
+                && Assembly.OutputFileInfo.Exists)
             {
                 Assembly.OutputFileInfo.Delete();
             }

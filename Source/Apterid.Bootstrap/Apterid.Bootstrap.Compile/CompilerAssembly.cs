@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Apterid.Bootstrap.Analyze;
 using Apterid.Bootstrap.Common;
 using Apterid.Bootstrap.Parse;
 
@@ -18,7 +19,7 @@ namespace Apterid.Bootstrap.Compile
         public OutputMode Mode { get; set; }
 
         public IList<ParserSourceFile> SourceFiles { get; set; }
-        public Analyze.AnalyzerAssembly AnalyzedAssembly { get; set; }
+        public AnalyzerAssembly AnalyzedAssembly { get; set; }
 
         public IList<ApteridError> Errors { get { return errors; } }
 
