@@ -12,14 +12,10 @@ using Apterid.Bootstrap.Parse;
 
 namespace Apterid.Bootstrap.Compile
 {
-    public class CompileContext : Common.Context
+    public class CompileContext : Context
     {
-        public ApteridCompiler Compiler { get; internal set; }
-        public ApteridAnalyzer Analyzer { get; internal set; }
-
-        public IList<CompileUnit> CompileUnits { get; } = new List<CompileUnit>();
-
         public CancellationTokenSource CancelSource { get; } = new CancellationTokenSource();
+        public IList<CompileUnit> CompileUnits { get; } = new List<CompileUnit>();
 
         internal IList<CompileError> CompileErrors { get; } = new List<CompileError>();
 
@@ -29,7 +25,7 @@ namespace Apterid.Bootstrap.Compile
             {
                 return CompileUnits
                     .SelectMany(u => u.Errors)
-                    .Concat(Errors);
+                    .Concat(CompileErrors);
             }
         }
     }

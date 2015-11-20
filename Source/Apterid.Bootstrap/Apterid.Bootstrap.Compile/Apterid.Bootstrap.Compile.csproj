@@ -53,7 +53,7 @@
     <Compile Include="CompileUnit.cs" />
     <Compile Include="CompileContext.cs" />
     <Compile Include="ApteridCompiler.cs" />
-    <Compile Include="CompilerStep.cs" />
+    <Compile Include="CompileStep.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="PhysicalSourceFile.cs" />
     <Compile Include="Program.cs" />
@@ -61,7 +61,7 @@
     <Compile Include="Steps\AnalyzeSourceFileStep.cs" />
     <Compile Include="Steps\GenerateStep.cs" />
     <Compile Include="Steps\ParseSourceFileStep.cs" />
-    <Compile Include="Steps\CompileStep.cs" />
+    <Compile Include="Steps\CompileUnitStep.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

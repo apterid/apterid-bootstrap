@@ -21,9 +21,7 @@ namespace Apterid.Bootstrap.Compile
             Context = new CompileContext
             {
                 ForceRecompile = forceRecompile,
-                Compiler = this
             };
-            Context.Analyzer = new ApteridAnalyzer(Context);
         }
 
         public void AddReference(string dllPath)
@@ -37,14 +35,14 @@ namespace Apterid.Bootstrap.Compile
             IEnumerable<ParserSourceFile> sources)
         {
             if (Context.CompileUnits.Any(u => u.OutputFileInfo == outputFileInfo))
-                throw new InternalException(
-                    string.Format(ErrorMessages.EC_0008_Compiler_DuplicateOutputFileInfo, outputFileInfo.FullName));
+                throw new InternalException(string.Format(ErrorMessages.EC_0008_Compiler_DuplicateOutputFileInfo, outputFileInfo.FullName));
 
             var unit = new CompileUnit
             {
                 Mode = mode,
                 OutputFileInfo = outputFileInfo,
                 SourceFiles = sources.ToList(),
+                AnalyzeUnit = new AnalyzeUnit(),
             };
 
             Context.CompileUnits.Add(unit);
@@ -52,11 +50,11 @@ namespace Apterid.Bootstrap.Compile
 
         public StepStatus UpdateAllCompileUnits()
         {
-            var compileStep = new CompilerStep(Context)
+            var compileStep = new CompileStep(Context)
             {
                 SubSteps = Context.CompileUnits
-                    .Select(a => new CompileStep(Context, a))
-                    .OfType<CompilerStep>()
+                    .Select(unit => new CompileStep(Context, unit))
+                    .OfType<CompileStep>()
                     .ToList()
             };
 

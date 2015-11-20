@@ -8,7 +8,7 @@ using Apterid.Bootstrap.Parse;
 
 namespace Apterid.Bootstrap.Compile.Steps
 {
-    public class ParseSourceFileStep : CompilerStep
+    public class ParseSourceFileStep : CompileStep
     {
         public ParserSourceFile SourceFile { get; }
 
@@ -23,10 +23,12 @@ namespace Apterid.Bootstrap.Compile.Steps
             // verify that the source file exists
             if (!SourceFile.Exists)
             {
-                CompileUnit.AddError<ParseError>(
-                    string.Format(ErrorMessages.EB_0006_Compiler_SourceDoesNotExist, SourceFile.Name));
+                CompileUnit.AddError<ParseError>(string.Format(ErrorMessages.EB_0006_Compiler_SourceDoesNotExist, SourceFile.Name));
                 return Failed();
             }
+
+            if (Context.CancelSource.IsCancellationRequested)
+                return Canceled();
 
             // if the source file is older than the output file, do nothing
             if (!Context.ForceRecompile
@@ -44,6 +46,9 @@ namespace Apterid.Bootstrap.Compile.Steps
                 SourceFile.Parser = parser;
 
                 var match = parser.GetMatch(SourceFile.Buffer, parser.ApteridSource);
+
+                if (Context.CancelSource.IsCancellationRequested)
+                    return Canceled();
 
                 if (match.Success)
                 {

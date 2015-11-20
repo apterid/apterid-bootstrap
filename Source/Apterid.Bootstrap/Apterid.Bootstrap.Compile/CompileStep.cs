@@ -19,23 +19,23 @@ namespace Apterid.Bootstrap.Compile
     public struct StepResult
     {
         public StepStatus Status;
-        public CompilerStep Continuation;
+        public CompileStep Continuation;
     }
 
-    public class CompilerStep
+    public class CompileStep
     {
         public CompileContext Context { get; }
         public CompileUnit CompileUnit { get; protected set; }
 
-        public List<CompilerStep> SubSteps { get; set; }
-        public CompilerStep Continuation { get; set; }
+        public List<CompileStep> SubSteps { get; set; }
+        public CompileStep Continuation { get; set; }
 
-        public CompilerStep(CompileContext context)
+        public CompileStep(CompileContext context)
         {
             Context = context;
         }
 
-        public CompilerStep(CompileContext context, CompileUnit compileUnit)
+        public CompileStep(CompileContext context, CompileUnit compileUnit)
             : this(context)
         {
             CompileUnit = compileUnit;
@@ -54,8 +54,21 @@ namespace Apterid.Bootstrap.Compile
 
             while (tasks.Any())
             {
-                var task = await Task.WhenAny(tasks);
-                tasks.Remove(task);
+                Task<StepResult> task = null;
+
+                try
+                {
+                    task = await Task.WhenAny(tasks);
+                }
+                catch (OperationCanceledException)
+                {
+                    return StepStatus.Canceled;
+                }
+                finally
+                {
+                    if (task != null && task.IsCompleted)
+                        tasks.Remove(task);
+                }
 
                 if (Context.CancelSource.IsCancellationRequested)
                     return StepStatus.Canceled;
@@ -82,7 +95,7 @@ namespace Apterid.Bootstrap.Compile
             return StepStatus.Succeeded;
         }
 
-        Task<StepResult> StartTask(CompilerStep step)
+        Task<StepResult> StartTask(CompileStep step)
         {
             return Task<StepResult>.Factory.StartNew(
                 step.Run, 
@@ -105,7 +118,7 @@ namespace Apterid.Bootstrap.Compile
             return new StepResult { Status = StepStatus.Failed };
         }
 
-        protected StepResult Cancelled()
+        protected StepResult Canceled()
         {
             return new StepResult { Status = StepStatus.Canceled };
         }

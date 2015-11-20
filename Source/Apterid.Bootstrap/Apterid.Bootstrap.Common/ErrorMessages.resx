@@ -120,6 +120,9 @@
   <data name="EA_0009_Analyzer_DuplicateSourceFile" xml:space="preserve">
     <value>Duplicate source file "{0}".</value>
   </data>
+  <data name="EA_0010_Analyzer_ParseTreeIsNotSource" xml:space="preserve">
+    <value>The source file "{0}" is not valid Apterid source code.</value>
+  </data>
   <data name="EB_0006_Compiler_SourceDoesNotExist" xml:space="preserve">
     <value>Source file does not exist: {0}.</value>
   </data>

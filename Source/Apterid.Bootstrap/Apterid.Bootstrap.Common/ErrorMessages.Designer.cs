@@ -70,6 +70,15 @@ namespace Apterid.Bootstrap.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The source file &quot;{0}&quot; is not valid Apterid source code..
+        /// </summary>
+        public static string EA_0010_Analyzer_ParseTreeIsNotSource {
+            get {
+                return ResourceManager.GetString("EA_0010_Analyzer_ParseTreeIsNotSource", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Source file does not exist: {0}..
         /// </summary>
         public static string EB_0006_Compiler_SourceDoesNotExist {

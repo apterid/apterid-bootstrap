@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Apterid.Bootstrap.Compile.Steps
 {
-    class GenerateStep : CompilerStep
+    class GenerateStep : Compile.CompileStep
     {
         public GenerateStep(CompileContext context, CompileUnit compileUnit)
             : base(context, compileUnit)

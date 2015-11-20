@@ -7,9 +7,9 @@ using Apterid.Bootstrap.Analyze;
 
 namespace Apterid.Bootstrap.Compile.Steps
 {
-    class CompileStep : CompilerStep
+    class CompileUnitStep : CompileStep
     {
-        public CompileStep(CompileContext context, CompileUnit compileUnit)
+        public CompileUnitStep(CompileContext context, CompileUnit compileUnit)
             : base(context, compileUnit)
         {
             CompileUnit.AnalyzeUnit = new AnalyzeUnit();
@@ -26,7 +26,7 @@ namespace Apterid.Bootstrap.Compile.Steps
 
                         return parseStep;
                     })
-                    .OfType<CompilerStep>()
+                    .OfType<CompileStep>()
                     .ToList()
             };
 
@@ -34,7 +34,7 @@ namespace Apterid.Bootstrap.Compile.Steps
 
             parseAndAnalyze.Continuation = generate;
 
-            SubSteps = new List<CompilerStep>
+            SubSteps = new List<CompileStep>
             {
                 parseAndAnalyze
             };

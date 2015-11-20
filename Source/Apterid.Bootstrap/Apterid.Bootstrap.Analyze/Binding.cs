@@ -8,6 +8,7 @@ namespace Apterid.Bootstrap.Analyze
 {
     public class Binding
     {
+        public Annotation Annotation { get; set; }
         public Pattern Pattern { get; set; }
         public Expression Function { get; set; }
     }
