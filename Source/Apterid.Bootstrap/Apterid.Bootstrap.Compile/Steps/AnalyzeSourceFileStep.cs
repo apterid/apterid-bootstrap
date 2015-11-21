@@ -25,8 +25,6 @@ namespace Apterid.Bootstrap.Compile.Steps
 
         public override StepResult Run()
         {
-            // TODO: make dummy modules from references
-
             try
             {
                 if (Analyzer == null)

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Apterid.Bootstrap.Analyze
 {
-    public class Binding
+    public class Binding : Scope
     {
         public Annotation Annotation { get; set; }
         public Pattern Pattern { get; set; }

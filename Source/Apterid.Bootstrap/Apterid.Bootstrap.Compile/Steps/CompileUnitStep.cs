@@ -14,6 +14,8 @@ namespace Apterid.Bootstrap.Compile.Steps
         {
             CompileUnit.AnalyzeUnit = new AnalyzeUnit();
 
+            // TODO: make dummy modules from references
+
             var parseAndAnalyze = new CompileStep(context, compileUnit)
             {
                 SubSteps = CompileUnit.SourceFiles

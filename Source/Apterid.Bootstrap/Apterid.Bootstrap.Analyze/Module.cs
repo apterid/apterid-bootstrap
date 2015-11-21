@@ -8,7 +8,9 @@ namespace Apterid.Bootstrap.Analyze
 {
     public class Module : Scope
     {
-        public IList<Type> Types { get; set; }
-        public IList<Binding> Bindings { get; set; }
+        public Scope Parent { get; internal set; }
+
+        public IList<Type> Types { get; } = new List<Type>();
+        public IList<Binding> Bindings { get; } = new List<Binding>();
     }
 }

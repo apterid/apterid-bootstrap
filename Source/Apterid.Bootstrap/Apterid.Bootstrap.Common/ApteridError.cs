@@ -10,5 +10,17 @@ namespace Apterid.Bootstrap.Common
     {
         public string Message { get; set; }
         public Exception Exception { get; set; }
+
+        const int MaxMessageStringLength = 16;
+
+        public static string Truncate(string str)
+        {
+            if (str == null) return string.Empty;
+
+            if (str.Length > MaxMessageStringLength)
+                str = str.Substring(0, MaxMessageStringLength) + "...";
+
+            return str;
+        }
     }
 }

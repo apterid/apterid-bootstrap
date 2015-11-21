@@ -10,6 +10,6 @@ namespace Apterid.Bootstrap.Analyze
 {
     public class AnalyzeUnit : Unit
     {
-        public IList<Module> Modules { get; } = new List<Module>();
+        public IDictionary<QualifiedName, Module> Modules { get; } = new Dictionary<QualifiedName, Module>();
     }
 }

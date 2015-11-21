@@ -61,92 +61,101 @@ namespace Apterid.Bootstrap.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Duplicate source file &quot;{0}&quot;..
-        /// </summary>
-        public static string EA_0009_Analyzer_DuplicateSourceFile {
-            get {
-                return ResourceManager.GetString("EA_0009_Analyzer_DuplicateSourceFile", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The source file &quot;{0}&quot; is not valid Apterid source code..
-        /// </summary>
-        public static string EA_0010_Analyzer_ParseTreeIsNotSource {
-            get {
-                return ResourceManager.GetString("EA_0010_Analyzer_ParseTreeIsNotSource", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Source file does not exist: {0}..
-        /// </summary>
-        public static string EB_0006_Compiler_SourceDoesNotExist {
-            get {
-                return ResourceManager.GetString("EB_0006_Compiler_SourceDoesNotExist", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to You must specify an output path..
-        /// </summary>
-        public static string EC_0004_CmdLine_NoOutputPath {
-            get {
-                return ResourceManager.GetString("EC_0004_CmdLine_NoOutputPath", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Unknown compiler output mode &apos;{0}&apos;..
-        /// </summary>
-        public static string EC_0005_CmdLine_UnknownOutputMode {
-            get {
-                return ResourceManager.GetString("EC_0005_CmdLine_UnknownOutputMode", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Duplicate output file &quot;{0}&quot;..
-        /// </summary>
-        public static string EC_0008_Compiler_DuplicateOutputFileInfo {
-            get {
-                return ResourceManager.GetString("EC_0008_Compiler_DuplicateOutputFileInfo", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to A node constructor&apos;s NodeArgs parameter must be named &quot;args&quot;..
         /// </summary>
-        public static string EI_0001_ParserImpl_MakeNodeArgs {
+        public static string E_0001_ParserImpl_MakeNodeArgs {
             get {
-                return ResourceManager.GetString("EI_0001_ParserImpl_MakeNodeArgs", resourceCulture);
+                return ResourceManager.GetString("E_0001_ParserImpl_MakeNodeArgs", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to A node constructor&apos;s Node[] parameter must be named &quot;children&quot;..
         /// </summary>
-        public static string EI_0002_ParserImpl_MakeNodeChildren {
+        public static string E_0002_ParserImpl_MakeNodeChildren {
             get {
-                return ResourceManager.GetString("EI_0002_ParserImpl_MakeNodeChildren", resourceCulture);
+                return ResourceManager.GetString("E_0002_ParserImpl_MakeNodeChildren", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Unable to find a constructor for {0}..
         /// </summary>
-        public static string EI_0003_ParserImpl_MakeNodeNoCtor {
+        public static string E_0003_ParserImpl_MakeNodeNoCtor {
             get {
-                return ResourceManager.GetString("EI_0003_ParserImpl_MakeNodeNoCtor", resourceCulture);
+                return ResourceManager.GetString("E_0003_ParserImpl_MakeNodeNoCtor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You must specify an output path..
+        /// </summary>
+        public static string E_0004_CmdLine_NoOutputPath {
+            get {
+                return ResourceManager.GetString("E_0004_CmdLine_NoOutputPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown compiler output mode &apos;{0}&apos;..
+        /// </summary>
+        public static string E_0005_CmdLine_UnknownOutputMode {
+            get {
+                return ResourceManager.GetString("E_0005_CmdLine_UnknownOutputMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Source file does not exist: {0}..
+        /// </summary>
+        public static string E_0006_Compiler_SourceDoesNotExist {
+            get {
+                return ResourceManager.GetString("E_0006_Compiler_SourceDoesNotExist", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Unable to parse..
         /// </summary>
-        public static string EP_0007_Parser_SyntaxError {
+        public static string E_0007_Parser_SyntaxError {
             get {
-                return ResourceManager.GetString("EP_0007_Parser_SyntaxError", resourceCulture);
+                return ResourceManager.GetString("E_0007_Parser_SyntaxError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Duplicate output file &quot;{0}&quot;..
+        /// </summary>
+        public static string E_0008_Compiler_DuplicateOutputFileInfo {
+            get {
+                return ResourceManager.GetString("E_0008_Compiler_DuplicateOutputFileInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Duplicate source file &quot;{0}&quot;..
+        /// </summary>
+        public static string E_0009_Analyzer_DuplicateSourceFile {
+            get {
+                return ResourceManager.GetString("E_0009_Analyzer_DuplicateSourceFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The source file &quot;{0}&quot; is not valid source code..
+        /// </summary>
+        public static string E_0010_Analyzer_ParseTreeIsNotSource {
+            get {
+                return ResourceManager.GetString("E_0010_Analyzer_ParseTreeIsNotSource", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You are not allowed to have the construct &quot;{0}&quot; at the top level of a source file..
+        /// </summary>
+        public static string E_0011_Analyzer_InvalidToplevelItem {
+            get {
+                return ResourceManager.GetString("E_0011_Analyzer_InvalidToplevelItem", resourceCulture);
             }
         }
     }
