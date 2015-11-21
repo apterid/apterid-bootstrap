@@ -19,26 +19,26 @@ namespace Apterid.Bootstrap.Compile
     public struct StepResult
     {
         public StepStatus Status;
-        public CompileStep Continuation;
+        public CompilerStep Continuation;
     }
 
-    public class CompileStep
+    public class CompilerStep
     {
-        public CompileContext Context { get; }
-        public CompileUnit CompileUnit { get; protected set; }
+        public CompilerContext Context { get; }
+        public CompilationUnit Unit { get; protected set; }
 
-        public List<CompileStep> SubSteps { get; set; }
-        public CompileStep Continuation { get; set; }
+        public List<CompilerStep> SubSteps { get; set; }
+        public CompilerStep Continuation { get; set; }
 
-        public CompileStep(CompileContext context)
+        public CompilerStep(CompilerContext context)
         {
             Context = context;
         }
 
-        public CompileStep(CompileContext context, CompileUnit compileUnit)
+        public CompilerStep(CompilerContext context, CompilationUnit compileUnit)
             : this(context)
         {
-            CompileUnit = compileUnit;
+            Unit = compileUnit;
         }
 
         public virtual StepResult Run()
@@ -95,7 +95,7 @@ namespace Apterid.Bootstrap.Compile
             return StepStatus.Succeeded;
         }
 
-        Task<StepResult> StartTask(CompileStep step)
+        Task<StepResult> StartTask(CompilerStep step)
         {
             return Task<StepResult>.Factory.StartNew(
                 step.Run, 

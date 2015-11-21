@@ -8,11 +8,11 @@ using Apterid.Bootstrap.Parse;
 
 namespace Apterid.Bootstrap.Compile.Steps
 {
-    public class ParseSourceFileStep : CompileStep
+    public class ParseSourceFile : CompilerStep
     {
         public ParserSourceFile SourceFile { get; }
 
-        public ParseSourceFileStep(CompileContext context, CompileUnit compileUnit, ParserSourceFile sourceFile)
+        public ParseSourceFile(CompilerContext context, CompilationUnit compileUnit, ParserSourceFile sourceFile)
             : base(context, compileUnit)
         {
             SourceFile = sourceFile;
@@ -23,7 +23,7 @@ namespace Apterid.Bootstrap.Compile.Steps
             // verify that the source file exists
             if (!SourceFile.Exists)
             {
-                CompileUnit.AddError<ParseError>(string.Format(ErrorMessages.EB_0006_Compiler_SourceDoesNotExist, SourceFile.Name));
+                Unit.AddError<ParsingError>(string.Format(ErrorMessages.E_0006_Compiler_SourceDoesNotExist, SourceFile.Name));
                 return Failed();
             }
 
@@ -32,8 +32,8 @@ namespace Apterid.Bootstrap.Compile.Steps
 
             // if the source file is older than the output file, do nothing
             if (!Context.ForceRecompile
-                && CompileUnit.OutputFileInfo.Exists
-                && CompileUnit.OutputFileInfo.LastWriteTimeUtc >= SourceFile.LastWriteTimeUtc)
+                && Unit.OutputFileInfo.Exists
+                && Unit.OutputFileInfo.LastWriteTimeUtc >= SourceFile.LastWriteTimeUtc)
             {
                 return Succeeded();
             }
@@ -58,34 +58,34 @@ namespace Apterid.Bootstrap.Compile.Steps
                     var errorSections = SourceFile.GetNodes<Parse.Syntax.ErrorSection>();
                     foreach (var es in errorSections)
                     {
-                        var error = new ParseError
+                        var error = new ParsingError
                         {
                             SourceFile = SourceFile,
-                            Message = ErrorMessages.EP_0007_Parser_SyntaxError,
+                            Message = ErrorMessages.E_0007_Parser_SyntaxError,
                             ErrorNode = es,
                             ErrorIndex = es.StartIndex
                         };
-                        CompileUnit.AddError(error);
+                        Unit.AddError(error);
                     }
 
-                    return CompileUnit.Errors.Any() ? Failed() : Succeeded();
+                    return Unit.Errors.Any() ? Failed() : Succeeded();
                 }
                 else
                 {
-                    var error = new ParseError
+                    var error = new ParsingError
                     {
                         SourceFile = SourceFile,
                         Message = match.Error,
                         ErrorIndex = match.ErrorIndex
                     };
 
-                    CompileUnit.AddError(error);
+                    Unit.AddError(error);
                     return Failed();
                 }
             }
             catch (Exception e)
             {
-                CompileUnit.AddError(new ParseError { Exception = e });
+                Unit.AddError(new ParsingError { Exception = e });
                 return Failed();
             }
         }

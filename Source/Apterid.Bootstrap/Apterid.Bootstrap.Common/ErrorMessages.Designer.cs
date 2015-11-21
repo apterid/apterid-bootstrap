@@ -158,5 +158,23 @@ namespace Apterid.Bootstrap.Common {
                 return ResourceManager.GetString("E_0011_Analyzer_InvalidToplevelItem", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You are not allowed to bind to the name &quot;{0}&quot; more than once in one scope..
+        /// </summary>
+        public static string E_0012_Analyzer_DuplicateBinding {
+            get {
+                return ResourceManager.GetString("E_0012_Analyzer_DuplicateBinding", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You are not allowed to have the construct &quot;{0}&quot; here..
+        /// </summary>
+        public static string E_0013_Analyzer_InvalidScopeItem {
+            get {
+                return ResourceManager.GetString("E_0013_Analyzer_InvalidScopeItem", resourceCulture);
+            }
+        }
     }
 }

@@ -8,7 +8,7 @@ using Apterid.Bootstrap.Parse;
 
 namespace Apterid.Bootstrap.Analyze
 {
-    public class AnalyzeUnit : Unit
+    public class AnalysisUnit : Unit
     {
         public IDictionary<QualifiedName, Module> Modules { get; } = new Dictionary<QualifiedName, Module>();
     }

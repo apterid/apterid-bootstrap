@@ -48,7 +48,7 @@ namespace Apterid.Bootstrap.Compile
                         if (Enum.TryParse<OutputMode>(arg, out m))
                             mode = m;
                         else
-                            throw new CmdLineException(string.Format(ErrorMessages.EC_0005_CmdLine_UnknownOutputMode, arg));
+                            throw new CmdLineException(string.Format(ErrorMessages.E_0005_CmdLine_UnknownOutputMode, arg));
                         state = OptionState.GetSources;
                         break;
                     case OptionState.GetOutput:
@@ -74,7 +74,7 @@ namespace Apterid.Bootstrap.Compile
 
             // sanity checks
             if (string.IsNullOrWhiteSpace(OutputPath))
-                throw new CmdLineException(ErrorMessages.EC_0004_CmdLine_NoOutputPath);
+                throw new CmdLineException(ErrorMessages.E_0004_CmdLine_NoOutputPath);
 
             if (mode == null)
             {
@@ -83,7 +83,7 @@ namespace Apterid.Bootstrap.Compile
                 else if (OutputPath.ToUpper().EndsWith(".EXE"))
                     mode = OutputMode.Executable;
                 else
-                    throw new CmdLineException(string.Format(ErrorMessages.EC_0005_CmdLine_UnknownOutputMode, "?"));
+                    throw new CmdLineException(string.Format(ErrorMessages.E_0005_CmdLine_UnknownOutputMode, "?"));
             }
         }
     }

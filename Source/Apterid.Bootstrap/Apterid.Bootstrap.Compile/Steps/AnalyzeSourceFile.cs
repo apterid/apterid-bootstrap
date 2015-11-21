@@ -9,14 +9,14 @@ using Apterid.Bootstrap.Parse;
 
 namespace Apterid.Bootstrap.Compile.Steps
 {
-    public class AnalyzeSourceFileStep : CompileStep
+    public class AnalyzeSourceFile : CompilerStep
     {
         public ParserSourceFile SourceFile { get; }
         internal ApteridAnalyzer Analyzer { get; set; }
 
-        public AnalyzeSourceFileStep(
-            CompileContext context, 
-            CompileUnit compileUnit, 
+        public AnalyzeSourceFile(
+            CompilerContext context, 
+            CompilationUnit compileUnit, 
             ParserSourceFile sourceFile)
             : base(context, compileUnit)
         {
@@ -28,12 +28,12 @@ namespace Apterid.Bootstrap.Compile.Steps
             try
             {
                 if (Analyzer == null)
-                    Analyzer = new ApteridAnalyzer(Context, SourceFile, CompileUnit.AnalyzeUnit, Context.CancelSource.Token);
+                    Analyzer = new ApteridAnalyzer(Context, SourceFile, Unit.AnalyzeUnit, Context.CancelSource.Token);
 
                 Analyzer.Analyze();
 
                 if (Analyzer.NeedsRerun)
-                    this.Continuation = new AnalyzeSourceFileStep(Context, CompileUnit, SourceFile) { Analyzer = Analyzer };
+                    this.Continuation = new AnalyzeSourceFile(Context, Unit, SourceFile) { Analyzer = Analyzer };
             }
             catch (OperationCanceledException)
             {
@@ -41,7 +41,7 @@ namespace Apterid.Bootstrap.Compile.Steps
             }
             catch (ApteridException e)
             {
-                CompileUnit.AddError(new AnalyzeError { Exception = e });
+                Unit.AddError(new AnalyzerError { Exception = e });
             }
 
             return Context.Errors.Any() ? Failed() : Succeeded();

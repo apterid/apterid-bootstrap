@@ -11,12 +11,12 @@ using Apterid.Bootstrap.Parse;
 
 namespace Apterid.Bootstrap.Compile
 {
-    public class CompileUnit : Unit
+    public class CompilationUnit : Unit
     {
         public OutputMode Mode { get; internal set; }
         public FileInfo OutputFileInfo { get; internal set; }
 
         public IList<ParserSourceFile> SourceFiles { get; internal set; }
-        public AnalyzeUnit AnalyzeUnit { get; internal set; }
+        public AnalysisUnit AnalyzeUnit { get; internal set; }
     }
 }

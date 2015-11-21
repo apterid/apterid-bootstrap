@@ -12,10 +12,10 @@ using Apterid.Bootstrap.Parse;
 
 namespace Apterid.Bootstrap.Compile
 {
-    public class CompileContext : Context
+    public class CompilerContext : Context
     {
         public CancellationTokenSource CancelSource { get; } = new CancellationTokenSource();
-        public IList<CompileUnit> CompileUnits { get; } = new List<CompileUnit>();
+        public IList<CompilationUnit> CompileUnits { get; } = new List<CompilationUnit>();
 
         internal IList<CompileError> CompileErrors { get; } = new List<CompileError>();
 

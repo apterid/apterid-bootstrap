@@ -7,36 +7,36 @@ using Apterid.Bootstrap.Analyze;
 
 namespace Apterid.Bootstrap.Compile.Steps
 {
-    class CompileUnitStep : CompileStep
+    class Compile : CompilerStep
     {
-        public CompileUnitStep(CompileContext context, CompileUnit compileUnit)
+        public Compile(CompilerContext context, CompilationUnit compileUnit)
             : base(context, compileUnit)
         {
-            CompileUnit.AnalyzeUnit = new AnalyzeUnit();
+            Unit.AnalyzeUnit = new AnalysisUnit();
 
             // TODO: make dummy modules from references
 
-            var parseAndAnalyze = new CompileStep(context, compileUnit)
+            var parseAndAnalyze = new CompilerStep(context, compileUnit)
             {
-                SubSteps = CompileUnit.SourceFiles
+                SubSteps = Unit.SourceFiles
                     .Select(sourceFile =>
                     {
-                        var parseStep = new ParseSourceFileStep(Context, CompileUnit, sourceFile);
+                        var parseStep = new ParseSourceFile(Context, Unit, sourceFile);
 
-                        var analyzeStep = new AnalyzeSourceFileStep(Context, CompileUnit, sourceFile);
+                        var analyzeStep = new AnalyzeSourceFile(Context, Unit, sourceFile);
                         parseStep.Continuation = analyzeStep;
 
                         return parseStep;
                     })
-                    .OfType<CompileStep>()
+                    .OfType<CompilerStep>()
                     .ToList()
             };
 
-            var generate = new GenerateStep(context, compileUnit);
+            var generate = new Generate(context, compileUnit);
 
             parseAndAnalyze.Continuation = generate;
 
-            SubSteps = new List<CompileStep>
+            SubSteps = new List<CompilerStep>
             {
                 parseAndAnalyze
             };

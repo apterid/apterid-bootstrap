@@ -14,11 +14,11 @@ namespace Apterid.Bootstrap.Compile
 {
     public class ApteridCompiler
     {
-        public CompileContext Context { get; }
+        public CompilerContext Context { get; }
 
         public ApteridCompiler(bool forceRecompile = false)
         {
-            Context = new CompileContext
+            Context = new CompilerContext
             {
                 ForceRecompile = forceRecompile,
             };
@@ -35,14 +35,14 @@ namespace Apterid.Bootstrap.Compile
             IEnumerable<ParserSourceFile> sources)
         {
             if (Context.CompileUnits.Any(u => u.OutputFileInfo == outputFileInfo))
-                throw new InternalException(string.Format(ErrorMessages.EC_0008_Compiler_DuplicateOutputFileInfo, outputFileInfo.FullName));
+                throw new InternalException(string.Format(ErrorMessages.E_0008_Compiler_DuplicateOutputFileInfo, outputFileInfo.FullName));
 
-            var unit = new CompileUnit
+            var unit = new CompilationUnit
             {
                 Mode = mode,
                 OutputFileInfo = outputFileInfo,
                 SourceFiles = sources.ToList(),
-                AnalyzeUnit = new AnalyzeUnit(),
+                AnalyzeUnit = new AnalysisUnit(),
             };
 
             Context.CompileUnits.Add(unit);
@@ -50,11 +50,11 @@ namespace Apterid.Bootstrap.Compile
 
         public StepStatus UpdateAllCompileUnits()
         {
-            var compileStep = new CompileStep(Context)
+            var compileStep = new CompilerStep(Context)
             {
                 SubSteps = Context.CompileUnits
-                    .Select(unit => new CompileStep(Context, unit))
-                    .OfType<CompileStep>()
+                    .Select(unit => new CompilerStep(Context, unit))
+                    .OfType<CompilerStep>()
                     .ToList()
             };
 

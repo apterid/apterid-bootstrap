@@ -150,4 +150,10 @@
   <data name="E_0011_Analyzer_InvalidToplevelItem" xml:space="preserve">
     <value>You are not allowed to have the construct "{0}" at the top level of a source file.</value>
   </data>
+  <data name="E_0012_Analyzer_DuplicateBinding" xml:space="preserve">
+    <value>You are not allowed to bind to the name "{0}" more than once in one scope.</value>
+  </data>
+  <data name="E_0013_Analyzer_InvalidScopeItem" xml:space="preserve">
+    <value>You are not allowed to have the construct "{0}" here.</value>
+  </data>
 </root>

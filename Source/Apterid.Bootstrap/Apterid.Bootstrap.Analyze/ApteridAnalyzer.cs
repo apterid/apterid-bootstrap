@@ -13,13 +13,13 @@ namespace Apterid.Bootstrap.Analyze
     public class ApteridAnalyzer
     {
         public Context Context { get; }
-        public AnalyzeUnit Unit { get; private set; }
+        public AnalysisUnit Unit { get; private set; }
         public ParserSourceFile SourceFile { get; }
         protected CancellationToken Cancel { get; }
 
         public bool NeedsRerun { get; private set; }
 
-        public ApteridAnalyzer(Context context, ParserSourceFile sourceFile, AnalyzeUnit analyzeUnit, CancellationToken cancel)
+        public ApteridAnalyzer(Context context, ParserSourceFile sourceFile, AnalysisUnit analyzeUnit, CancellationToken cancel)
         {
             Context = context;
             Unit = analyzeUnit;
@@ -32,7 +32,7 @@ namespace Apterid.Bootstrap.Analyze
             var sourceNode = SourceFile.ParseTree as Parse.Syntax.Source;
             if (sourceNode == null)
             {
-                Unit.AddError(new AnalyzeError { Node = SourceFile.ParseTree, Message = string.Format(ErrorMessages.EA_0010_Analyzer_ParseTreeIsNotSource, SourceFile.Name) });
+                Unit.AddError(new AnalyzerError { Node = SourceFile.ParseTree, Message = string.Format(ErrorMessages.E_0010_Analyzer_ParseTreeIsNotSource, SourceFile.Name) });
                 return;
             }
 
@@ -54,18 +54,25 @@ namespace Apterid.Bootstrap.Analyze
 
                 if ((moduleNode = node as Parse.Syntax.Module) != null)
                 {
-                    module = new Module
+                    // look for existing module
+                    var moduleName = new QualifiedName
                     {
-                        Name = new QualifiedName
-                        {
-                            Qualifiers = moduleNode.Qualifiers.Select(id => id.Text),
-                            Name = moduleNode.Name.Text
-                        },
+                        Qualifiers = moduleNode.Qualifiers.Select(id => id.Text),
+                        Name = moduleNode.Name.Text
                     };
 
-                    foreach (var tn in triviaNodes)
-                        module.PreTrivia.Add(tn);
-                    triviaNodes.Clear();
+                    lock (Unit.Modules)
+                    {
+                        if (!Unit.Modules.TryGetValue(moduleName, out module))
+                        {
+                            module = new Module { Name = moduleName };
+                            Unit.Modules.Add(module.Name, module);
+                        }
+
+                        foreach (var tn in triviaNodes)
+                            module.PreTrivia.Add(tn);
+                        triviaNodes.Clear();
+                    }
 
                     AnalyzeModule(module, moduleNode);
                 }
@@ -79,7 +86,7 @@ namespace Apterid.Bootstrap.Analyze
                 }
                 else
                 {
-                    Unit.AddError(new AnalyzeError
+                    Unit.AddError(new AnalyzerError
                     {
                         Node = node,
                         Message = string.Format(ErrorMessages.E_0011_Analyzer_InvalidToplevelItem, ApteridError.Truncate(node.Text)),
@@ -88,27 +95,20 @@ namespace Apterid.Bootstrap.Analyze
                 }
             }
 
-            if (module != null && triviaNodes.Count > 0)
+            if (module != null)
             {
                 foreach (var tn in triviaNodes)
                     module.PostTrivia.Add(tn);
             }
-
-            // add module to the analyze unit
-            if (module != null)
-                Unit.Modules[module.Name] = module;
 
             // don't complain about no module; can be an empty source file
         }
 
         void AnalyzeModule(Module module, Parse.Syntax.Module moduleNode)
         {
-            // get types and bindings
             var triviaNodes = new List<Parse.Syntax.Node>();
 
-            IList<Type> types = new List<Type>();
-            IList<Binding> bindings = new List<Binding>();
-
+            Binding binding = null;
             Parse.Syntax.Binding bindingNode = null;
 
             foreach (var node in moduleNode.Children)
@@ -118,20 +118,61 @@ namespace Apterid.Bootstrap.Analyze
 
                 if ((bindingNode = node as Parse.Syntax.Binding) != null)
                 {
-                    var binding = new Binding
+                    var bindingName = new QualifiedName(module, bindingNode.Name.Text);
+
+                    lock (module.Bindings)
                     {
-                        Name = new QualifiedName(module, bindingNode.Name.Text)
-                    };
+                        if (module.Bindings.TryGetValue(bindingName, out binding))
+                        {
+                            Unit.AddError(new AnalyzerError
+                            {
+                                Node = node,
+                                Message = string.Format(ErrorMessages.E_0012_Analyzer_DuplicateBinding, bindingName.Name),
+                            });
+                            return;
+                        }
+                        else
+                        {
+                            binding = new Binding { Parent = module, Name = bindingName };
+                            module.Bindings.Add(binding.Name, binding);
+                        }
+
+                        foreach (var tn in triviaNodes)
+                            binding.PreTrivia.Add(tn);
+                        triviaNodes.Clear();
+                    }
+
+                    AnalyzeBinding(module, binding, bindingNode);
                 }
-                else
+                else if (node is Parse.Syntax.Space)
                 {
                     triviaNodes.Add(node);
                 }
+                else
+                {
+                    Unit.AddError(new AnalyzerError
+                    {
+                        Node = node,
+                        Message = string.Format(ErrorMessages.E_0013_Analyzer_InvalidScopeItem, ApteridError.Truncate(node.Text)),
+                    });
+                    return;
+                }
             }
+
+            if (binding != null)
+            {
+                foreach (var tn in triviaNodes)
+                    binding.PostTrivia.Add(tn);
+            }
+        }
+
+        void AnalyzeBinding(Module module, Binding binding, Parse.Syntax.Binding bindingNode)
+        {
+
         }
     }
 
-    public class AnalyzeError : ApteridError
+    public class AnalyzerError : ApteridError
     {
         public Parse.Syntax.Node Node { get; set; }
     }

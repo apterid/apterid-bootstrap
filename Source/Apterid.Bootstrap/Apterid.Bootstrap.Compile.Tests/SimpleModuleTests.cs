@@ -26,7 +26,7 @@ module One =
                 var compileUnit = context.CompileUnits.First();
                 var sourceFile = compileUnit.SourceFiles.First();
 
-                var parse = new ParseSourceFileStep(tester.Compiler.Context, compileUnit, sourceFile);
+                var parse = new ParseSourceFile(tester.Compiler.Context, compileUnit, sourceFile);
                 var result = parse.Run();
                 Assert.AreEqual(StepStatus.Succeeded, result.Status);
 
