@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 using Apterid.Bootstrap.Common;
 using Apterid.Bootstrap.Parse;
+using Verophyle.CSLogic;
 
 namespace Apterid.Bootstrap.Analyze
 {
@@ -32,14 +34,24 @@ namespace Apterid.Bootstrap.Analyze
             var sourceNode = SourceFile.ParseTree as Parse.Syntax.Source;
             if (sourceNode == null)
             {
-                Unit.AddError(new AnalyzerError { Node = SourceFile.ParseTree, Message = string.Format(ErrorMessages.E_0010_Analyzer_ParseTreeIsNotSource, SourceFile.Name) });
+                Unit.AddError(new AnalyzerError
+                {
+                    Node = SourceFile.ParseTree,
+                    Message = string.Format(ErrorMessages.E_0010_Analyzer_ParseTreeIsNotSource, SourceFile.Name)
+                });
                 return;
             }
 
-            AnalyzeSource(sourceNode);
+            var modules = AnalyzeSource(sourceNode).ToList();
+            if (Unit.Errors.Any())
+                return;
+
+            ResolveTypes(modules);
         }
 
-        void AnalyzeSource(Parse.Syntax.Source sourceNode)
+        #region Semantic Analysis
+
+        IEnumerable<Module> AnalyzeSource(Parse.Syntax.Source sourceNode)
         {
             // look for top-level modules
             var triviaNodes = new List<Parse.Syntax.Node>();
@@ -75,6 +87,7 @@ namespace Apterid.Bootstrap.Analyze
                     }
 
                     AnalyzeModule(module, moduleNode);
+                    yield return module;
                 }
                 else if (node is Parse.Syntax.Directive)
                 {
@@ -91,7 +104,7 @@ namespace Apterid.Bootstrap.Analyze
                         Node = node,
                         Message = string.Format(ErrorMessages.E_0011_Analyzer_InvalidToplevelItem, ApteridError.Truncate(node.Text)),
                     });
-                    return;
+                    yield break;
                 }
             }
 
@@ -100,8 +113,6 @@ namespace Apterid.Bootstrap.Analyze
                 foreach (var tn in triviaNodes)
                     module.PostTrivia.Add(tn);
             }
-
-            // don't complain about no module; can be an empty source file
         }
 
         void AnalyzeModule(Module module, Parse.Syntax.Module moduleNode)
@@ -111,7 +122,7 @@ namespace Apterid.Bootstrap.Analyze
             Binding binding = null;
             Parse.Syntax.Binding bindingNode = null;
 
-            foreach (var node in moduleNode.Children)
+            foreach (var node in moduleNode.Body)
             {
                 if (Cancel.IsCancellationRequested)
                     throw new OperationCanceledException(Cancel);
@@ -168,8 +179,114 @@ namespace Apterid.Bootstrap.Analyze
 
         void AnalyzeBinding(Module module, Binding binding, Parse.Syntax.Binding bindingNode)
         {
+            if (bindingNode.Body == null || !bindingNode.Body.Any())
+            {
+                Unit.AddError(new AnalyzerError
+                {
+                    Node = bindingNode,
+                    Message = string.Format(ErrorMessages.E_0014_Analyzer_EmptyBinding, bindingNode.Name.Text),
+                });
+                return;
+            }
 
+            var triviaNodes = new List<Parse.Syntax.Node>();
+            Expression expression = null;
+
+            Parse.Syntax.Literal literalNode;
+            Parse.Syntax.Literal<BigInteger> bigIntLiteral;
+
+            foreach (var node in bindingNode.Body)
+            {
+                if (Cancel.IsCancellationRequested)
+                    throw new OperationCanceledException(Cancel);
+
+                if ((literalNode = node as Parse.Syntax.Literal) != null)
+                {
+                    if ((bigIntLiteral = literalNode as Parse.Syntax.Literal<BigInteger>) != null)
+                    {
+                        expression = new Expressions.IntegerLiteral(bigIntLiteral.Value);
+                    }
+                    else
+                    {
+                        throw new NotImplementedException(string.Format("Literals of type {0} not implemented yet.", literalNode.ValueType.Name));
+                    }
+                }
+                else if (node is Parse.Syntax.Space)
+                {
+                    triviaNodes.Add(node);
+                }
+            }
+
+            if (expression == null)
+            {
+                Unit.AddError(new AnalyzerError
+                {
+                    Node = bindingNode,
+                    Message = string.Format(ErrorMessages.E_0014_Analyzer_EmptyBinding, bindingNode.Name.Text),
+                });
+                return;
+            }
+
+            foreach (var tn in triviaNodes)
+                expression.PostTrivia.Add(tn);
+
+            binding.Expression = expression;
         }
+
+        #endregion
+
+        #region Type Resolution
+
+        struct TypeResolveRec
+        {
+            public Goal<Type> Constraint { get; set; }
+            public IEnumerable<Tuple<Expression, Var>> ExpTypeVars { get; set; }
+        }
+
+        bool ResolveTypes(IEnumerable<Module> modules)
+        {
+            var trr = new TypeResolveRec
+            {
+                Constraint = s => new[] { s }, // true
+                ExpTypeVars = Enumerable.Empty<Tuple<Expression, Var>>(),
+            };
+
+            trr = modules.Aggregate(trr, (mtr, m) => m.Bindings.Values.Aggregate(mtr, (btr, b) => ResolveExpressionType(btr, b.Expression)));
+            var varTypes = Goal.Eval(trr.Constraint).FirstOrDefault();
+
+            foreach (var expVar in trr.ExpTypeVars)
+            {
+                var e = expVar.Item1;
+                var v = expVar.Item2;
+
+                if (!varTypes.Binds(v))
+                {
+                    Unit.AddError(new AnalyzerError
+                    {
+                        Node = e.SyntaxNode,
+                        Message = string.Format(ErrorMessages.E_0015_Analyzer_UnableToInferType, ApteridError.Truncate(e.SyntaxNode.Text)),
+                    });
+                    return false;
+                }
+
+                e.ResolvedType = varTypes[v];
+            }
+
+            return true;
+        }
+
+        TypeResolveRec ResolveExpressionType(TypeResolveRec tvr, Expression e)
+        {
+            tvr = e.Children.Aggregate(tvr, (tvrc, c) => ResolveExpressionType(tvrc, c));
+            var v = Var.NewVar();
+            return new TypeResolveRec
+            {
+                Constraint = Goal.Conj(tvr.Constraint, e.ResolveType(v)),
+                ExpTypeVars = tvr.ExpTypeVars.Concat(new[] { Tuple.Create(e, v) }),
+            };
+        }
+
+        #endregion
     }
 
     public class AnalyzerError : ApteridError

@@ -176,5 +176,23 @@ namespace Apterid.Bootstrap.Common {
                 return ResourceManager.GetString("E_0013_Analyzer_InvalidScopeItem", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Binding &quot;{0}&quot; cannot be empty..
+        /// </summary>
+        public static string E_0014_Analyzer_EmptyBinding {
+            get {
+                return ResourceManager.GetString("E_0014_Analyzer_EmptyBinding", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to infer type for expression &quot;{0}&quot;..
+        /// </summary>
+        public static string E_0015_Analyzer_UnableToInferType {
+            get {
+                return ResourceManager.GetString("E_0015_Analyzer_UnableToInferType", resourceCulture);
+            }
+        }
     }
 }

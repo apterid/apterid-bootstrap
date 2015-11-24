@@ -12,6 +12,8 @@ namespace Apterid.Bootstrap.Analyze
         public Scope Parent { get; internal set; }
         public QualifiedName Name { get; internal set; }
 
+        public Parse.Syntax.Node SyntaxNode { get; internal set; }
+
         public IList<Parse.Syntax.Node> PreTrivia { get; } = new List<Parse.Syntax.Node>();
         public IList<Parse.Syntax.Node> PostTrivia { get; } = new List<Parse.Syntax.Node>();
 

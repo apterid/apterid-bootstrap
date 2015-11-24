@@ -6,12 +6,25 @@ using System.Threading.Tasks;
 
 namespace Apterid.Bootstrap.Parse.Syntax
 {
-    public class Literal<T> : Leaf
+    public class Literal : Leaf
     {
-        public T Value { get; private set; }
+        public object Value { get; private set; }
+        public Type ValueType { get; private set; }
+
+        public Literal(NodeArgs args, object value, Type valueType)
+            : base(args)
+        {
+            this.Value = value;
+            this.ValueType = valueType;
+        }
+    }
+
+    public class Literal<T> : Literal
+    {
+        public new T Value { get; private set; }
 
         public Literal(NodeArgs args, T value)
-            : base(args)
+            : base(args, value, typeof(T))
         {
             this.Value = value;
         }

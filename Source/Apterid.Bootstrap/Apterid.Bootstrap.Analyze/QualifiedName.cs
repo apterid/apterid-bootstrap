@@ -35,11 +35,13 @@ namespace Apterid.Bootstrap.Analyze
                 if (value == null)
                     throw new ArgumentNullException(nameof(Qualifiers));
 
-                var name = tokens.Length > 1 ? tokens[tokens.Length - 1] : null;
+                var name = tokens != null && tokens.Length > 1 
+                    ? tokens[tokens.Length - 1] 
+                    : null;
                 var toks = value.ToArray();
                 var size = toks.Length + 1;
 
-                if (tokens.Length != size)
+                if (tokens == null || tokens.Length != size)
                     tokens = new string[size];
 
                 for (int i = 0; i < toks.Length; i++)
@@ -157,6 +159,12 @@ namespace Apterid.Bootstrap.Analyze
 
             h = hash;
             return hash;
+        }
+
+        public override string ToString()
+        {
+            var fn = FullName;
+            return string.IsNullOrWhiteSpace(fn) ? "<empty>" : fn;
         }
     }
 }

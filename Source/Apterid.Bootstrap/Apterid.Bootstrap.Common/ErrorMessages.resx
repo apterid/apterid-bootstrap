@@ -156,4 +156,10 @@
   <data name="E_0013_Analyzer_InvalidScopeItem" xml:space="preserve">
     <value>You are not allowed to have the construct "{0}" here.</value>
   </data>
+  <data name="E_0014_Analyzer_EmptyBinding" xml:space="preserve">
+    <value>Binding "{0}" cannot be empty.</value>
+  </data>
+  <data name="E_0015_Analyzer_UnableToInferType" xml:space="preserve">
+    <value>Unable to infer type for expression "{0}".</value>
+  </data>
 </root>

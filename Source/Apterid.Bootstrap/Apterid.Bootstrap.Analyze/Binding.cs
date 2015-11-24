@@ -8,7 +8,8 @@ namespace Apterid.Bootstrap.Analyze
 {
     public class Binding : Scope
     {
-        public Annotation Annotation { get; set; }
-        public Expression Value { get; set; }
+        public bool IsPublic { get; internal set; }
+        public Annotation Annotation { get; internal set; }
+        public Expression Expression { get; internal set; }
     }
 }
