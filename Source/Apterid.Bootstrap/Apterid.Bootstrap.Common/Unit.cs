@@ -8,17 +8,33 @@ namespace Apterid.Bootstrap.Common
 {
     public abstract class Unit
     {
-        public IList<ApteridError> Errors { get; } = new List<ApteridError>();
+        IList<ApteridError> errors = null;
+
+        public abstract IEnumerable<Unit> Children { get; }
+
+        public IEnumerable<ApteridError> Errors
+        {
+            get
+            {
+                IEnumerable<ApteridError> es = errors != null ? errors : Enumerable.Empty<ApteridError>();
+                var children = Children;
+                if (children != null)
+                    es = es.Concat(children.SelectMany(child => child.Errors));
+                return es;
+            }
+        }
 
         public void AddError<T>(string message)
             where T : ApteridError, new()
         {
-            Errors.Add(new T { Message = message });
+            if (errors == null) errors = new List<ApteridError>();
+            errors.Add(new T { Message = message });
         }
 
         public void AddError(ApteridError error)
         {
-            Errors.Add(error);
+            if (errors == null) errors = new List<ApteridError>();
+            errors.Add(error);
         }
     }
 }

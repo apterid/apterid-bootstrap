@@ -59,7 +59,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Steps\AnalyzeSourceFile.cs" />
-    <Compile Include="Steps\Generate.cs" />
+    <Compile Include="Steps\GenerateAssembly.cs" />
     <Compile Include="Steps\ParseSourceFile.cs" />
     <Compile Include="Steps\Compile.cs" />
   </ItemGroup>

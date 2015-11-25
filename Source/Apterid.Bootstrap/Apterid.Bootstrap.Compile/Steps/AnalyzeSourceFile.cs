@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Apterid.Bootstrap.Analyze;
 using Apterid.Bootstrap.Common;
@@ -9,42 +10,22 @@ using Apterid.Bootstrap.Parse;
 
 namespace Apterid.Bootstrap.Compile.Steps
 {
-    public class AnalyzeSourceFile : CompilerStep
+    public class AnalyzeSourceFile : CompilerStep<AnalysisUnit>
     {
-        public ParserSourceFile SourceFile { get; }
-        internal ApteridAnalyzer Analyzer { get; set; }
+        ParseUnit ParseUnit { get; }
+        ApteridAnalyzer Analyzer { get; set; }
 
-        public AnalyzeSourceFile(
-            CompilerContext context, 
-            CompilationUnit compileUnit, 
-            ParserSourceFile sourceFile)
-            : base(context, compileUnit)
+        public AnalyzeSourceFile(CompilerContext context, AnalysisUnit analysisUnit, ParseUnit parseUnit)
+            : base(context, analysisUnit)
         {
-            SourceFile = sourceFile;
+            ParseUnit = parseUnit;
         }
 
-        public override StepResult Run()
+        public override async Task RunAsync(CancellationToken cancel)
         {
-            try
-            {
-                if (Analyzer == null)
-                    Analyzer = new ApteridAnalyzer(Context, SourceFile, Unit.AnalyzeUnit, Context.CancelSource.Token);
-
-                Analyzer.Analyze();
-
-                if (Analyzer.NeedsRerun)
-                    this.Continuation = new AnalyzeSourceFile(Context, Unit, SourceFile) { Analyzer = Analyzer };
-            }
-            catch (OperationCanceledException)
-            {
-                return Canceled();
-            }
-            catch (ApteridException e)
-            {
-                Unit.AddError(new AnalyzerError { Exception = e });
-            }
-
-            return Context.Errors.Any() ? Failed() : Succeeded();
+            if (Analyzer == null)
+                Analyzer = new ApteridAnalyzer(Context, ParseUnit.SourceFile, Unit);
+            await Analyzer.Analyze(cancel);
         }
     }
 }

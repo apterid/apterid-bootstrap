@@ -2,92 +2,88 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Apterid.Bootstrap.Common;
 using Apterid.Bootstrap.Parse;
 
 namespace Apterid.Bootstrap.Compile.Steps
 {
-    public class ParseSourceFile : CompilerStep
+    public class ParseSourceFile : CompilerStep<ParseUnit>
     {
-        public ParserSourceFile SourceFile { get; }
-
-        public ParseSourceFile(CompilerContext context, CompilationUnit compileUnit, ParserSourceFile sourceFile)
-            : base(context, compileUnit)
+        public ParseSourceFile(CompilerContext context, ParseUnit parseUnit)
+            : base(context, parseUnit)
         {
-            SourceFile = sourceFile;
         }
 
-        public override StepResult Run()
+        public override Task RunAsync(CancellationToken cancel)
         {
-            // verify that the source file exists
-            if (!SourceFile.Exists)
+            return Task.Run(() =>
             {
-                Unit.AddError<ParsingError>(string.Format(ErrorMessages.E_0006_Compiler_SourceDoesNotExist, SourceFile.Name));
-                return Failed();
-            }
+                var sourceFile = Unit.SourceFile;
 
-            if (Context.CancelSource.IsCancellationRequested)
-                return Canceled();
-
-            // if the source file is older than the output file, do nothing
-            if (!Context.ForceRecompile
-                && Unit.OutputFileInfo.Exists
-                && Unit.OutputFileInfo.LastWriteTimeUtc >= SourceFile.LastWriteTimeUtc)
-            {
-                return Succeeded();
-            }
-
-            // parse
-            try
-            {
-                var parser = new ApteridParser(handle_left_recursion: true);
-                parser.SourceFile = SourceFile;
-                SourceFile.Parser = parser;
-
-                var match = parser.GetMatch(SourceFile.Buffer, parser.ApteridSource);
-
-                if (Context.CancelSource.IsCancellationRequested)
-                    return Canceled();
-
-                if (match.Success)
+                // verify that the source file exists
+                if (!sourceFile.Exists)
                 {
-                    // check for error sections
-                    SourceFile.ParseTree = match.Result;
+                    Unit.AddError<ParsingError>(string.Format(ErrorMessages.E_0006_Compiler_SourceDoesNotExist, sourceFile.Name));
 
-                    var errorSections = SourceFile.GetNodes<Parse.Syntax.ErrorSection>();
-                    foreach (var es in errorSections)
+                    if (Context.AbortOnError)
+                        return;
+                }
+
+                if (cancel.IsCancellationRequested)
+                    throw new OperationCanceledException(cancel);
+
+                // parse
+                try
+                {
+                    if (Unit.Parser == null)
+                        Unit.Parser = new ApteridParser(handle_left_recursion: true);
+
+                    var parser = Unit.Parser;
+                    parser.SourceFile = sourceFile;
+                    sourceFile.Parser = parser;
+
+                    var match = parser.GetMatch(sourceFile.Buffer, parser.ApteridSource);
+
+                    if (cancel.IsCancellationRequested)
+                        throw new OperationCanceledException(cancel);
+
+                    if (match.Success)
+                    {
+                        // check for error sections
+                        sourceFile.ParseTree = match.Result;
+
+                        var errorSections = sourceFile.GetNodes<Parse.Syntax.ErrorSection>();
+                        foreach (var es in errorSections)
+                        {
+                            var error = new ParsingError
+                            {
+                                SourceFile = sourceFile,
+                                Message = ErrorMessages.E_0007_Parser_SyntaxError,
+                                ErrorNode = es,
+                                ErrorIndex = es.StartIndex
+                            };
+                            Unit.AddError(error);
+                        }
+                    }
+                    else
                     {
                         var error = new ParsingError
                         {
-                            SourceFile = SourceFile,
-                            Message = ErrorMessages.E_0007_Parser_SyntaxError,
-                            ErrorNode = es,
-                            ErrorIndex = es.StartIndex
+                            SourceFile = sourceFile,
+                            Message = match.Error,
+                            ErrorIndex = match.ErrorIndex
                         };
+
                         Unit.AddError(error);
                     }
-
-                    return Unit.Errors.Any() ? Failed() : Succeeded();
                 }
-                else
+                catch (Exception e)
                 {
-                    var error = new ParsingError
-                    {
-                        SourceFile = SourceFile,
-                        Message = match.Error,
-                        ErrorIndex = match.ErrorIndex
-                    };
-
-                    Unit.AddError(error);
-                    return Failed();
+                    Unit.AddError(new ParsingError { Exception = e });
                 }
-            }
-            catch (Exception e)
-            {
-                Unit.AddError(new ParsingError { Exception = e });
-                return Failed();
-            }
+            });
         }
     }
 }

@@ -16,8 +16,7 @@ namespace Apterid.Bootstrap.Compile
     {
         public CancellationTokenSource CancelSource { get; } = new CancellationTokenSource();
         public IList<CompilationUnit> CompileUnits { get; } = new List<CompilationUnit>();
-
-        internal IList<CompileError> CompileErrors { get; } = new List<CompileError>();
+        public IList<CompilerError> CompileErrors { get; } = new List<CompilerError>();
 
         public IEnumerable<ApteridError> Errors
         {
@@ -28,9 +27,5 @@ namespace Apterid.Bootstrap.Compile
                     .Concat(CompileErrors);
             }
         }
-    }
-
-    public class CompileError : ApteridError
-    {
     }
 }

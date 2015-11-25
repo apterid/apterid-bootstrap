@@ -42,23 +42,22 @@ namespace Apterid.Bootstrap.Compile
                 Mode = mode,
                 OutputFileInfo = outputFileInfo,
                 SourceFiles = sources.ToList(),
-                AnalyzeUnit = new AnalysisUnit(),
             };
 
             Context.CompileUnits.Add(unit);
         }
 
-        public StepStatus UpdateAllCompileUnits()
+        public Task UpdateAllCompileUnitsAsync()
         {
-            var compileStep = new CompilerStep(Context)
-            {
-                SubSteps = Context.CompileUnits
-                    .Select(unit => new CompilerStep(Context, unit))
-                    .OfType<CompilerStep>()
-                    .ToList()
-            };
+            var tasks = Context.CompileUnits
+                .Select(unit => new Steps.Compile(Context, unit).RunAsync(Context.CancelSource.Token))
+                .ToArray();
 
-            return compileStep.Run().Status;
+            return Task.WhenAll(tasks);
         }
+    }
+
+    public class CompilerError : ApteridError
+    {
     }
 }

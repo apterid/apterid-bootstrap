@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using Apterid.Bootstrap.Analyze;
 using Apterid.Bootstrap.Compile.Steps;
+using Apterid.Bootstrap.Parse;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Apterid.Bootstrap.Compile.Tests
@@ -25,10 +28,10 @@ module One =
                 var context = compiler.Context;
                 var compileUnit = context.CompileUnits.First();
                 var sourceFile = compileUnit.SourceFiles.First();
+                var parseUnit = new ParseUnit { SourceFile = sourceFile };
 
-                var parse = new ParseSourceFile(context, compileUnit, sourceFile);
-                var result = parse.Run();
-                Assert.AreEqual(StepStatus.Succeeded, result.Status);
+                new ParseSourceFile(context, parseUnit).RunAsync(context.CancelSource.Token).Wait();
+                Assert.AreEqual(0, compileUnit.Errors.Count(), "parse errors: " + string.Join("; ", compileUnit.Errors.Select(e => e.Message)));
 
                 var modules = sourceFile.ParseTree.Children.OfType<Parse.Syntax.Module>().ToList();
                 Assert.AreEqual(1, modules.Count);
@@ -55,14 +58,16 @@ module One =
                 var context = compiler.Context;
                 var compileUnit = context.CompileUnits.First();
                 var sourceFile = compileUnit.SourceFiles.First();
+                var parseUnit = new ParseUnit { SourceFile = sourceFile };
 
-                var parseResult = new ParseSourceFile(context, compileUnit, sourceFile).Run();
-                Assert.AreEqual(StepStatus.Succeeded, parseResult.Status);
+                new ParseSourceFile(context, parseUnit).RunAsync(context.CancelSource.Token).Wait();
+                Assert.AreEqual(0, compileUnit.Errors.Count(), "parse errors: " + string.Join("; ", compileUnit.Errors.Select(e => e.Message)));
 
-                var analyzeResult = new AnalyzeSourceFile(context, compileUnit, sourceFile).Run();
-                Assert.AreEqual(StepStatus.Succeeded, analyzeResult.Status);
+                var analyzeUnit = new AnalysisUnit { ParseUnits = new List<ParseUnit>() { parseUnit } };
+                new AnalyzeSourceFile(context, analyzeUnit, parseUnit).RunAsync(context.CancelSource.Token).Wait();
+                Assert.AreEqual(0, compileUnit.Errors.Count(), "analyze errors: " + string.Join("; ", compileUnit.Errors.Select(e => e.Message)));
 
-                var module = compileUnit.AnalyzeUnit.Modules.Values.Single(m => m.Name.Name == "One");
+                var module = analyzeUnit.Modules.Values.Single(m => m.Name.Name == "One");
                 var binding = module.Bindings.Values.Single(b => b.Name.Name == "f");
                 Assert.IsFalse(binding.IsPublic);
 
