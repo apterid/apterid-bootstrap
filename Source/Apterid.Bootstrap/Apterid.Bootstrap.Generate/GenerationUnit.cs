@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.SymbolStore;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,11 +16,14 @@ namespace Apterid.Bootstrap.Generate
 {
     public class GenerationUnit : Unit
     {
-        public OutputMode Mode { get; set; }
-        public FileInfo OutputFileInfo { get; set; }
+        public CompileOutputMode Mode { get; set; }
 
         public IList<ParseUnit> ParseUnits { get; set; }
         public AnalysisUnit AnalysisUnit { get; set; }
+
+        public AssemblyBuilder AssemblyBuilder { get; set; }
+        public ModuleBuilder ModuleBuilder { get; set; }
+        public IDictionary<string, ISymbolDocumentWriter> SymbolDocs { get; } = new Dictionary<string, ISymbolDocumentWriter>();
 
         public override IEnumerable<Unit> Children
         {
