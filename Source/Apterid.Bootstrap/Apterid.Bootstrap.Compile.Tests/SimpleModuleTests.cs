@@ -1,4 +1,6 @@
-﻿using System;
+// Copyright (C) 2015 The Apterid Developers - See LICENSE
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -98,7 +100,7 @@ module One =
                 var unit = tester.Compiler.Context.CompileUnits.Single();
                 Assert.AreEqual(0, unit.Errors.Count(), string.Format("Errors: {0}", string.Join("; ", unit.Errors.Select(e => e.Message))));
 
-                var assembly = Assembly.LoadFrom(unit.OutputFileInfo.FullName);
+                var assembly = unit.GenerationUnit.AssemblyBuilder;
                 Assert.IsNotNull(assembly);
 
                 var module = assembly.GetType("One");

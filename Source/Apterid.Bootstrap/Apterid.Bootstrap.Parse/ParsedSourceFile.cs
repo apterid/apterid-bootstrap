@@ -1,4 +1,6 @@
-﻿using System;
+// Copyright (C) 2015 The Apterid Developers - See LICENSE
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;

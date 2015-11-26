@@ -1,4 +1,6 @@
-﻿using System;
+// Copyright (C) 2015 The Apterid Developers - See LICENSE
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -25,11 +27,17 @@ namespace Apterid.Bootstrap.Compile.Tests
                 Path.GetTempPath();
 #endif
 
-            var outputPath = Path.Combine(tempPath, name + ".DLL");
+            var nonce = "";
+#if !DEBUG
+            nonce = "_" + Guid.NewGuid().ToString("D");
+#endif
+
+            var outputPath = Path.Combine(tempPath, string.Format("{0}{1}.dll", name, nonce));
 
             sourceInfos = sources.Select((s, i) =>
                 {
-                    var spath = Path.Combine(tempPath, string.Format("{0}_{1}.apterid", name, i));
+
+                    var spath = Path.Combine(tempPath, string.Format("{0}{1}_{2}.apterid", name, nonce, i));
                     File.WriteAllText(spath, s);
                     return new FileInfo(spath);
                 })
@@ -52,6 +60,12 @@ namespace Apterid.Bootstrap.Compile.Tests
 #if !DEBUG
                     if (unit.OutputFileInfo != null && unit.OutputFileInfo.Exists)
                         unit.OutputFileInfo.Delete();
+
+                    var dir = Path.GetDirectoryName(unit.OutputFileInfo.FullName);
+                    var name = Path.GetFileNameWithoutExtension(unit.OutputFileInfo.FullName);
+                    var pdb = new FileInfo(Path.Combine(dir, name + ".pdb"));
+                    if (pdb.Exists)
+                        pdb.Delete();
 #endif
                 }
             }

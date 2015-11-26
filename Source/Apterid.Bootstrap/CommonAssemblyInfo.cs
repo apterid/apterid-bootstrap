@@ -1,4 +1,4 @@
-// Copyright © 2015 The Apterid Developers
+// Copyright (C) 2015 The Apterid Developers - See LICENSE
 
 using System.Reflection;
 using System.Runtime.CompilerServices;
