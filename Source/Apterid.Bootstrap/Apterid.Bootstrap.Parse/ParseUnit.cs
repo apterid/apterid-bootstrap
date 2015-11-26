@@ -9,7 +9,7 @@ namespace Apterid.Bootstrap.Parse
 {
     public class ParseUnit : Unit
     {
-        public ParserSourceFile SourceFile { get; set; }
+        public ParsedSourceFile SourceFile { get; set; }
         public ApteridParser Parser { get; set; }
 
         public override IEnumerable<Unit> Children => Enumerable.Empty<Unit>();

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Reflection;
+using System.Threading.Tasks;
 using Apterid.Bootstrap.Analyze;
 using Apterid.Bootstrap.Compile.Steps;
 using Apterid.Bootstrap.Parse;
@@ -30,7 +32,9 @@ module One =
                 var sourceFile = compileUnit.SourceFiles.First();
                 var parseUnit = new ParseUnit { SourceFile = sourceFile };
 
-                new ParseSourceFile(context, parseUnit).RunAsync(context.CancelSource.Token).Wait();
+                var parse = new Task(new ParseSourceFile(context, parseUnit).GetStepAction(context.CancelSource.Token));
+                parse.Start();
+                parse.Wait();
                 Assert.AreEqual(0, compileUnit.Errors.Count(), "parse errors: " + string.Join("; ", compileUnit.Errors.Select(e => e.Message)));
 
                 var modules = sourceFile.ParseTree.Children.OfType<Parse.Syntax.Module>().ToList();
@@ -60,11 +64,16 @@ module One =
                 var sourceFile = compileUnit.SourceFiles.First();
                 var parseUnit = new ParseUnit { SourceFile = sourceFile };
 
-                new ParseSourceFile(context, parseUnit).RunAsync(context.CancelSource.Token).Wait();
+                var parse = new Task(new ParseSourceFile(context, parseUnit).GetStepAction(context.CancelSource.Token));
+                parse.Start();
+                parse.Wait();
                 Assert.AreEqual(0, compileUnit.Errors.Count(), "parse errors: " + string.Join("; ", compileUnit.Errors.Select(e => e.Message)));
 
                 var analyzeUnit = new AnalysisUnit { ParseUnits = new List<ParseUnit>() { parseUnit } };
-                new AnalyzeSourceFile(context, analyzeUnit, parseUnit).RunAsync(context.CancelSource.Token).Wait();
+                var analyze = new Task(new AnalyzeSourceFile(context, analyzeUnit, parseUnit).GetStepAction(context.CancelSource.Token));
+                analyze.Start();
+                analyze.Wait();
+
                 Assert.AreEqual(0, compileUnit.Errors.Count(), "analyze errors: " + string.Join("; ", compileUnit.Errors.Select(e => e.Message)));
 
                 var module = analyzeUnit.Modules.Values.Single(m => m.Name.Name == "One");
@@ -73,9 +82,34 @@ module One =
 
                 Assert.IsInstanceOfType(binding.Expression, typeof(Analyze.Expressions.IntegerLiteral));
                 var intLiteral = binding.Expression as Analyze.Expressions.IntegerLiteral;
+
                 Assert.IsInstanceOfType(intLiteral.ResolvedType, typeof(Analyze.Builtins.SystemInt32));
-                var val = (int)intLiteral.Value;
+                var val = (int)intLiteral.IntValue;
                 Assert.AreEqual(123, val);
+            }
+        }
+
+        [TestMethod]
+        public void Compiler_Generate_SimpleModule()
+        {
+            using (var tester = new CompilerTester(nameof(Compiler_Generate_SimpleModule), Source))
+            {
+                tester.Compiler.UpdateAllCompileUnitsAsync().Wait();
+                var unit = tester.Compiler.Context.CompileUnits.Single();
+                Assert.AreEqual(0, unit.Errors.Count(), string.Format("Errors: {0}", string.Join("; ", unit.Errors.Select(e => e.Message))));
+
+                var assembly = Assembly.LoadFile(unit.OutputFileInfo.FullName);
+                Assert.IsNotNull(assembly);
+
+                var module = assembly.GetType("One");
+                Assert.IsNotNull(module);
+
+                var field = module.GetField("f", BindingFlags.NonPublic | BindingFlags.Static);
+                Assert.IsNotNull(field);
+                Assert.AreEqual(typeof(int), field.FieldType);
+
+                int value = (int)field.GetValue(null);
+                Assert.AreEqual(123, value);
             }
         }
     }

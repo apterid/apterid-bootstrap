@@ -8,7 +8,7 @@ using Apterid.Bootstrap.Parse;
 
 namespace Apterid.Bootstrap.Compile
 {
-    public class PhysicalSourceFile : ParserSourceFile
+    public class PhysicalSourceFile : ParsedSourceFile
     {
         FileInfo fileInfo;
         string buffer;

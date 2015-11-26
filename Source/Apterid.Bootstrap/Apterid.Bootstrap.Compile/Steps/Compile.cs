@@ -21,78 +21,119 @@ namespace Apterid.Bootstrap.Compile.Steps
         {
         }
 
-        public override async Task RunAsync(CancellationToken cancel)
+        public override Action GetStepAction(CancellationToken cancel)
         {
-            // set up compilation units
-            if (Unit.ParseUnits == null)
+            return () =>
             {
-                Unit.ParseUnits = Unit.SourceFiles
-                    .Where(sf => (Unit.Mode & CompileOutputMode.SaveToFile) == 0
-                                 || Context.ForceRecompile
-                                 || !sf.Exists
-                                 || Unit.OutputFileInfo == null
-                                 || sf.LastWriteTimeUtc > Unit.OutputFileInfo.LastWriteTimeUtc)
-                    .Select(sf => new ParseUnit { SourceFile = sf })
-                    .ToList();
-            }
-
-            // TODO: make dummy modules from references
-
-            if (Unit.AnalysisUnit == null)
-            {
-                Unit.AnalysisUnit = new AnalysisUnit
+                try
                 {
-                    ParseUnits = Unit.ParseUnits
-                };
-            }
-
-            if (Unit.GenerationUnit == null)
-            {
-                Unit.GenerationUnit = new GenerationUnit
-                {
-                    Mode = Unit.Mode,
-                    ParseUnits = Unit.ParseUnits,
-                    AnalysisUnit = Unit.AnalysisUnit,
-                };
-            }
-
-            // tasks
-            var tasksToWait = new List<Task>();
-
-            foreach (var parseUnit in Unit.ParseUnits)
-            {
-                Task parse = null;
-                Task analyze = null;
-
-                if ((Unit.Mode & CompileOutputMode.Parse) != 0)
-                {
-                    parse = new ParseSourceFile(Context, parseUnit).RunAsync(Context.CancelSource.Token);
-                    tasksToWait.Add(parse);
-                    parse.Start();
-                }
-
-                if ((Unit.Mode & CompileOutputMode.Analyze) != 0)
-                {
-                    analyze = new AnalyzeSourceFile(Context, Unit.AnalysisUnit, parseUnit).RunAsync(Context.CancelSource.Token);
-
-                    if (parse == null)
+                    // set up compilation units
+                    if (Unit.ParseUnits == null)
                     {
-                        tasksToWait.Add(parse.ContinueWith(t => analyze));
+                        Unit.ParseUnits = Unit.SourceFiles
+                            .Where(sf => (Unit.Mode & CompileOutputMode.SaveToFile) == 0
+                                         || Context.ForceRecompile
+                                         || !sf.Exists
+                                         || Unit.OutputFileInfo == null
+                                         || sf.LastWriteTimeUtc > Unit.OutputFileInfo.LastWriteTimeUtc)
+                            .Select(sf => new ParseUnit { SourceFile = sf })
+                            .ToList();
                     }
-                    else
+
+                    // TODO: make dummy modules from references
+
+                    if (Unit.AnalysisUnit == null)
                     {
-                        tasksToWait.Add(analyze);
-                        analyze.Start();
+                        lock (Unit)
+                        {
+                            if (Unit.AnalysisUnit == null)
+                            {
+                                Unit.AnalysisUnit = new AnalysisUnit
+                                {
+                                    ParseUnits = Unit.ParseUnits
+                                };
+                            }
+                        }
+                    }
+
+                    if (Unit.GenerationUnit == null)
+                    {
+                        lock (Unit)
+                        {
+                            if (Unit.GenerationUnit == null)
+                            {
+                                Unit.GenerationUnit = new GenerationUnit
+                                {
+                                    Mode = Unit.Mode,
+                                    ParseUnits = Unit.ParseUnits,
+                                    AnalysisUnit = Unit.AnalysisUnit,
+                                };
+                            }
+                        }
+                    }
+
+                    // tasks
+                    var parseAndAnalyzeActions = new List<Tuple<Action, Action>>();
+
+                    foreach (var parseUnit in Unit.ParseUnits)
+                    {
+                        Action parse = null;
+                        Action analyze = null;
+
+                        if ((Unit.Mode & CompileOutputMode.Parse) != 0)
+                        {
+                            parse = new ParseSourceFile(Context, parseUnit).GetStepAction(Context.CancelSource.Token);
+                        }
+
+                        if ((Unit.Mode & CompileOutputMode.Analyze) != 0)
+                        {
+                            analyze = new AnalyzeSourceFile(Context, Unit.AnalysisUnit, parseUnit).GetStepAction(Context.CancelSource.Token);
+                        }
+
+                        parseAndAnalyzeActions.Add(Tuple.Create(parse, analyze));
+                    }
+
+                    var tasks = parseAndAnalyzeActions
+                        .Select(pa =>
+                        {
+                            if (pa.Item1 != null && pa.Item2 != null)
+                            {
+                                var parse = Task.Factory.StartNew(pa.Item1, TaskCreationOptions.AttachedToParent);
+                                return parse.ContinueWith(t => pa.Item2());
+                            }
+                            else if (pa.Item1 != null)
+                            {
+                                return Task.Factory.StartNew(pa.Item1, TaskCreationOptions.AttachedToParent);
+                            }
+                            else if (pa.Item2 != null)
+                            {
+                                return Task.Factory.StartNew(pa.Item2, TaskCreationOptions.AttachedToParent);
+                            }
+                            else
+                            {
+                                return null;
+                            }
+                        })
+                        .Where(t => t != null);
+
+                    Task.WhenAll(tasks).Wait();
+
+                    if ((Unit.Mode & CompileOutputMode.Generate) != 0 && !Unit.Errors.Any())
+                    {
+                        var generate = new GenerateAssembly(Context, Unit).GetStepAction(Context.CancelSource.Token);
+                        var task = Task.Factory.StartNew(generate, TaskCreationOptions.AttachedToParent);
+                        task.Wait();
                     }
                 }
-            }
-
-            await Task.WhenAll(tasksToWait);
-
-            if ((Unit.Mode & CompileOutputMode.Generate) != 0)
-            {
-                await new GenerateAssembly(Context, Unit).RunAsync(Context.CancelSource.Token);
-            }
+                catch (OperationCanceledException)
+                {
+                    throw;
+                }
+                catch (Exception e)
+                {
+                    Unit.AddError(new CompilerError { Exception = e });
+                }
+            };
         }
     }
 }

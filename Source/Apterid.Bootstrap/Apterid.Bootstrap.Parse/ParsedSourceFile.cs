@@ -8,7 +8,7 @@ using Apterid.Bootstrap.Parse.Syntax;
 
 namespace Apterid.Bootstrap.Parse
 {
-    public abstract class ParserSourceFile : Common.SourceFile
+    public abstract class ParsedSourceFile : Common.SourceFile
     {
         public ApteridParser Parser { get; set; }
         public Node ParseTree { get; set; }
@@ -32,7 +32,7 @@ namespace Apterid.Bootstrap.Parse
         }
     }
 
-    public class MemorySourceFile : ParserSourceFile
+    public class MemorySourceFile : ParsedSourceFile
     {
         string source;
 

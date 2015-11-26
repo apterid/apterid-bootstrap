@@ -18,7 +18,7 @@ namespace Apterid.Bootstrap.Compile
         public FileInfo OutputFileInfo { get; set; }
         public string OutputName { get; set; }
 
-        public IList<ParserSourceFile> SourceFiles { get; set; }
+        public IList<ParsedSourceFile> SourceFiles { get; set; }
         public IList<ParseUnit> ParseUnits { get; set; }
         public AnalysisUnit AnalysisUnit { get; set; }
         public GenerationUnit GenerationUnit { get; set; }

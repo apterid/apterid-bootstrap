@@ -21,12 +21,32 @@ namespace Apterid.Bootstrap.Compile.Steps
             ParseUnit = parseUnit;
         }
 
-        public override async Task RunAsync(CancellationToken cancel)
+        public override Action GetStepAction(CancellationToken cancel)
         {
-            if (Analyzer == null)
-                Analyzer = new ApteridAnalyzer(Context, ParseUnit.SourceFile, Unit);
+            return () =>
+            {
+                if (Analyzer == null)
+                {
+                    lock (this)
+                    {
+                        if (Analyzer == null)
+                            Analyzer = new ApteridAnalyzer(Context, ParseUnit.SourceFile, Unit);
+                    }
+                }
 
-            await Analyzer.Analyze(cancel);
+                try
+                {
+                    Analyzer.Analyze(cancel);
+                }
+                catch (OperationCanceledException)
+                {
+                    throw;
+                }
+                catch (Exception e)
+                {
+                    Unit.AddError(new AnalyzerError { Exception = e });
+                }
+            };
         }
     }
 }

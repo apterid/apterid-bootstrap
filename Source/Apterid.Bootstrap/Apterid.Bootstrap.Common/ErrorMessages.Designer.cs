@@ -203,5 +203,23 @@ namespace Apterid.Bootstrap.Common {
                 return ResourceManager.GetString("E_0016_Compiler_InvalidOutputDir", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The type of &apos;{0}&apos; was not resolved..
+        /// </summary>
+        public static string E_0017_Generator_UnresolvedType {
+            get {
+                return ResourceManager.GetString("E_0017_Generator_UnresolvedType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to convert numeric literal {0} to {1}..
+        /// </summary>
+        public static string E_0018_Generator_InvalidNumericLiteral {
+            get {
+                return ResourceManager.GetString("E_0018_Generator_InvalidNumericLiteral", resourceCulture);
+            }
+        }
     }
 }

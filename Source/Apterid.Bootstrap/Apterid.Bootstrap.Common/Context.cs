@@ -16,8 +16,7 @@ namespace Apterid.Bootstrap.Common
         Library     = 1 << 3,
         Executable  = 1 << 4,
         EmitSymbols = 1 << 5,
-        DebugInfo   = 1 << 6,
-        Optimize    = 1 << 7,
+        Optimize    = 1 << 6,
 
         SaveToFile = Library | Executable,
 

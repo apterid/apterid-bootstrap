@@ -15,9 +15,9 @@ namespace Apterid.Bootstrap.Compile.Steps
         {
         }
 
-        public override Task RunAsync(CancellationToken cancel)
+        public override Action GetStepAction(CancellationToken cancel)
         {
-            return Task.Run(() =>
+            return () =>
             {
                 if ((Unit.Mode & CompileOutputMode.Executable) != 0)
                 {
@@ -25,7 +25,7 @@ namespace Apterid.Bootstrap.Compile.Steps
                 }
 
                 Unit.GenerationUnit.AssemblyBuilder.Save(Unit.OutputFileInfo.Name);
-            }, cancel);
+            };
         }
     }
 }

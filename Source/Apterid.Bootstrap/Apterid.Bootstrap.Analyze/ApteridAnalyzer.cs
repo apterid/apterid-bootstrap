@@ -16,39 +16,40 @@ namespace Apterid.Bootstrap.Analyze
     {
         public Context Context { get; }
         public AnalysisUnit Unit { get; private set; }
-        public ParserSourceFile SourceFile { get; }
+        public ParsedSourceFile SourceFile { get; }
 
-        public ApteridAnalyzer(Context context, ParserSourceFile sourceFile, AnalysisUnit analyzeUnit)
+        public ApteridAnalyzer(Context context, ParsedSourceFile sourceFile, AnalysisUnit analyzeUnit)
         {
             Context = context;
             Unit = analyzeUnit;
             SourceFile = sourceFile;
         }
 
-        public async Task Analyze(CancellationToken cancel)
+        public void Analyze(CancellationToken cancel)
         {
             var sourceNode = SourceFile.ParseTree as Parse.Syntax.Source;
             if (sourceNode == null)
             {
                 Unit.AddError(new AnalyzerError
                 {
-                    Node = SourceFile.ParseTree,
+                    ErrorNode = SourceFile.ParseTree,
                     Message = string.Format(ErrorMessages.E_0010_Analyzer_ParseTreeIsNotSource, SourceFile.Name)
                 });
                 return;
             }
 
-            var modules = await AnalyzeSource(sourceNode, cancel);
+            var modules = AnalyzeSource(sourceNode, cancel).Result;
             if (Unit.Errors.Any() && Context.AbortOnError)
                 return;
-            await ResolveTypes(modules);
+
+            ResolveTypes(modules, cancel);
         }
 
         #region Semantic Analysis
 
         Task<Module[]> AnalyzeSource(Parse.Syntax.Source sourceNode, CancellationToken cancel)
         {
-            var modules = new List<Tuple<Parse.Syntax.Module, Module>>();
+            var nodesAndModules = new List<Tuple<Parse.Syntax.Module, Module>>();
 
             // collect top-level modules
             var triviaNodes = new List<Parse.Syntax.Node>();
@@ -82,7 +83,7 @@ namespace Apterid.Bootstrap.Analyze
                         triviaNodes.Clear();
                     }
 
-                    modules.Add(Tuple.Create(moduleNode, curModule));
+                    nodesAndModules.Add(Tuple.Create(moduleNode, curModule));
                 }
                 else if (node is Parse.Syntax.Directive)
                 {
@@ -96,7 +97,7 @@ namespace Apterid.Bootstrap.Analyze
                 {
                     Unit.AddError(new AnalyzerError
                     {
-                        Node = node,
+                        ErrorNode = node,
                         Message = string.Format(ErrorMessages.E_0011_Analyzer_InvalidToplevelItem, ApteridError.Truncate(node.Text)),
                     });                    
                 }
@@ -109,14 +110,11 @@ namespace Apterid.Bootstrap.Analyze
             }
 
             // analyze
-            var tasks = modules
-                .Select(mm => AnalyzeModule(mm.Item1, mm.Item2, cancel))
-                .ToArray();
-
+            var tasks = nodesAndModules.Select(mm => AnalyzeModule(mm.Item1, mm.Item2, cancel));
             return Task.WhenAll(tasks);
         }
 
-        async Task<Module> AnalyzeModule(Parse.Syntax.Module moduleNode, Module module, CancellationToken cancel)
+        Task<Module> AnalyzeModule(Parse.Syntax.Module moduleNode, Module module, CancellationToken cancel)
         {
             var bindings = new List<Tuple<Parse.Syntax.Binding, Binding>>();
 
@@ -141,7 +139,7 @@ namespace Apterid.Bootstrap.Analyze
                         {
                             Unit.AddError(new AnalyzerError
                             {
-                                Node = node,
+                                ErrorNode = node,
                                 Message = string.Format(ErrorMessages.E_0012_Analyzer_DuplicateBinding, bindingName.Name),
                             });
                         }
@@ -165,7 +163,7 @@ namespace Apterid.Bootstrap.Analyze
                 {
                     Unit.AddError(new AnalyzerError
                     {
-                        Node = node,
+                        ErrorNode = node,
                         Message = string.Format(ErrorMessages.E_0013_Analyzer_InvalidScopeItem, ApteridError.Truncate(node.Text)),
                     });
                 }
@@ -178,23 +176,20 @@ namespace Apterid.Bootstrap.Analyze
             }
 
             // analyze
-            var tasks = bindings
-                .Select(bb => AnalyzeBinding(module, bb.Item1, bb.Item2, cancel))
-                .ToArray();
-            await Task.WhenAll(tasks);
-            return module;
+            var tasks = bindings.Select(bb => Task.Factory.StartNew(() => AnalyzeBinding(module, bb.Item1, bb.Item2, cancel), TaskCreationOptions.AttachedToParent));
+            return Task.WhenAll(tasks).ContinueWith(t => module);
         }
 
-        Task AnalyzeBinding(Module module, Parse.Syntax.Binding bindingNode, Binding binding, CancellationToken cancel)
+        void AnalyzeBinding(Module module, Parse.Syntax.Binding bindingNode, Binding binding, CancellationToken cancel)
         {
             if (bindingNode.Body == null || !bindingNode.Body.Any())
             {
                 Unit.AddError(new AnalyzerError
                 {
-                    Node = bindingNode,
+                    ErrorNode = bindingNode,
                     Message = string.Format(ErrorMessages.E_0014_Analyzer_EmptyBinding, bindingNode.Name.Text),
                 });
-                return Task.CompletedTask;
+                return;
             }
 
             var triviaNodes = new List<Parse.Syntax.Node>();
@@ -229,17 +224,16 @@ namespace Apterid.Bootstrap.Analyze
             {
                 Unit.AddError(new AnalyzerError
                 {
-                    Node = bindingNode,
+                    ErrorNode = bindingNode,
                     Message = string.Format(ErrorMessages.E_0014_Analyzer_EmptyBinding, bindingNode.Name.Text),
                 });
-                return Task.CompletedTask;
+                return;
             }
 
             foreach (var tn in triviaNodes)
                 expression.PostTrivia.Add(tn);
 
             binding.Expression = expression;
-            return Task.CompletedTask;
         }
 
         #endregion
@@ -252,18 +246,29 @@ namespace Apterid.Bootstrap.Analyze
             public IEnumerable<Tuple<Expression, Var>> ExpTypeVars { get; set; }
         }
 
-        Task ResolveTypes(IEnumerable<Module> modules)
+        void ResolveTypes(IEnumerable<Module> modules, CancellationToken cancel)
         {
-            return Task.Run(() =>
-            { 
-                var trr = new TypeResolveRec
-                {
-                    Constraint = s => new[] { s }, // true
-                    ExpTypeVars = Enumerable.Empty<Tuple<Expression, Var>>(),
-                };
+            var trr = new TypeResolveRec
+            {
+                Constraint = s => new[] { s }, // true
+                ExpTypeVars = Enumerable.Empty<Tuple<Expression, Var>>(),
+            };
 
-                trr = modules.Aggregate(trr, (mtr, m) => m.Bindings.Values.Aggregate(mtr, (btr, b) => ResolveExpressionType(btr, b.Expression)));
-                var varTypes = Goal.Eval(trr.Constraint).FirstOrDefault();
+            trr = modules.Aggregate(trr, (mtr, m) =>
+            {
+                if (cancel.IsCancellationRequested) throw new OperationCanceledException(cancel);
+
+                return m.Bindings.Values.Aggregate(mtr, (btr, b) =>
+                {
+                    if (cancel.IsCancellationRequested) throw new OperationCanceledException(cancel);
+
+                    return ResolveExpressionType(btr, b.Expression);
+                });
+            });
+
+            try
+            {
+                var varTypes = Goal.Eval(trr.Constraint).First();
 
                 foreach (var expVar in trr.ExpTypeVars)
                 {
@@ -278,30 +283,38 @@ namespace Apterid.Bootstrap.Analyze
                     {
                         Unit.AddError(new AnalyzerError
                         {
-                            Node = e.SyntaxNode,
+                            ErrorNode = e.SyntaxNode,
                             Message = string.Format(ErrorMessages.E_0015_Analyzer_UnableToInferType, ApteridError.Truncate(e.SyntaxNode.Text)),
                         });
                     }
                 }
-            });
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (Exception e)
+            {
+                Unit.AddError(new AnalyzerError { Exception = e });
+            }
         }
 
         TypeResolveRec ResolveExpressionType(TypeResolveRec tvr, Expression e)
         {
             tvr = e.Children.Aggregate(tvr, (tvrc, c) => ResolveExpressionType(tvrc, c));
             var v = Var.NewVar();
-            return new TypeResolveRec
+            var result = new TypeResolveRec
             {
                 Constraint = Goal.Conj(tvr.Constraint, e.ResolveType(v)),
                 ExpTypeVars = tvr.ExpTypeVars.Concat(new[] { Tuple.Create(e, v) }),
             };
+            return result;
         }
 
         #endregion
     }
 
-    public class AnalyzerError : ApteridError
+    public class AnalyzerError : NodeError
     {
-        public Parse.Syntax.Node Node { get; set; }
     }
 }

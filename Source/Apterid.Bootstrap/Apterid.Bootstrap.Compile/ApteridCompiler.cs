@@ -32,7 +32,7 @@ namespace Apterid.Bootstrap.Compile
         public void AddCompileUnit(
             CompileOutputMode mode, 
             FileInfo outputFileInfo, 
-            IEnumerable<ParserSourceFile> sources)
+            IEnumerable<ParsedSourceFile> sources)
         {
             if (Context.CompileUnits.Any(u => (u.Mode == CompileOutputMode.Library || u.Mode == CompileOutputMode.Executable) &&  u.OutputFileInfo == outputFileInfo))
                 throw new InternalException(string.Format(ErrorMessages.E_0008_Compiler_DuplicateOutputFileInfo, outputFileInfo.FullName));
@@ -50,7 +50,11 @@ namespace Apterid.Bootstrap.Compile
         public Task UpdateAllCompileUnitsAsync()
         {
             var tasks = Context.CompileUnits
-                .Select(unit => new Steps.Compile(Context, unit).RunAsync(Context.CancelSource.Token))
+                .Select(unit =>
+                {
+                    var action = new Steps.Compile(Context, unit).GetStepAction(Context.CancelSource.Token);
+                    return Task.Factory.StartNew(action, TaskCreationOptions.AttachedToParent);
+                })
                 .ToArray();
 
             return Task.WhenAll(tasks);

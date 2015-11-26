@@ -25,34 +25,30 @@ namespace Apterid.Bootstrap.Generate
 
         CancellationToken cancel;
 
-        public Task Generate(CancellationToken cancel)
+        public void Generate(CancellationToken cancel)
         {
             this.cancel = cancel;
 
-            return Task.Run(() =>
+            TypeAttributes atts = TypeAttributes.Sealed;
+            atts |= Module.IsPublic ? TypeAttributes.Public : TypeAttributes.NotPublic;
+
+            var mtb = Unit.ModuleBuilder.DefineType(Module.Name.FullName, atts, typeof(Apterid.Module));
+
+            foreach (var type in Module.Types.Values)
             {
-                TypeAttributes atts = TypeAttributes.Sealed;
-                atts |= Module.IsPublic ? TypeAttributes.Public : TypeAttributes.NotPublic;
+                if (cancel.IsCancellationRequested) throw new OperationCanceledException(cancel);
 
-                var mtb = Unit.ModuleBuilder.DefineType(Module.Name.FullName, atts, typeof(Apterid.Module));
+                GenerateType(mtb, type);
+            }
 
-                foreach (var type in Module.Types.Values)
-                {
-                    if (cancel.IsCancellationRequested) throw new OperationCanceledException(cancel);
+            foreach (var binding in Module.Bindings.Values)
+            {
+                if (cancel.IsCancellationRequested) throw new OperationCanceledException(cancel);
 
-                    GenerateType(mtb, type);
-                }
+                GenerateBinding(mtb, binding);
+            }
 
-                foreach (var binding in Module.Bindings.Values)
-                {
-                    if (cancel.IsCancellationRequested) throw new OperationCanceledException(cancel);
-
-                    GenerateBinding(mtb, binding);
-                }
-
-                mtb.CreateType();
-            }, 
-            cancel);
+            mtb.CreateType();
         }
 
         void GenerateType(TypeBuilder tb, Analyze.Type type)
@@ -63,9 +59,11 @@ namespace Apterid.Bootstrap.Generate
         {
             if (binding.Expression != null)
             {
-                if (binding.Expression is Analyze.Expressions.Literal)
+                Analyze.Expressions.Literal literal;
+
+                if ((literal = binding.Expression as Analyze.Expressions.Literal) != null)
                 {
-                    GenerateLiteral(tb, binding.Expression as Analyze.Expressions.Literal);
+                    GenerateLiteral(tb, binding, literal);
                 }
             }
         }
@@ -74,13 +72,84 @@ namespace Apterid.Bootstrap.Generate
         {
         }
 
-        void GenerateLiteral(TypeBuilder tb, Analyze.Expressions.Literal literal)
+        void GenerateLiteral(TypeBuilder tb, Analyze.Binding binding, Analyze.Expressions.Literal literal)
         {
+            if (literal.ResolvedType == null)
+            {
+                Unit.AddError(new GeneratorError
+                {
+                    Message = string.Format(ErrorMessages.E_0017_Generator_UnresolvedType, ApteridError.Truncate(literal.SyntaxNode.Text)),
+                    ErrorNode = literal.SyntaxNode
+                });
+                return;
+            }
 
+            var atts = FieldAttributes.Static | FieldAttributes.InitOnly;
+            atts |= binding.IsPublic ? FieldAttributes.Public : FieldAttributes.Private;
+            var field = tb.DefineField(binding.Name.Name, literal.ResolvedType.CLRType, atts);
+
+            if (literal.Value == null)
+            {
+                if (field.FieldType.IsValueType)
+                    field.SetConstant(Activator.CreateInstance(field.FieldType));
+                else
+                    field.SetConstant(null);
+            }
+            else
+            {
+                field.SetConstant(ConvertLiteral(literal.Value, field.FieldType));
+            }
+        }
+
+        object ConvertLiteral(object value, Type tgtType)
+        {
+            var srcType = value.GetType();
+
+            if (srcType == tgtType)
+                return value;
+
+            if (srcType == typeof(System.Numerics.BigInteger))
+            {
+                var bigval = (System.Numerics.BigInteger)value;
+                switch (Type.GetTypeCode(tgtType))
+                {
+                    case TypeCode.Byte:
+                        return (byte)bigval;
+                    case TypeCode.Int16:
+                        return (short)bigval;
+                    case TypeCode.Int32:
+                        return (int)bigval;
+                    case TypeCode.Int64:
+                        return (long)bigval;
+                    case TypeCode.SByte:
+                        return (sbyte)bigval;
+                    case TypeCode.UInt16:
+                        return (ushort)bigval;
+                    case TypeCode.UInt32:
+                        return (uint)bigval;
+                    case TypeCode.UInt64:
+                        return (ulong)bigval;
+
+                    case TypeCode.Boolean:
+                    case TypeCode.Char:
+                    case TypeCode.DateTime:
+                    case TypeCode.DBNull:
+                    case TypeCode.Decimal:
+                    case TypeCode.Double:
+                    case TypeCode.Empty:
+                    case TypeCode.String:
+                    case TypeCode.Object:
+                        throw new Exception(string.Format(ErrorMessages.E_0018_Generator_InvalidNumericLiteral, bigval, tgtType.Name));
+                    default:
+                        break;
+                }
+            }
+
+            return Convert.ChangeType(value, tgtType);
         }
     }
 
-    public class GeneratorError : ApteridError
+    public class GeneratorError : Parse.NodeError
     {
     }
 }

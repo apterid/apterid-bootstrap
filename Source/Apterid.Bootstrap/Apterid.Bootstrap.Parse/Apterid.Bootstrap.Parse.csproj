@@ -55,9 +55,9 @@
       <DependentUpon>ApteridParser.ironmeta</DependentUpon>
     </Compile>
     <Compile Include="ParseUnit.cs" />
-    <Compile Include="ParsingError.cs" />
+    <Compile Include="NodeError.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ParserSourceFile.cs" />
+    <Compile Include="ParsedSourceFile.cs" />
     <Compile Include="Syntax\ErrorSection.cs" />
     <Compile Include="Syntax\Binding.cs" />
     <Compile Include="Syntax\Leaf.cs" />

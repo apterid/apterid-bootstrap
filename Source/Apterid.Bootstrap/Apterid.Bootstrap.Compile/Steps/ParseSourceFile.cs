@@ -16,16 +16,16 @@ namespace Apterid.Bootstrap.Compile.Steps
         {
         }
 
-        public override Task RunAsync(CancellationToken cancel)
+        public override Action GetStepAction(CancellationToken cancel)
         {
-            return Task.Run(() =>
-            {
+            return () =>
+            { 
                 var sourceFile = Unit.SourceFile;
 
                 // verify that the source file exists
                 if (!sourceFile.Exists)
                 {
-                    Unit.AddError<ParsingError>(string.Format(ErrorMessages.E_0006_Compiler_InvalidSourceFile, sourceFile.Name));
+                    Unit.AddError<NodeError>(string.Format(ErrorMessages.E_0006_Compiler_InvalidSourceFile, sourceFile.Name));
 
                     if (Context.AbortOnError)
                         return;
@@ -38,7 +38,13 @@ namespace Apterid.Bootstrap.Compile.Steps
                 try
                 {
                     if (Unit.Parser == null)
-                        Unit.Parser = new ApteridParser(handle_left_recursion: true);
+                    {
+                        lock (this)
+                        {
+                            if (Unit.Parser == null)
+                                Unit.Parser = new ApteridParser(handle_left_recursion: true);
+                        }
+                    }
 
                     var parser = Unit.Parser;
                     parser.SourceFile = sourceFile;
@@ -57,7 +63,7 @@ namespace Apterid.Bootstrap.Compile.Steps
                         var errorSections = sourceFile.GetNodes<Parse.Syntax.ErrorSection>();
                         foreach (var es in errorSections)
                         {
-                            var error = new ParsingError
+                            var error = new NodeError
                             {
                                 SourceFile = sourceFile,
                                 Message = ErrorMessages.E_0007_Parser_SyntaxError,
@@ -69,7 +75,7 @@ namespace Apterid.Bootstrap.Compile.Steps
                     }
                     else
                     {
-                        var error = new ParsingError
+                        var error = new NodeError
                         {
                             SourceFile = sourceFile,
                             Message = match.Error,
@@ -79,11 +85,15 @@ namespace Apterid.Bootstrap.Compile.Steps
                         Unit.AddError(error);
                     }
                 }
+                catch (OperationCanceledException)
+                {
+                    throw;
+                }
                 catch (Exception e)
                 {
-                    Unit.AddError(new ParsingError { Exception = e });
+                    Unit.AddError(new NodeError { Exception = e });
                 }
-            });
+            };
         }
     }
 }

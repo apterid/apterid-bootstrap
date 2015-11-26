@@ -7,9 +7,9 @@ using Apterid.Bootstrap.Common;
 
 namespace Apterid.Bootstrap.Parse
 {
-    public class ParsingError : ApteridError
+    public class NodeError : ApteridError
     {
-        public ParserSourceFile SourceFile { get; set; }
+        public ParsedSourceFile SourceFile { get; set; }
         public Syntax.Node ErrorNode { get; set; }
         public int ErrorIndex { get; set; }
     }

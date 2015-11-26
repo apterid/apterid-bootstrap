@@ -18,11 +18,18 @@ namespace Apterid.Bootstrap.Compile.Tests
 
         public CompilerTester(string name, params string[] sources)
         {
-            var outputPath = Path.Combine(Path.GetTempPath(), name + ".DLL");
+            var tempPath =
+#if DEBUG
+                ".";
+#else
+                Path.GetTempPath();
+#endif
 
-            sourceInfos = sources.Select(s =>
+            var outputPath = Path.Combine(tempPath, name + ".DLL");
+
+            sourceInfos = sources.Select((s, i) =>
                 {
-                    var spath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName() + ".apterid");
+                    var spath = Path.Combine(tempPath, string.Format("{0}_{1}.apterid", name, i));
                     File.WriteAllText(spath, s);
                     return new FileInfo(spath);
                 })
@@ -30,7 +37,9 @@ namespace Apterid.Bootstrap.Compile.Tests
 
             Compiler = new ApteridCompiler(forceRecompile: true);
 
-            Compiler.AddCompileUnit(CompileOutputMode.CompileLibrary, new FileInfo(outputPath),
+            Compiler.AddCompileUnit(
+                CompileOutputMode.CompileLibrary | CompileOutputMode.EmitSymbols, 
+                new FileInfo(outputPath),
                 sourceInfos.Select(info => new PhysicalSourceFile(info.FullName)));
         }
 
@@ -40,8 +49,10 @@ namespace Apterid.Bootstrap.Compile.Tests
             {
                 foreach (var unit in Compiler.Context.CompileUnits)
                 {
+#if !DEBUG
                     if (unit.OutputFileInfo != null && unit.OutputFileInfo.Exists)
                         unit.OutputFileInfo.Delete();
+#endif
                 }
             }
 
@@ -51,8 +62,10 @@ namespace Apterid.Bootstrap.Compile.Tests
                 {
                     foreach (var info in sourceInfos)
                     {
+#if !DEBUG
                         if (info.Exists)
                             info.Delete();
+#endif
                     }
                 }
                 finally

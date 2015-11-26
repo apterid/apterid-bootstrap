@@ -165,4 +165,10 @@
   <data name="E_0016_Compiler_InvalidOutputDir" xml:space="preserve">
     <value>The output directory '{0}' does not exist or cannot be written to.</value>
   </data>
+  <data name="E_0017_Generator_UnresolvedType" xml:space="preserve">
+    <value>The type of '{0}' was not resolved.</value>
+  </data>
+  <data name="E_0018_Generator_InvalidNumericLiteral" xml:space="preserve">
+    <value>Unable to convert numeric literal {0} to {1}.</value>
+  </data>
 </root>

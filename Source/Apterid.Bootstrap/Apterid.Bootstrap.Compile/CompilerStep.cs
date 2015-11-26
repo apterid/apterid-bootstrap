@@ -30,6 +30,6 @@ namespace Apterid.Bootstrap.Compile
             Context = context;
         }
 
-        public abstract Task RunAsync(CancellationToken cancel);
+        public abstract Action GetStepAction(CancellationToken cancel);
     }
 }

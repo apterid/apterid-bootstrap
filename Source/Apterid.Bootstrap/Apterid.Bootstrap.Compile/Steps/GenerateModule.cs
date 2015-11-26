@@ -19,11 +19,21 @@ namespace Apterid.Bootstrap.Compile.Steps
             Module = module;
         }
 
-        public override async Task RunAsync(CancellationToken cancel)
+        public override Action GetStepAction(CancellationToken cancel)
         {
-            if (Generator == null)
-                Generator = new ApteridGenerator(Context, Unit, Module);
-            await Generator.Generate(cancel);
+            return () =>
+            {
+                if (Generator == null)
+                {
+                    lock (this)
+                    {
+                        if (Generator == null)
+                            Generator = new ApteridGenerator(Context, Unit, Module);
+                    }
+                }
+
+                Generator.Generate(cancel);
+            };
         }
     }
 }

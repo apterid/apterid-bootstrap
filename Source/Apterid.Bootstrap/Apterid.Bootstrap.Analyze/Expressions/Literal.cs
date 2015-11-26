@@ -10,7 +10,7 @@ namespace Apterid.Bootstrap.Analyze.Expressions
 {
     public abstract class Literal : Expression
     {
-        public object Value { get; internal set; }
+        public abstract object Value { get; }
     }
 
     public abstract class NumericLiteral : Literal
@@ -19,18 +19,18 @@ namespace Apterid.Bootstrap.Analyze.Expressions
 
     public class IntegerLiteral : NumericLiteral
     {
-        public new BigInteger Value { get; internal set; }
+        public BigInteger IntValue { get; internal set; }
+        public override object Value { get { return IntValue; } }
 
         public IntegerLiteral(BigInteger value)
         {
-            (this as Literal).Value = value;
-            Value = value;
+            IntValue = value;
         }
 
         public override Goal<Type> ResolveType(Var type)
         {
             return Goal.Disj(
-                Goal.Conj(Goal.Pred<Type>(type, _ => Value.CompareTo(System.Int32.MaxValue) <= 0),
+                Goal.Conj(Goal.Pred<Type>(type, _ => IntValue.CompareTo(System.Int32.MaxValue) <= 0),
                           Goal.Unify<Type>(type, Builtins.SystemInt32.Instance)),
                 Goal.Unify<Type>(type, Builtins.SystemNumericsBigInteger.Instance)
             );
