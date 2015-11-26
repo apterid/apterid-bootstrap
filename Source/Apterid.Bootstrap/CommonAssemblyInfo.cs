@@ -6,8 +6,8 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyCompany("The Apterid Developers")]
 [assembly: AssemblyProduct("Apterid.Bootstrap")]
-[assembly: AssemblyCopyright("Copyright © 2015 The Apterid Developers")]
+[assembly: AssemblyCopyright("Copyright (C) 2015 The Apterid Developers")]
 [assembly: AssemblyTrademark("")]
 
-[assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyInformationalVersion("1.0.0-alpha1")]
+[assembly: AssemblyVersion("0.1.*")]
+[assembly: AssemblyInformationalVersion("0.1.0")]
