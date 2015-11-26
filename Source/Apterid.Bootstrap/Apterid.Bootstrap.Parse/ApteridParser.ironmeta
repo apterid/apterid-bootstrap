@@ -48,9 +48,7 @@ ironmeta ApteridParser<char, Syntax.Node>
     // Bindings
 
     Binding = Identifier:name WS? EQ WS? Expression:body SE ->
-        { 
-            Make<Syntax.Binding>(_IM_Result, new { name = name.Results.SingleOrDefault(), pattern = (Syntax.Pattern)null, body = body.Results })
-        };
+        { Make<Syntax.Binding>(_IM_Result, new { name = name.Results.SingleOrDefault(), pattern = (Syntax.Pattern)null, body = body.Results }) };
 
     /////////////////////////////////////////////////////////////////
     // Expressions

@@ -50,15 +50,17 @@ namespace Apterid.Bootstrap.Compile.Steps
                     parser.SourceFile = sourceFile;
                     sourceFile.Parser = parser;
 
-                    var match = parser.GetMatch(sourceFile.Buffer, parser.ApteridSource);
+                    var result = parser.GetMatch(sourceFile.Buffer, parser.ApteridSource);
+                    sourceFile.MatchResult = result;
+                    sourceFile.MatchState = result.MatchState;
 
                     if (cancel.IsCancellationRequested)
                         throw new OperationCanceledException(cancel);
 
-                    if (match.Success)
+                    if (result.Success)
                     {
                         // check for error sections
-                        sourceFile.ParseTree = match.Result;
+                        sourceFile.ParseTree = result.Result;
 
                         var errorSections = sourceFile.GetNodes<Parse.Syntax.ErrorSection>();
                         foreach (var es in errorSections)
@@ -78,8 +80,8 @@ namespace Apterid.Bootstrap.Compile.Steps
                         var error = new NodeError
                         {
                             SourceFile = sourceFile,
-                            Message = match.Error,
-                            ErrorIndex = match.ErrorIndex
+                            Message = result.Error,
+                            ErrorIndex = result.ErrorIndex
                         };
 
                         Unit.AddError(error);

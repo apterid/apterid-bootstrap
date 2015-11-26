@@ -12,5 +12,8 @@ namespace Apterid
     /// </summary>
     public abstract class Module
     {
+        protected Module()
+        {
+        }
     }
 }

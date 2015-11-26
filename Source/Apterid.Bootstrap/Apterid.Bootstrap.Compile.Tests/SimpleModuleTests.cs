@@ -98,13 +98,13 @@ module One =
                 var unit = tester.Compiler.Context.CompileUnits.Single();
                 Assert.AreEqual(0, unit.Errors.Count(), string.Format("Errors: {0}", string.Join("; ", unit.Errors.Select(e => e.Message))));
 
-                var assembly = Assembly.LoadFile(unit.OutputFileInfo.FullName);
+                var assembly = Assembly.LoadFrom(unit.OutputFileInfo.FullName);
                 Assert.IsNotNull(assembly);
 
                 var module = assembly.GetType("One");
                 Assert.IsNotNull(module);
 
-                var field = module.GetField("f", BindingFlags.NonPublic | BindingFlags.Static);
+                var field = module.GetField("f", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
                 Assert.IsNotNull(field);
                 Assert.AreEqual(typeof(int), field.FieldType);
 

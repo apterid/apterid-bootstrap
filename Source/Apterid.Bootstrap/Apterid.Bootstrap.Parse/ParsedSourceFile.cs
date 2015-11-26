@@ -11,6 +11,9 @@ namespace Apterid.Bootstrap.Parse
     public abstract class ParsedSourceFile : Common.SourceFile
     {
         public ApteridParser Parser { get; set; }
+        public IronMeta.Matcher.MatchState<char, Syntax.Node> MatchState { get; set; }
+        public IronMeta.Matcher.MatchResult<char, Syntax.Node> MatchResult { get; set; }
+
         public Node ParseTree { get; set; }
 
         public IEnumerable<T> GetNodes<T>()

@@ -145,7 +145,7 @@ namespace Apterid.Bootstrap.Analyze
                         }
                         else
                         {
-                            curBinding = new Binding { Parent = module, Name = bindingName };
+                            curBinding = new Binding { Parent = module, Name = bindingName, SyntaxNode = bindingNode };
                             bindings.Add(Tuple.Create(bindingNode, curBinding));
                             module.Bindings.Add(curBinding.Name, curBinding);
                         }
@@ -207,7 +207,7 @@ namespace Apterid.Bootstrap.Analyze
                 {
                     if ((bigIntLiteral = literalNode as Parse.Syntax.Literal<BigInteger>) != null)
                     {
-                        expression = new Expressions.IntegerLiteral(bigIntLiteral.Value);
+                        expression = new Expressions.IntegerLiteral(bigIntLiteral.Value) { SyntaxNode = bigIntLiteral };
                     }
                     else
                     {

@@ -55,6 +55,9 @@ namespace Apterid.Bootstrap.Parse
                 .GetConstructors()
                 .OrderByDescending(ctor => ctor.GetParameters().Length);
 
+            if (children == null || children.Length == 0)
+                children = item.Results.ToArray();
+
             var arguments = new List<object>();
             foreach (var ctor in ctors)
             {

@@ -71,8 +71,8 @@ namespace Apterid.Bootstrap.Compile.Steps
                             if (Unit.GenerationUnit.ModuleBuilder == null)
                             {
                                 var moduleBuilder = Unit.GenerationUnit.ModuleBuilder = saveToFile
-                                    ? Unit.GenerationUnit.AssemblyBuilder.DefineDynamicModule(assemblyName.Name, Unit.OutputFileInfo.Name, emitSymbols)
-                                    : Unit.GenerationUnit.AssemblyBuilder.DefineDynamicModule(assemblyName.Name, emitSymbols);
+                                    ? Unit.GenerationUnit.AssemblyBuilder.DefineDynamicModule(Unit.OutputFileInfo.Name, Unit.OutputFileInfo.Name, emitSymbols)
+                                    : Unit.GenerationUnit.AssemblyBuilder.DefineDynamicModule(Unit.OutputFileInfo.Name, emitSymbols);
 
                                 if (emitSymbols)
                                 {
