@@ -7,10 +7,22 @@ using System.Threading.Tasks;
 
 namespace Apterid.Bootstrap.Common
 {
-    public enum OutputMode
+    [Flags]
+    public enum CompileOutputMode
     {
-        Library,
-        Executable,
+        Parse       = 1 << 0,
+        Analyze     = 1 << 1,
+        Generate    = 1 << 2,
+        Library     = 1 << 3,
+        Executable  = 1 << 4,
+        EmitSymbols = 1 << 5,
+        DebugInfo   = 1 << 6,
+        Optimize    = 1 << 7,
+
+        SaveToFile = Library | Executable,
+
+        CompileLibrary = Parse | Analyze | Generate | Library,
+        CompileExecutable = Parse | Analyze | Generate | Executable,
     }
 
     public class Context

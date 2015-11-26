@@ -25,6 +25,7 @@ namespace Apterid.Bootstrap.Compile.Steps
         {
             if (Analyzer == null)
                 Analyzer = new ApteridAnalyzer(Context, ParseUnit.SourceFile, Unit);
+
             await Analyzer.Analyze(cancel);
         }
     }

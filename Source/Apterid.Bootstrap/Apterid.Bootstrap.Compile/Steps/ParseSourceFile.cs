@@ -25,7 +25,7 @@ namespace Apterid.Bootstrap.Compile.Steps
                 // verify that the source file exists
                 if (!sourceFile.Exists)
                 {
-                    Unit.AddError<ParsingError>(string.Format(ErrorMessages.E_0006_Compiler_SourceDoesNotExist, sourceFile.Name));
+                    Unit.AddError<ParsingError>(string.Format(ErrorMessages.E_0006_Compiler_InvalidSourceFile, sourceFile.Name));
 
                     if (Context.AbortOnError)
                         return;

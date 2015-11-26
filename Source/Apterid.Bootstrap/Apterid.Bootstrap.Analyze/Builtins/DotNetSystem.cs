@@ -13,7 +13,7 @@ namespace Apterid.Bootstrap.Analyze.Builtins
     {
         public static DotNetSystem Instance = new DotNetSystem();
 
-        public DotNetSystem()
+        private DotNetSystem()
         {
             Name = new QualifiedName { Name = "System" };
         }
@@ -22,7 +22,7 @@ namespace Apterid.Bootstrap.Analyze.Builtins
         {
             public static Numerics Instance = new Numerics();
 
-            public Numerics()
+            private Numerics()
             {
                 Name = new QualifiedName(DotNetSystem.Instance, "Numerics");
             }

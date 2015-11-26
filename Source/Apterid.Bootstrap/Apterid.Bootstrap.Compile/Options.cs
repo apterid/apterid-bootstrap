@@ -9,7 +9,7 @@ namespace Apterid.Bootstrap.Compile
 {
     public class Options
     {
-        public OutputMode Mode { get; set; }
+        public CompileOutputMode Mode { get; set; }
         public string OutputPath { get; set; }
 
         public bool ForceRecompile { get; set; }
@@ -37,15 +37,15 @@ namespace Apterid.Bootstrap.Compile
             References = new List<string>();
 
             OptionState state = OptionState.GetSources;
-            OutputMode? mode = null;
+            CompileOutputMode? mode = null;
 
             foreach (var arg in argv)
             {
                 switch (state)
                 {
                     case OptionState.GetMode:
-                        OutputMode m;
-                        if (Enum.TryParse<OutputMode>(arg, out m))
+                        CompileOutputMode m;
+                        if (Enum.TryParse<CompileOutputMode>(arg, out m))
                             mode = m;
                         else
                             throw new CmdLineException(string.Format(ErrorMessages.E_0005_CmdLine_UnknownOutputMode, arg));
@@ -79,9 +79,9 @@ namespace Apterid.Bootstrap.Compile
             if (mode == null)
             {
                 if (OutputPath.ToUpper().EndsWith(".DLL"))
-                    mode = OutputMode.Library;
+                    mode = CompileOutputMode.Library;
                 else if (OutputPath.ToUpper().EndsWith(".EXE"))
-                    mode = OutputMode.Executable;
+                    mode = CompileOutputMode.Executable;
                 else
                     throw new CmdLineException(string.Format(ErrorMessages.E_0005_CmdLine_UnknownOutputMode, "?"));
             }

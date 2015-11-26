@@ -13,9 +13,19 @@ namespace Apterid.Bootstrap.Analyze.Builtins
     {
         public static ApteridRuntime Instance { get; } = new ApteridRuntime();
 
-        public ApteridRuntime()
+        private ApteridRuntime()
         {
             Name = new QualifiedName { Name = "Apterid" };
+        }
+
+        public class ApteridModule : Type
+        {
+            public static ApteridModule Instance { get; } = new ApteridModule();
+
+            private ApteridModule()
+            {
+                Name = new QualifiedName(ApteridRuntime.Instance, "Module");
+            }
         }
     }
 }

@@ -8,6 +8,7 @@ namespace Apterid.Bootstrap.Analyze
 {
     public class Module : Scope
     {
+        public bool IsPublic { get; internal set; }
         public IDictionary<QualifiedName, Type> Types { get; } = new Dictionary<QualifiedName, Type>();
     }
 }

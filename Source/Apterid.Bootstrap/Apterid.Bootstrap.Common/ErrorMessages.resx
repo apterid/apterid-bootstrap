@@ -132,34 +132,37 @@
   <data name="E_0005_CmdLine_UnknownOutputMode" xml:space="preserve">
     <value>Unknown compiler output mode '{0}'.</value>
   </data>
-  <data name="E_0006_Compiler_SourceDoesNotExist" xml:space="preserve">
-    <value>Source file does not exist: {0}.</value>
+  <data name="E_0006_Compiler_InvalidSourceFile" xml:space="preserve">
+    <value>Source file '{0}' cannot be found.</value>
   </data>
   <data name="E_0007_Parser_SyntaxError" xml:space="preserve">
     <value>Unable to parse.</value>
   </data>
   <data name="E_0008_Compiler_DuplicateOutputFileInfo" xml:space="preserve">
-    <value>Duplicate output file "{0}".</value>
+    <value>Duplicate output file '{0}'.</value>
   </data>
   <data name="E_0009_Analyzer_DuplicateSourceFile" xml:space="preserve">
-    <value>Duplicate source file "{0}".</value>
+    <value>Duplicate source file '{0}'.</value>
   </data>
   <data name="E_0010_Analyzer_ParseTreeIsNotSource" xml:space="preserve">
-    <value>The source file "{0}" is not valid source code.</value>
+    <value>The source file '{0}' is not valid source code.</value>
   </data>
   <data name="E_0011_Analyzer_InvalidToplevelItem" xml:space="preserve">
-    <value>You are not allowed to have the construct "{0}" at the top level of a source file.</value>
+    <value>You are not allowed to have the construct '{0}' at the top level of a source file.</value>
   </data>
   <data name="E_0012_Analyzer_DuplicateBinding" xml:space="preserve">
-    <value>You are not allowed to bind to the name "{0}" more than once in one scope.</value>
+    <value>You are not allowed to bind to the name '{0}' more than once in one scope.</value>
   </data>
   <data name="E_0013_Analyzer_InvalidScopeItem" xml:space="preserve">
-    <value>You are not allowed to have the construct "{0}" here.</value>
+    <value>You are not allowed to have the construct '{0}' here.</value>
   </data>
   <data name="E_0014_Analyzer_EmptyBinding" xml:space="preserve">
-    <value>Binding "{0}" cannot be empty.</value>
+    <value>Binding '{0}' cannot be empty.</value>
   </data>
   <data name="E_0015_Analyzer_UnableToInferType" xml:space="preserve">
-    <value>Unable to infer type for expression "{0}".</value>
+    <value>Unable to infer type for expression '{0}'.</value>
+  </data>
+  <data name="E_0016_Compiler_InvalidOutputDir" xml:space="preserve">
+    <value>The output directory '{0}' does not exist or cannot be written to.</value>
   </data>
 </root>

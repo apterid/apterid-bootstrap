@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Apterid.Bootstrap.Analyze;
@@ -13,8 +14,9 @@ namespace Apterid.Bootstrap.Compile
 {
     public class CompilationUnit : Unit
     {
-        public OutputMode Mode { get; internal set; }
-        public FileInfo OutputFileInfo { get; internal set; }
+        public CompileOutputMode Mode { get; set; }
+        public FileInfo OutputFileInfo { get; set; }
+        public string OutputName { get; set; }
 
         public IList<ParserSourceFile> SourceFiles { get; set; }
         public IList<ParseUnit> ParseUnits { get; set; }

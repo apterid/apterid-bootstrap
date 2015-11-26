@@ -18,8 +18,6 @@ namespace Apterid.Bootstrap.Analyze
         public AnalysisUnit Unit { get; private set; }
         public ParserSourceFile SourceFile { get; }
 
-        public bool NeedsRerun { get; private set; }
-
         public ApteridAnalyzer(Context context, ParserSourceFile sourceFile, AnalysisUnit analyzeUnit)
         {
             Context = context;

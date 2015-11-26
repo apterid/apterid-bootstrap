@@ -106,11 +106,11 @@ namespace Apterid.Bootstrap.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Source file does not exist: {0}..
+        ///   Looks up a localized string similar to Source file &apos;{0}&apos; cannot be found..
         /// </summary>
-        public static string E_0006_Compiler_SourceDoesNotExist {
+        public static string E_0006_Compiler_InvalidSourceFile {
             get {
-                return ResourceManager.GetString("E_0006_Compiler_SourceDoesNotExist", resourceCulture);
+                return ResourceManager.GetString("E_0006_Compiler_InvalidSourceFile", resourceCulture);
             }
         }
         
@@ -124,7 +124,7 @@ namespace Apterid.Bootstrap.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Duplicate output file &quot;{0}&quot;..
+        ///   Looks up a localized string similar to Duplicate output file &apos;{0}&apos;..
         /// </summary>
         public static string E_0008_Compiler_DuplicateOutputFileInfo {
             get {
@@ -133,7 +133,7 @@ namespace Apterid.Bootstrap.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Duplicate source file &quot;{0}&quot;..
+        ///   Looks up a localized string similar to Duplicate source file &apos;{0}&apos;..
         /// </summary>
         public static string E_0009_Analyzer_DuplicateSourceFile {
             get {
@@ -142,7 +142,7 @@ namespace Apterid.Bootstrap.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The source file &quot;{0}&quot; is not valid source code..
+        ///   Looks up a localized string similar to The source file &apos;{0}&apos; is not valid source code..
         /// </summary>
         public static string E_0010_Analyzer_ParseTreeIsNotSource {
             get {
@@ -151,7 +151,7 @@ namespace Apterid.Bootstrap.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You are not allowed to have the construct &quot;{0}&quot; at the top level of a source file..
+        ///   Looks up a localized string similar to You are not allowed to have the construct &apos;{0}&apos; at the top level of a source file..
         /// </summary>
         public static string E_0011_Analyzer_InvalidToplevelItem {
             get {
@@ -160,7 +160,7 @@ namespace Apterid.Bootstrap.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You are not allowed to bind to the name &quot;{0}&quot; more than once in one scope..
+        ///   Looks up a localized string similar to You are not allowed to bind to the name &apos;{0}&apos; more than once in one scope..
         /// </summary>
         public static string E_0012_Analyzer_DuplicateBinding {
             get {
@@ -169,7 +169,7 @@ namespace Apterid.Bootstrap.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You are not allowed to have the construct &quot;{0}&quot; here..
+        ///   Looks up a localized string similar to You are not allowed to have the construct &apos;{0}&apos; here..
         /// </summary>
         public static string E_0013_Analyzer_InvalidScopeItem {
             get {
@@ -178,7 +178,7 @@ namespace Apterid.Bootstrap.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Binding &quot;{0}&quot; cannot be empty..
+        ///   Looks up a localized string similar to Binding &apos;{0}&apos; cannot be empty..
         /// </summary>
         public static string E_0014_Analyzer_EmptyBinding {
             get {
@@ -187,11 +187,20 @@ namespace Apterid.Bootstrap.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unable to infer type for expression &quot;{0}&quot;..
+        ///   Looks up a localized string similar to Unable to infer type for expression &apos;{0}&apos;..
         /// </summary>
         public static string E_0015_Analyzer_UnableToInferType {
             get {
                 return ResourceManager.GetString("E_0015_Analyzer_UnableToInferType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The output directory &apos;{0}&apos; does not exist or cannot be written to..
+        /// </summary>
+        public static string E_0016_Compiler_InvalidOutputDir {
+            get {
+                return ResourceManager.GetString("E_0016_Compiler_InvalidOutputDir", resourceCulture);
             }
         }
     }

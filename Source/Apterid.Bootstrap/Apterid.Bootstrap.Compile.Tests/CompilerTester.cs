@@ -30,9 +30,7 @@ namespace Apterid.Bootstrap.Compile.Tests
 
             Compiler = new ApteridCompiler(forceRecompile: true);
 
-            Compiler.AddCompileUnit(
-                OutputMode.Library,
-                new FileInfo(outputPath),
+            Compiler.AddCompileUnit(CompileOutputMode.CompileLibrary, new FileInfo(outputPath),
                 sourceInfos.Select(info => new PhysicalSourceFile(info.FullName)));
         }
 
