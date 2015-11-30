@@ -1,0 +1,125 @@
+﻿// Copyright (C) 2015 The Apterid Developers - See LICENSE
+
+using System.Numerics;
+
+ironmeta ApteridParser<char, Syntax.Node>
+{
+    ApteridSource = SourcePart* EOF -> { Make<Syntax.Source>(_IM_Result) };
+
+    SourcePart = Directive | TopLevelModule | SE+ | ErrorSection+;
+
+    /////////////////////////////////////////////////////////////////
+    // Directives
+
+    Directive = '#' WS? DirectiveExpression;
+
+    DirectiveExpression = "if" SC '!'? SC Identifier;
+    DirectiveExpression = "endif";
+
+    /////////////////////////////////////////////////////////////////
+    // Modules
+
+    TopLevelModule = SC?:indent Keyword("module") SC QualifiedIdentifier:name SC? EQ SE ModuleBody(indent):body ->
+        { Make<Syntax.Module>(_IM_Result, new { name = name.Results.SingleOrDefault(), body = body.Results }) };
+
+    ModuleBody :outer =
+        (
+            (SC:inner SE) ?(inner.Length() > outer.Length())
+            | !"the contents of a module must be indented -- even comments"
+        )*
+        (
+            (SC:inner ModuleItem(inner)) ?(inner.Length() > outer.Length()) 
+            | !"the contents of a module must be indented"
+        )
+        ModulePart(inner)*;
+
+    // these all include the initial indent and go to the end of the part's last line
+    ModulePart :indent = SE;
+    ModulePart :indent = (SC:ws ModuleItem(indent) SE) ?(ws.Length() == indent.Length());
+    ModulePart :indent = (SC:ws ModuleItem(indent) SE) !"parts of a module must indented and aligned";
+    ModulePart :indent = Directive SE;
+    ModulePart :indent = ErrorSection;
+
+    /////////////////////////
+
+    ModuleItem :indent = Binding(indent);
+
+    /////////////////////////////////////////////////////////////////
+    // Bindings
+
+    Binding = Identifier:name WS? EQ WS? Expression:body SE ->
+        { Make<Syntax.Binding>(_IM_Result, new { name = name.Results.SingleOrDefault(), pattern = (Syntax.Pattern)null, body = body.Results }) };
+
+    /////////////////////////////////////////////////////////////////
+    // Expressions
+
+    Expression = Literal;
+
+    Literal = IntegerLiteral;
+
+    IntegerLiteral = DecimalInteger;
+
+    DecimalInteger = /[\+-]?[0-9]+(_?[0-9]+)*/ -> 
+        {
+            var str = new string(_IM_Result.Inputs.ToArray());
+            var value = BigInteger.Parse(str.Replace("_", ""));
+            return Make<Syntax.Literal<BigInteger>>(_IM_Result, new { value = value });
+        };
+
+    /////////////////////////////////////////////////////////////////
+    // Lexicon
+
+    Keyword :text = text -> { Make<Syntax.Keyword>(_IM_Result) };
+    
+    Identifier = /_|_[_0-9a-zA-Z]+|[a-zA-Z][_0-9a-zA-Z]*/ -> { Make<Syntax.Identifier>(_IM_Result) };
+
+    QualifiedIdentifier = (Identifier DOT)* Identifier:i -> { return Make<Syntax.QualifiedIdentifier>(_IM_Result); };
+
+    /////////////////////////////////////////////////////////////////
+    // Punctuation
+
+    DOT = '.' -> { Make<Syntax.Punct>(_IM_Result) };
+    EQ  = '=' -> { Make<Syntax.Punct>(_IM_Result) };
+
+    /////////////////////////////////////////////////////////////////
+    // Comments & Whitespace
+
+    SC = (WS | InlineComment)+;                     // space or inline comment
+    SE = (InlineComment | WS)* (LineComment | EOL); // space or comment at the end of a line (includes the EOL)
+
+    InlineComment = "/*" (EOL | ~"*/" .)* "*/" -> { Make<Syntax.InlineComment>(_IM_Result) };
+    InlineComment = "/*" (EOL | ~(EOF | "*/") .)* EOF !"unterminated comment";
+
+    LineComment = ("//" (~EOL .)*):ec (EOL | EOF):eol ->
+        {
+            new Syntax.Node[]
+            {
+                Make<Syntax.EndComment>(ec),
+                Make<Syntax.EndOfLine>(eol),
+            }
+        };
+
+    WS = ' '+ -> { Make<Syntax.Whitespace>(_IM_Result) };
+    WS = '\t'+ !"tabs are not allowed in Apterid source";
+
+    /////////////////////////////////////////////////////////////////
+    // ErrorSection
+
+    ErrorSection :indent = (~DoubleReturn .)+ DoubleReturn -> { Make<Syntax.ErrorSection>(_IM_Result) };
+    DoubleReturn = EOL WS? (EOL | EOF);
+
+    /////////////////////////////////////////////////////////////////
+    // End-of-Line and End-of-File
+
+    EOL = '\r'? '\n' ->
+        {
+            _memo.Positions.Add(_IM_Result.NextIndex);
+            return Make<Syntax.EndOfLine>(_IM_Result);
+        };
+
+    EOF = ~. ->
+        {
+            _memo.Positions.Add(_IM_Result.NextIndex);
+            return Make<Syntax.EndOfFile>(_IM_Result);
+        };
+}

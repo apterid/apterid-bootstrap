@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{42D5B408-B7F5-41B8-9E6E-D45D96608FCB}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Apterid.Bootstrap.Compile</RootNamespace>
+    <AssemblyName>Apterid.Bootstrap.Compile</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="IronMeta.Library, Version=4.1.5684.22219, Culture=neutral, PublicKeyToken=53410376b33c6719, processorArchitecture=MSIL">
+      <HintPath>..\packages\IronMeta.4.1.4\lib\net45\IronMeta.Library.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Verophyle.Regexp, Version=1.1.5684.13780, Culture=neutral, PublicKeyToken=74cddc3ca888ce35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Verophyle.Regexp.1.1.0\lib\net45\Verophyle.Regexp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="CompilationUnit.cs" />
+    <Compile Include="CompilerContext.cs" />
+    <Compile Include="ApteridCompiler.cs" />
+    <Compile Include="CompilerStep.cs" />
+    <Compile Include="Options.cs" />
+    <Compile Include="PhysicalSourceFile.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Steps\AnalyzeSourceFile.cs" />
+    <Compile Include="Steps\EmitAssembly.cs" />
+    <Compile Include="Steps\GenerateAssembly.cs" />
+    <Compile Include="Steps\GenerateModule.cs" />
+    <Compile Include="Steps\ParseSourceFile.cs" />
+    <Compile Include="Steps\Compile.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Apterid.Bootstrap.Common\Apterid.Bootstrap.Common.csproj">
+      <Project>{297b34ba-c406-44db-bc9e-7463efe53385}</Project>
+      <Name>Apterid.Bootstrap.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Apterid.Bootstrap.Generate\Apterid.Bootstrap.Generate.csproj">
+      <Project>{37ee6b64-13c2-4f69-9125-72b6ce6d9ea5}</Project>
+      <Name>Apterid.Bootstrap.Generate</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Apterid.Bootstrap.Parse\Apterid.Bootstrap.Parse.csproj">
+      <Project>{05d5fed0-fb8c-4d8d-afe9-9fea00dca49c}</Project>
+      <Name>Apterid.Bootstrap.Parse</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Apterid.Bootstrap.Runtime\Apterid.Bootstrap.Runtime.csproj">
+      <Project>{5acde00a-f542-4e2d-912c-36ae4b87230b}</Project>
+      <Name>Apterid.Bootstrap.Runtime</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Apterid.Bootstrap.Analyze\Apterid.Bootstrap.Analyze.csproj">
+      <Project>{1ec37f3a-eb7a-4f0e-8778-317d4a832519}</Project>
+      <Name>Apterid.Bootstrap.Analyze</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
