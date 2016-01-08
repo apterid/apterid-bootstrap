@@ -17,6 +17,31 @@ namespace Apterid.Bootstrap.Parse
     {
         public ParsedSourceFile SourceFile { get; set; }
 
+        protected Syntax.Flags GetFlags(IEnumerable<Syntax.Node> keywords)
+        {
+            var results = Syntax.Flags.None;
+            foreach (var keyword in keywords.OfType<Syntax.Keyword>())
+            {
+                switch (keyword.Text)
+                {
+                    case "":
+                        break;
+                    case "public":
+                        results |= Syntax.Flags.IsPublic;
+                        break;
+                    default:
+                        throw new ParseException(new NodeError
+                        {
+                            SourceFile = SourceFile,
+                            ErrorNode = keyword,
+                            ErrorIndex = keyword.StartIndex,
+                            Message = string.Format(ErrorMessages.E_0019_Parser_InvalidKeyword, keyword.Text)
+                        });
+                }
+            }
+            return results;
+        }
+
         protected T Make<T>(SyntaxItem item)
             where T : Syntax.Node
         {
@@ -39,8 +64,7 @@ namespace Apterid.Bootstrap.Parse
             where T : Syntax.Node
         {
             return Make<T>(item, parms, children.ToArray());
-        }
-    
+        }    
 
         protected T Make<T>(SyntaxItem item, object parms, params Syntax.Node[] children)
             where T : Syntax.Node
@@ -97,6 +121,17 @@ namespace Apterid.Bootstrap.Parse
             }
 
             throw new InternalException(string.Format(ErrorMessages.E_0003_ParserImpl_MakeNodeNoCtor, typeof(T).FullName));
+        }
+    }
+
+    public class ParseException : ApteridException
+    {
+        public NodeError Error { get; }
+
+        public ParseException(NodeError error)
+            : base(ErrorCode.Parser, error.Message)
+        {
+            Error = error;
         }
     }
 

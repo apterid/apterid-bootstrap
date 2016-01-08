@@ -25,19 +25,17 @@ namespace Apterid.Bootstrap.Compile
         public AnalysisUnit AnalysisUnit { get; set; }
         public GenerationUnit GenerationUnit { get; set; }
 
-        public override IEnumerable<Unit> Children
+        public override IEnumerable<Unit> Children => GetChildren();
+
+        IEnumerable<Unit> GetChildren()
         {
-            get
-            {
-                if (GenerationUnit != null)
-                    return new[] { GenerationUnit };
-                else if (AnalysisUnit != null)
-                    return new[] { AnalysisUnit };
-                else if (ParseUnits != null)
-                    return ParseUnits;
-                else
-                    return Enumerable.Empty<Unit>();
-            }
+            if (ParseUnits != null)
+                foreach (var parseUnit in ParseUnits)
+                    yield return parseUnit;
+            if (AnalysisUnit != null)
+                yield return AnalysisUnit;
+            if (GenerationUnit != null)
+                yield return GenerationUnit;
         }
     }
 }

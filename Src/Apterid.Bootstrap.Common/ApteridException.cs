@@ -12,6 +12,9 @@ namespace Apterid.Bootstrap.Common
     {
         Internal,
         CommandLine,
+        Parser,
+        Analyzer,
+        Generator,
         Unknown
     }
 

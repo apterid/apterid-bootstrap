@@ -32,7 +32,7 @@ namespace Apterid.Bootstrap.Compile.Steps
                     lock (this)
                     {
                         if (Analyzer == null)
-                            Analyzer = new ApteridAnalyzer(Context, ParseUnit.SourceFile, Unit);
+                            Analyzer = new ApteridAnalyzer(Context, Unit, ParseUnit.SourceFile);
                     }
                 }
 

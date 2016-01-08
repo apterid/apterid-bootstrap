@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using IronMeta.Matcher;
 
 namespace Apterid.Bootstrap.Parse.Syntax
 {
@@ -29,6 +30,12 @@ namespace Apterid.Bootstrap.Parse.Syntax
             : base(args, value, typeof(T))
         {
             this.Value = value;
+        }
+
+        protected override void FormatDetails(StringBuilder sb, MatchState<char, Node> ms = null)
+        {
+            sb.AppendFormat("literal {0} {1} ", typeof(T).FullName, Value);
+            base.FormatDetails(sb, ms);
         }
     }
 }

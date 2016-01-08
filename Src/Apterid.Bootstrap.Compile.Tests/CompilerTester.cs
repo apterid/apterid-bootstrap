@@ -44,6 +44,8 @@ namespace Apterid.Bootstrap.Compile.Tests
                 .ToArray();
 
             Compiler = new ApteridCompiler(forceRecompile: true);
+            Compiler.Context.References.Add("mscorlib.dll", new Reference { Assembly = typeof(int).Assembly });
+            Compiler.Context.References.Add("System.Numerics.dll", new Reference { Assembly = typeof(System.Numerics.BigInteger).Assembly });
 
             Compiler.AddCompileUnit(
                 CompileOutputMode.CompileLibrary | CompileOutputMode.EmitSymbols, 

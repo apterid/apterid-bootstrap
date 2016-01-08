@@ -18,18 +18,21 @@ namespace Apterid.Bootstrap.Parse.Tests
 module Qualified.One =
     f1 = 123
     
-    f2 = 314 /* comment */
+    public f2 = 314 /* comment */
 
-module Qualified.Two =
+public module Qualified.Two =
     // comment
     f3 = 3345    
-    f4 = -12345
+    public f4 = 12345
 
 ";
             var sa = s.Select(c => c).ToArray();
             var m = parser.GetMatch(s, parser.ApteridSource);
 
-            Assert.IsTrue(m.Success);
+            int num, offset;
+            m.MatchState.GetLine(m.ErrorIndex, out num, out offset);
+
+            Assert.IsTrue(m.Success, string.Format("{0}:{1}: {2}", num, offset, m.Error));
         }
     }
 }

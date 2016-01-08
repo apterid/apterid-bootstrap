@@ -38,6 +38,7 @@ namespace Apterid.Bootstrap.Parse.Syntax
         public int Length { get { return Math.Max(0, NextIndex - StartIndex); } }
 
         public Node Parent { get; private set; }
+
         public Node[] Children
         {
             get { return children ?? (children = new Node[0]); }
@@ -76,6 +77,64 @@ namespace Apterid.Bootstrap.Parse.Syntax
 
             foreach (var child in node.Children)
                 Renumber(child, delta);
+        }
+
+        protected virtual void FormatDetails(StringBuilder sb, MatchState<char, Node> ms = null)
+        {
+            if (ms != null && Item != null && SourceFile != null)
+            {
+                int num, offset;
+                ms.GetLine(Item.StartIndex, out num, out offset);
+                sb.AppendFormat("    @ {0}({1},{2})", SourceFile.Name, num, offset);
+            }
+        }
+
+        protected virtual IEnumerable<Node> ChildrenToFormat
+        {
+            get { return Children; }
+        }
+
+        public void FormatString(StringBuilder sb, string indent, MatchState<char, Node> ms = null)
+        {
+            sb.AppendFormat("{0} ", indent);
+            FormatDetails(sb, ms);
+            sb.AppendLine();
+
+            indent = indent + "  ";
+            foreach (var child in ChildrenToFormat.Where(c => c != null))
+                child.FormatString(sb, indent, ms);
+        }
+
+        public override string ToString()
+        {
+            var sb = new StringBuilder();
+            FormatString(sb, "");
+            return sb.ToString();
+        }
+    }
+
+    [Flags]
+    public enum Flags
+    {
+        None = 0,
+        IsPublic = 1 << 0,
+    }
+
+    public abstract class FlaggedNode : Node
+    {
+        public Flags Flags { get; }
+
+        public FlaggedNode(NodeArgs args, Flags flags, params Node[] children)
+            : base(args, children)
+        {
+            Flags = flags;
+        }
+
+        protected override void FormatDetails(StringBuilder sb, MatchState<char, Node> ms = null)
+        {
+            if ((Flags & Flags.IsPublic) != 0)
+                sb.AppendFormat("public ");
+            base.FormatDetails(sb, ms);
         }
     }
 }

@@ -12,5 +12,10 @@ namespace Apterid.Bootstrap.Analyze
     {
         public bool IsPublic { get; internal set; }
         public IDictionary<QualifiedName, Type> Types { get; } = new Dictionary<QualifiedName, Type>();
+
+        public Module(Parse.Syntax.Node syntaxNode)
+            : base(syntaxNode)
+        {
+        }
     }
 }

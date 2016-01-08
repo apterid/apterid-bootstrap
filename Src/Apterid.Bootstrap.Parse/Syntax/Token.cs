@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using IronMeta.Matcher;
 
@@ -14,6 +15,12 @@ namespace Apterid.Bootstrap.Parse.Syntax
         protected Token(NodeArgs args)
             : base(args)
         {
+        }
+
+        protected override void FormatDetails(StringBuilder sb, MatchState<char, Node> ms = null)
+        {
+            sb.AppendFormat("token \"{0}\"", Regex.Escape(Text));
+            base.FormatDetails(sb, ms);
         }
     }
 
@@ -59,6 +66,15 @@ namespace Apterid.Bootstrap.Parse.Syntax
         public override string Text
         {
             get { return Identifier.Text; }
+        }
+
+        protected override void FormatDetails(StringBuilder sb, MatchState<char, Node> ms = null)
+        {
+            if (Qualifiers != null)
+                sb.AppendFormat("qid {0}{1} ", string.Join(".", Qualifiers.Select(q => q.Text)), Identifier.Text);
+            else
+                sb.AppendFormat("qid {0} ", Identifier.Text);
+            base.FormatDetails(sb, ms);
         }
     }
 }

@@ -10,7 +10,14 @@ namespace Apterid.Bootstrap.Common
 {
     public abstract class ApteridError
     {
-        public string Message { get; set; }
+        string message;
+
+        public string Message
+        {
+            get { return message ?? (Exception != null ? Exception.Message : ""); }
+            set { message = value; }
+        }
+
         public Exception Exception { get; set; }
 
         const int MaxMessageStringLength = 16;

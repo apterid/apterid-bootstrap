@@ -19,6 +19,12 @@ namespace Apterid.Bootstrap.Analyze
         public IList<Parse.Syntax.Node> PreTrivia { get; } = new List<Parse.Syntax.Node>();
         public IList<Parse.Syntax.Node> PostTrivia { get; } = new List<Parse.Syntax.Node>();
 
+        public IDictionary<QualifiedName, Scope> Children { get; } = new Dictionary<QualifiedName, Scope>();
         public IDictionary<QualifiedName, Binding> Bindings { get; } = new Dictionary<QualifiedName, Binding>();
+
+        public Scope(Parse.Syntax.Node syntaxNode)
+        {
+            SyntaxNode = syntaxNode;
+        }
     }
 }

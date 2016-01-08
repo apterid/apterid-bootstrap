@@ -11,7 +11,12 @@ namespace Apterid.Bootstrap.Analyze
 {
     public class Type : Scope, IUnifiable<Type>
     {
-        public virtual System.Type CLRType { get { throw new NotImplementedException(); } }
+        public virtual System.Type CLRType { get; internal set; }
+
+        public Type(Parse.Syntax.Node syntaxNode)
+            : base(syntaxNode)
+        {
+        }
 
         public virtual IEnumerable<State<Type>> Unify(Type other, State<Type> s)
         {

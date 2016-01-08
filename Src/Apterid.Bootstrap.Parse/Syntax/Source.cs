@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using IronMeta.Matcher;
 
 namespace Apterid.Bootstrap.Parse.Syntax
 {
@@ -14,6 +15,12 @@ namespace Apterid.Bootstrap.Parse.Syntax
             : base(args, children)
         {
         }
+
+        protected override void FormatDetails(StringBuilder sb, MatchState<char, Node> ms = null)
+        {
+            sb.AppendFormat("source ");
+            base.FormatDetails(sb, ms);
+        }
     }
 
     public class Directive : Node
@@ -21,6 +28,12 @@ namespace Apterid.Bootstrap.Parse.Syntax
         public Directive(NodeArgs args, params Node[] children)
             : base(args, children)
         {
+        }
+
+        protected override void FormatDetails(StringBuilder sb, MatchState<char, Node> ms = null)
+        {
+            sb.AppendFormat("directive ");
+            base.FormatDetails(sb, ms);
         }
     }
 }

@@ -20,10 +20,10 @@ namespace Apterid.Bootstrap.Parse.Tests
             Assert.IsTrue(m1.Success);
             Assert.AreEqual(123, (int)((Syntax.Literal<BigInteger>)m1.Result).Value);
 
-            const string s2 = "-34_56";
+            const string s2 = "34_56";
             var m2 = parser.GetMatch(s2, parser.DecimalInteger);
             Assert.IsTrue(m2.Success);
-            Assert.AreEqual(-3456, (int)((Syntax.Literal<BigInteger>)m2.Result).Value);
+            Assert.AreEqual(3456, (int)((Syntax.Literal<BigInteger>)m2.Result).Value);
         }
 
         [TestMethod]

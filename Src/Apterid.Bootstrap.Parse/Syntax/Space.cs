@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using IronMeta.Matcher;
 
@@ -14,6 +15,12 @@ namespace Apterid.Bootstrap.Parse.Syntax
         protected Space(NodeArgs args)
             : base(args)
         {
+        }
+
+        protected override void FormatDetails(StringBuilder sb, MatchState<char, Node> ms = null)
+        {
+            sb.AppendFormat("space \"{0}\" ", Regex.Escape(Text));
+            base.FormatDetails(sb, ms);
         }
     }
 

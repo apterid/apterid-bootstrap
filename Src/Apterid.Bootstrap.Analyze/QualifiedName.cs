@@ -20,7 +20,7 @@ namespace Apterid.Bootstrap.Analyze
 
         public AssemblyName AssemblyName { get; set; }
 
-        public IEnumerable<string> Qualifiers
+        public ICollection<string> Qualifiers
         {
             get
             {
@@ -100,7 +100,7 @@ namespace Apterid.Bootstrap.Analyze
             }
         }
 
-        public IEnumerable<string> Tokens
+        public ICollection<string> Tokens
         {
             get { return tokens; }
             set
@@ -116,6 +116,16 @@ namespace Apterid.Bootstrap.Analyze
         }
 
         public QualifiedName()
+        {
+        }
+
+        public QualifiedName(IEnumerable<string> tokens)
+        {
+            Tokens = tokens.ToArray();
+        }
+
+        public QualifiedName(string fullName)
+            : this(fullName.Split('.'))
         {
         }
 

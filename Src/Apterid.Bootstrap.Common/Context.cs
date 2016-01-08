@@ -31,7 +31,7 @@ namespace Apterid.Bootstrap.Common
         public bool ForceRecompile { get; set; }
         public bool AbortOnError { get; set; }
 
-        public IDictionary<string, SourceFile> Sources { get; set; }
-        public IDictionary<string, Reference> References { get; set; }
+        public IDictionary<string, SourceFile> Sources { get; } = new Dictionary<string, SourceFile>();
+        public IDictionary<string, Reference> References { get; } = new Dictionary<string, Reference>();
     }
 }

@@ -20,11 +20,16 @@ namespace Apterid.Bootstrap.Analyze
         public AnalysisUnit Unit { get; private set; }
         public ParsedSourceFile SourceFile { get; }
 
-        public ApteridAnalyzer(Context context, ParsedSourceFile sourceFile, AnalysisUnit analyzeUnit)
+        TypeResolver TypeResolver { get; }
+
+        public ApteridAnalyzer(Context context, AnalysisUnit analyzeUnit, ParsedSourceFile sourceFile)
         {
             Context = context;
             Unit = analyzeUnit;
             SourceFile = sourceFile;
+
+            var rtr = new ReferenceTypeResolver(context.References.Values);
+            TypeResolver = new ScopeTypeResolver(rtr);
         }
 
         public void Analyze(CancellationToken cancel)
@@ -32,11 +37,7 @@ namespace Apterid.Bootstrap.Analyze
             var sourceNode = SourceFile.ParseTree as Parse.Syntax.Source;
             if (sourceNode == null)
             {
-                Unit.AddError(new AnalyzerError
-                {
-                    ErrorNode = SourceFile.ParseTree,
-                    Message = string.Format(ErrorMessages.E_0010_Analyzer_ParseTreeIsNotSource, SourceFile.Name)
-                });
+                Unit.AddError(new AnalyzerError(SourceFile.ParseTree, string.Format(ErrorMessages.E_0010_Analyzer_ParseTreeIsNotSource, SourceFile.Name)));
                 return;
             }
 
@@ -68,7 +69,7 @@ namespace Apterid.Bootstrap.Analyze
                     // look for existing module
                     var moduleName = new QualifiedName
                     {
-                        Qualifiers = moduleNode.Qualifiers.Select(id => id.Text),
+                        Qualifiers = moduleNode.Qualifiers.Select(id => id.Text).ToArray(),
                         Name = moduleNode.Name.Text
                     };
 
@@ -76,7 +77,12 @@ namespace Apterid.Bootstrap.Analyze
                     {
                         if (!Unit.Modules.TryGetValue(moduleName, out curModule))
                         {
-                            curModule = new Module { Name = moduleName };
+                            curModule = new Module(moduleNode)
+                            {
+                                IsPublic = (moduleNode.Flags & Parse.Syntax.Flags.IsPublic) != 0,
+                                Name = moduleName
+                            };
+
                             Unit.Modules.Add(curModule.Name, curModule);
                         }
 
@@ -97,11 +103,7 @@ namespace Apterid.Bootstrap.Analyze
                 }
                 else
                 {
-                    Unit.AddError(new AnalyzerError
-                    {
-                        ErrorNode = node,
-                        Message = string.Format(ErrorMessages.E_0011_Analyzer_InvalidToplevelItem, ApteridError.Truncate(node.Text)),
-                    });                    
+                    Unit.AddError(new AnalyzerError(node, string.Format(ErrorMessages.E_0011_Analyzer_InvalidToplevelItem, ApteridError.Truncate(node.Text))));
                 }
             }
 
@@ -139,15 +141,17 @@ namespace Apterid.Bootstrap.Analyze
                     {
                         if (module.Bindings.TryGetValue(bindingName, out curBinding))
                         {
-                            Unit.AddError(new AnalyzerError
-                            {
-                                ErrorNode = node,
-                                Message = string.Format(ErrorMessages.E_0012_Analyzer_DuplicateBinding, bindingName.Name),
-                            });
+                            Unit.AddError(new AnalyzerError(node, string.Format(ErrorMessages.E_0012_Analyzer_DuplicateBinding, bindingName.Name)));
                         }
                         else
                         {
-                            curBinding = new Binding { Parent = module, Name = bindingName, SyntaxNode = bindingNode };
+                            curBinding = new Binding(bindingNode)
+                            {
+                                IsPublic = (bindingNode.Flags & Parse.Syntax.Flags.IsPublic) != 0,
+                                Parent = module,
+                                Name = bindingName
+                            };
+
                             bindings.Add(Tuple.Create(bindingNode, curBinding));
                             module.Bindings.Add(curBinding.Name, curBinding);
                         }
@@ -163,11 +167,7 @@ namespace Apterid.Bootstrap.Analyze
                 }
                 else
                 {
-                    Unit.AddError(new AnalyzerError
-                    {
-                        ErrorNode = node,
-                        Message = string.Format(ErrorMessages.E_0013_Analyzer_InvalidScopeItem, ApteridError.Truncate(node.Text)),
-                    });
+                    Unit.AddError(new AnalyzerError(node, string.Format(ErrorMessages.E_0013_Analyzer_InvalidScopeItem, ApteridError.Truncate(node.Text))));
                 }
             }
 
@@ -186,11 +186,7 @@ namespace Apterid.Bootstrap.Analyze
         {
             if (bindingNode.Body == null || !bindingNode.Body.Any())
             {
-                Unit.AddError(new AnalyzerError
-                {
-                    ErrorNode = bindingNode,
-                    Message = string.Format(ErrorMessages.E_0014_Analyzer_EmptyBinding, bindingNode.Name.Text),
-                });
+                Unit.AddError(new AnalyzerError(bindingNode, string.Format(ErrorMessages.E_0014_Analyzer_EmptyBinding, bindingNode.Name.Text)));
                 return;
             }
 
@@ -198,7 +194,6 @@ namespace Apterid.Bootstrap.Analyze
             Expression expression = null;
 
             Parse.Syntax.Literal literalNode;
-            Parse.Syntax.Literal<BigInteger> bigIntLiteral;
 
             foreach (var node in bindingNode.Body)
             {
@@ -207,14 +202,7 @@ namespace Apterid.Bootstrap.Analyze
 
                 if ((literalNode = node as Parse.Syntax.Literal) != null)
                 {
-                    if ((bigIntLiteral = literalNode as Parse.Syntax.Literal<BigInteger>) != null)
-                    {
-                        expression = new Expressions.IntegerLiteral(bigIntLiteral.Value) { SyntaxNode = bigIntLiteral };
-                    }
-                    else
-                    {
-                        throw new NotImplementedException(string.Format("Literals of type {0} not implemented yet.", literalNode.ValueType.Name));
-                    }
+                    expression = AnalyzeLiteral(module, literalNode, cancel);
                 }
                 else if (node is Parse.Syntax.Space)
                 {
@@ -224,11 +212,7 @@ namespace Apterid.Bootstrap.Analyze
 
             if (expression == null)
             {
-                Unit.AddError(new AnalyzerError
-                {
-                    ErrorNode = bindingNode,
-                    Message = string.Format(ErrorMessages.E_0014_Analyzer_EmptyBinding, bindingNode.Name.Text),
-                });
+                Unit.AddError(new AnalyzerError(bindingNode, string.Format(ErrorMessages.E_0014_Analyzer_EmptyBinding, bindingNode.Name.Text)));
                 return;
             }
 
@@ -236,6 +220,22 @@ namespace Apterid.Bootstrap.Analyze
                 expression.PostTrivia.Add(tn);
 
             binding.Expression = expression;
+        }
+
+        Expression AnalyzeLiteral(Module module, Parse.Syntax.Literal literalNode, CancellationToken cancel)
+        {
+            if (literalNode.ValueType == typeof(BigInteger))
+            {
+                return new Expressions.IntegerLiteral((BigInteger)literalNode.Value, literalNode);
+            }
+            else if (literalNode.ValueType == typeof(bool))
+            {
+                return new Expressions.Literal<bool>((bool)literalNode.Value, literalNode);
+            }
+            else
+            {
+                throw new NotImplementedException(string.Format("Literals of type {0} not implemented yet.", literalNode.ValueType.Name));
+            }
         }
 
         #endregion
@@ -283,11 +283,7 @@ namespace Apterid.Bootstrap.Analyze
                     }
                     else
                     {
-                        Unit.AddError(new AnalyzerError
-                        {
-                            ErrorNode = e.SyntaxNode,
-                            Message = string.Format(ErrorMessages.E_0015_Analyzer_UnableToInferType, ApteridError.Truncate(e.SyntaxNode.Text)),
-                        });
+                        Unit.AddError(new AnalyzerError(e.SyntaxNode, string.Format(ErrorMessages.E_0015_Analyzer_UnableToInferType, ApteridError.Truncate(e.SyntaxNode.Text))));
                     }
                 }
             }
@@ -303,11 +299,11 @@ namespace Apterid.Bootstrap.Analyze
 
         TypeResolveRec ResolveExpressionType(TypeResolveRec tvr, Expression e)
         {
-            tvr = e.Children.Aggregate(tvr, (tvrc, c) => ResolveExpressionType(tvrc, c));
+            tvr = e.Children.OfType<Expression>().Aggregate(tvr, (tvrc, c) => ResolveExpressionType(tvrc, c));
             var v = Var.NewVar();
             var result = new TypeResolveRec
             {
-                Constraint = Goal.Conj(tvr.Constraint, e.ResolveType(v)),
+                Constraint = Goal.Conj(tvr.Constraint, e.ResolveType(Unit, TypeResolver, v)),
                 ExpTypeVars = tvr.ExpTypeVars.Concat(new[] { Tuple.Create(e, v) }),
             };
             return result;
@@ -318,5 +314,14 @@ namespace Apterid.Bootstrap.Analyze
 
     public class AnalyzerError : NodeError
     {
+        public AnalyzerError()
+        {
+        }
+
+        public AnalyzerError(Parse.Syntax.Node node, string message)
+        {
+            ErrorNode = node;
+            Message = message;
+        }
     }
 }

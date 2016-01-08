@@ -171,4 +171,10 @@
   <data name="E_0018_Generator_InvalidNumericLiteral" xml:space="preserve">
     <value>Unable to convert numeric literal {0} to {1}.</value>
   </data>
+  <data name="E_0019_Parser_InvalidKeyword" xml:space="preserve">
+    <value>Invalid keyword '{0}'.</value>
+  </data>
+  <data name="E_0020_Analyzer_UnableToResolveType" xml:space="preserve">
+    <value>Unable to resolve type '{0}'.</value>
+  </data>
 </root>

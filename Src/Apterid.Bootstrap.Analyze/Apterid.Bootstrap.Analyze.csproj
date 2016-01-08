@@ -53,8 +53,6 @@
     <Compile Include="ApteridAnalyzer.cs" />
     <Compile Include="AnalysisUnit.cs" />
     <Compile Include="Binding.cs" />
-    <Compile Include="Builtins\ApteridRuntime.cs" />
-    <Compile Include="Builtins\DotNetSystem.cs" />
     <Compile Include="Expression.cs" />
     <Compile Include="Expressions\Literal.cs" />
     <Compile Include="Module.cs" />
@@ -63,7 +61,7 @@
     <Compile Include="QualifiedName.cs" />
     <Compile Include="Scope.cs" />
     <Compile Include="Type.cs" />
-    <Compile Include="Builtins\Number.cs" />
+    <Compile Include="TypeResolver.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Apterid.Bootstrap.Common\Apterid.Bootstrap.Common.csproj">

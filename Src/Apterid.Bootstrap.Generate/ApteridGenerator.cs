@@ -180,6 +180,7 @@ namespace Apterid.Bootstrap.Generate
             var atts = FieldAttributes.Static | FieldAttributes.InitOnly;
             atts |= binding.IsPublic ? FieldAttributes.Public : FieldAttributes.Private;
             var field = typeInfo.TypeBuilder.DefineField(binding.Name.Name, literal.ResolvedType.CLRType, atts);
+            binding.GeneratedMemberInfo = field;
 
             typeInfo.Bindings.Add(literal, field);
 
@@ -196,23 +197,35 @@ namespace Apterid.Bootstrap.Generate
                 {
                     Node = binding.SyntaxNode,
                     Field = field,
-                    GenLoad = il => GenerateLoadLiteral(il, literal, field.FieldType)
+                    GenLoad = il => EmitLoadLiteral(il, literal, field.FieldType)
                 });
             }
         }
 
-        void GenerateLoadLiteral(ILGenerator il, Analyze.Expressions.Literal literal, Type tgtType)
+        void EmitLoadLiteral(ILGenerator il, Analyze.Expressions.Literal literal, Type tgtType)
         {
             MarkSequencePoint(il, literal.SyntaxNode, literal.SyntaxNode);
 
+            Analyze.Expressions.Literal<bool> boolLiteral;
             Analyze.Expressions.IntegerLiteral intLiteral;
             if ((intLiteral = literal as Analyze.Expressions.IntegerLiteral) != null)
             {
-                GenerateLoadIntegerLiteral(il, intLiteral, tgtType);
+                EmitLoadIntegerLiteral(il, intLiteral, tgtType);
+            }
+            else if ((boolLiteral = literal as Analyze.Expressions.Literal<bool>) != null)
+            {
+                if (boolLiteral.TypedValue == true)
+                    il.Emit(OpCodes.Ldc_I4_1);
+                else
+                    il.Emit(OpCodes.Ldc_I4_0);
+            }
+            else
+            {
+                Unit.AddError<GeneratorError>("Don't know how to generate literal of type " + literal.GetType().FullName);
             }
         }
 
-        void GenerateLoadIntegerLiteral(ILGenerator il, Analyze.Expressions.IntegerLiteral literal, Type tgtType)
+        void EmitLoadIntegerLiteral(ILGenerator il, Analyze.Expressions.IntegerLiteral literal, Type tgtType)
         {
             var bigval = literal.IntValue;
 

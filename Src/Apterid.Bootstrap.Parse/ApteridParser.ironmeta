@@ -16,11 +16,19 @@ ironmeta ApteridParser<char, Syntax.Node>
     DirectiveExpression = "if" SC '!'? SC Identifier;
     DirectiveExpression = "endif";
 
+
     /////////////////////////////////////////////////////////////////
     // Modules
 
-    TopLevelModule = SC?:indent Keyword("module") SC QualifiedIdentifier:name SC? EQ SE ModuleBody(indent):body ->
-        { Make<Syntax.Module>(_IM_Result, new { name = name.Results.SingleOrDefault(), body = body.Results }) };
+    TopLevelModule = SC?:indent (Keyword("public") SC)?:vis Keyword("module") SC QualifiedIdentifier:name SC? EQ SE ModuleBody(indent):body ->
+        { 
+            Make<Syntax.Module>(_IM_Result, new 
+            {
+                flags = GetFlags(vis.Results),
+                name = name.Results.SingleOrDefault(), 
+                body = body.Results 
+            }) 
+        };
 
     ModuleBody :outer =
         (
@@ -42,29 +50,48 @@ ironmeta ApteridParser<char, Syntax.Node>
 
     /////////////////////////
 
-    ModuleItem :indent = Binding(indent);
+    ModuleItem :indent = ModuleBinding(indent);
+
 
     /////////////////////////////////////////////////////////////////
     // Bindings
 
-    Binding = Identifier:name WS? EQ WS? Expression:body SE ->
-        { Make<Syntax.Binding>(_IM_Result, new { name = name.Results.SingleOrDefault(), pattern = (Syntax.Pattern)null, body = body.Results }) };
+    ModuleBinding :indent = (Keyword("public") SC)?:vis Identifier:name WS? EQ WS? Expression:body SE ->
+        {
+            var args = new 
+            {
+                flags = GetFlags(vis.Results),
+                name = name.Results.SingleOrDefault(), 
+                pattern = (Syntax.Pattern)null, 
+                body = body.Results 
+            };
+            return Make<Syntax.Binding>(_IM_Result, args);
+        };
+    
 
     /////////////////////////////////////////////////////////////////
     // Expressions
 
     Expression = Literal;
 
-    Literal = IntegerLiteral;
+    Literal = BooleanLiteral
+        | IntegerLiteral;
+
+    BooleanLiteral = /true|false/ -> 
+        {
+            var str = new string (_IM_Result.Inputs.ToArray());
+            return Make<Syntax.Literal<bool>>(_IM_Result, new { value = bool.Parse(str) });
+        };
 
     IntegerLiteral = DecimalInteger;
 
-    DecimalInteger = /[\+-]?[0-9]+(_?[0-9]+)*/ -> 
+    DecimalInteger = /[0-9]+(_?[0-9]+)*/ -> 
         {
             var str = new string(_IM_Result.Inputs.ToArray());
             var value = BigInteger.Parse(str.Replace("_", ""));
             return Make<Syntax.Literal<BigInteger>>(_IM_Result, new { value = value });
         };
+
 
     /////////////////////////////////////////////////////////////////
     // Lexicon
@@ -75,11 +102,13 @@ ironmeta ApteridParser<char, Syntax.Node>
 
     QualifiedIdentifier = (Identifier DOT)* Identifier:i -> { return Make<Syntax.QualifiedIdentifier>(_IM_Result); };
 
+
     /////////////////////////////////////////////////////////////////
     // Punctuation
 
     DOT = '.' -> { Make<Syntax.Punct>(_IM_Result) };
     EQ  = '=' -> { Make<Syntax.Punct>(_IM_Result) };
+
 
     /////////////////////////////////////////////////////////////////
     // Comments & Whitespace
@@ -102,11 +131,13 @@ ironmeta ApteridParser<char, Syntax.Node>
     WS = ' '+ -> { Make<Syntax.Whitespace>(_IM_Result) };
     WS = '\t'+ !"tabs are not allowed in Apterid source";
 
+
     /////////////////////////////////////////////////////////////////
     // ErrorSection
 
     ErrorSection :indent = (~DoubleReturn .)+ DoubleReturn -> { Make<Syntax.ErrorSection>(_IM_Result) };
     DoubleReturn = EOL WS? (EOL | EOF);
+
 
     /////////////////////////////////////////////////////////////////
     // End-of-Line and End-of-File

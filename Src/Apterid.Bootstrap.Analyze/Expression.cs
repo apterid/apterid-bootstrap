@@ -12,9 +12,11 @@ namespace Apterid.Bootstrap.Analyze
     public abstract class Expression : Scope
     {
         public Type ResolvedType { get; internal set; }
+        public abstract Goal<Type> ResolveType(AnalysisUnit unit, TypeResolver tr, Var type);
 
-        public abstract Goal<Type> ResolveType(Var type);
-
-        public IList<Expression> Children { get; } = new List<Expression>();
+        public Expression(Parse.Syntax.Node syntaxNode)
+            : base(syntaxNode)
+        {
+        }
     }
 }
