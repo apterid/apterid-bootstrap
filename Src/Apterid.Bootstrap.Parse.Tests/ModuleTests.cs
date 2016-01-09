@@ -15,7 +15,7 @@ namespace Apterid.Bootstrap.Parse.Tests
         public void Parser_Module_SimpleModule()
         {
             var s = @"
-module Qualified.One =
+module Qualified.One = 
     f1 = 123
     
     public f2 = 314 /* comment */

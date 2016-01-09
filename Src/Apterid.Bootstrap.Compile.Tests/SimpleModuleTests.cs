@@ -22,7 +22,7 @@ namespace Apterid.Bootstrap.Compile.Tests
 module One =
   f = 123
 
-public module Two =  
+public module Two = 
   public G = true
   h = 456
 
