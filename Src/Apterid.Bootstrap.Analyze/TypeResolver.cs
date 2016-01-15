@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Apterid.Bootstrap.Common;
+using Apterid.Bootstrap.Analyze.Abstract;
 
 namespace Apterid.Bootstrap.Analyze
 {
     public abstract class TypeResolver
     {
-        public abstract Type ResolveType(QualifiedName name);
+        public abstract AType ResolveType(QualifiedName name);
     }
 
     class ScopeTypeResolver : TypeResolver
@@ -21,7 +22,7 @@ namespace Apterid.Bootstrap.Analyze
             RefResolver = rtr;
         }
 
-        public override Type ResolveType(QualifiedName name)
+        public override AType ResolveType(QualifiedName name)
         {
             return RefResolver.ResolveType(name);
         }
@@ -32,7 +33,7 @@ namespace Apterid.Bootstrap.Analyze
         public ICollection<Reference> References { get; }
 
         IDictionary<QualifiedName, Scope> resolvedNamespaces = new Dictionary<QualifiedName, Scope>();
-        IDictionary<QualifiedName, Type> resolvedTypes = new Dictionary<QualifiedName, Type>();
+        IDictionary<QualifiedName, AType> resolvedTypes = new Dictionary<QualifiedName, AType>();
 
         public ReferenceTypeResolver(ICollection<Reference> references)
         {
@@ -41,9 +42,9 @@ namespace Apterid.Bootstrap.Analyze
 
         object resolveLock = new object();
 
-        public override Type ResolveType(QualifiedName name)
+        public override AType ResolveType(QualifiedName name)
         {
-            Type result;
+            AType result;
             if (resolvedTypes.TryGetValue(name, out result))
                 return result;
 
@@ -60,7 +61,7 @@ namespace Apterid.Bootstrap.Analyze
                 if (refAndType == null || refAndType.Item2 == null)
                     return null;
 
-                result = new Type(null)
+                result = new AType(null)
                 {
                     Name = new QualifiedName(name.Tokens)
                     {

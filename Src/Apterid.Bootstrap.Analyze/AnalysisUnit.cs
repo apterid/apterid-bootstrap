@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Apterid.Bootstrap.Analyze.Abstract;
 using Apterid.Bootstrap.Common;
 using Apterid.Bootstrap.Parse;
 

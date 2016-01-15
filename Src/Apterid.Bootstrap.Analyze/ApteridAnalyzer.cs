@@ -7,7 +7,8 @@ using System.Numerics;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-
+using Apterid.Bootstrap.Analyze.Abstract;
+using Apterid.Bootstrap.Analyze.Abstract.Expressions;
 using Apterid.Bootstrap.Common;
 using Apterid.Bootstrap.Parse;
 using Verophyle.CSLogic;
@@ -226,11 +227,11 @@ namespace Apterid.Bootstrap.Analyze
         {
             if (literalNode.ValueType == typeof(BigInteger))
             {
-                return new Expressions.IntegerLiteral((BigInteger)literalNode.Value, literalNode);
+                return new IntegerLiteral((BigInteger)literalNode.Value, literalNode);
             }
             else if (literalNode.ValueType == typeof(bool))
             {
-                return new Expressions.Literal<bool>((bool)literalNode.Value, literalNode);
+                return new Literal<bool>((bool)literalNode.Value, literalNode);
             }
             else
             {
@@ -244,7 +245,7 @@ namespace Apterid.Bootstrap.Analyze
 
         struct TypeResolveRec
         {
-            public Goal<Type> Constraint { get; set; }
+            public Goal<AType> Constraint { get; set; }
             public IEnumerable<Tuple<Expression, Var>> ExpTypeVars { get; set; }
         }
 

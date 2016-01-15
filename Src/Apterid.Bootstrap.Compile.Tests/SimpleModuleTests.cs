@@ -8,6 +8,7 @@ using System.Numerics;
 using System.Reflection;
 using System.Threading.Tasks;
 using Apterid.Bootstrap.Analyze;
+using Apterid.Bootstrap.Analyze.Abstract.Expressions;
 using Apterid.Bootstrap.Compile.Steps;
 using Apterid.Bootstrap.Parse;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -118,8 +119,8 @@ public module Two =
                     var binding = module.Bindings.Values.Single(b => b.Name.Name == "f");
                     Assert.IsFalse(binding.IsPublic);
 
-                    Assert.IsInstanceOfType(binding.Expression, typeof(Analyze.Expressions.IntegerLiteral));
-                    var intLiteral = binding.Expression as Analyze.Expressions.IntegerLiteral;
+                    Assert.IsInstanceOfType(binding.Expression, typeof(IntegerLiteral));
+                    var intLiteral = binding.Expression as IntegerLiteral;
                     Assert.AreEqual(typeof(int), intLiteral.ResolvedType.CLRType);
 
                     var val = (int)intLiteral.IntValue;
@@ -134,8 +135,8 @@ public module Two =
                         var g = module.Bindings.Values.Single(b => b.Name.Name == "G");
                         Assert.IsTrue(g.IsPublic);
 
-                        Assert.IsInstanceOfType(g.Expression, typeof(Analyze.Expressions.Literal<bool>));
-                        var boolLiteral = g.Expression as Analyze.Expressions.Literal<bool>;
+                        Assert.IsInstanceOfType(g.Expression, typeof(Literal<bool>));
+                        var boolLiteral = g.Expression as Literal<bool>;
                         Assert.AreEqual(typeof(bool), boolLiteral.ResolvedType.CLRType);
 
                         var val = (bool)boolLiteral.Value;
@@ -146,8 +147,8 @@ public module Two =
                         var h = module.Bindings.Values.Single(b => b.Name.Name == "h");
                         Assert.IsFalse(h.IsPublic);
 
-                        Assert.IsInstanceOfType(h.Expression, typeof(Analyze.Expressions.IntegerLiteral));
-                        var intLiteral = h.Expression as Analyze.Expressions.IntegerLiteral;
+                        Assert.IsInstanceOfType(h.Expression, typeof(IntegerLiteral));
+                        var intLiteral = h.Expression as IntegerLiteral;
                         Assert.AreEqual(typeof(int), intLiteral.ResolvedType.CLRType);
 
                         var val = (int)intLiteral.IntValue;

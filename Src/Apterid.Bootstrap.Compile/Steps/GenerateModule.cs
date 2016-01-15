@@ -12,10 +12,10 @@ namespace Apterid.Bootstrap.Compile.Steps
 {
     class GenerateModule : CompilerStep<GenerationUnit>
     {
-        Analyze.Module Module { get; set; }
+        Analyze.Abstract.Module Module { get; set; }
         ApteridGenerator Generator { get; set; }
 
-        public GenerateModule(CompilerContext context, GenerationUnit generationUnit, Analyze.Module module)
+        public GenerateModule(CompilerContext context, GenerationUnit generationUnit, Analyze.Abstract.Module module)
             : base(context, generationUnit)
         {
             Module = module;

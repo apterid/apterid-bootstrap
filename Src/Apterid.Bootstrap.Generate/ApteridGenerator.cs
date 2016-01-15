@@ -9,6 +9,8 @@ using System.Reflection.Emit;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Apterid.Bootstrap.Analyze.Abstract;
+using Apterid.Bootstrap.Analyze.Abstract.Expressions;
 using Apterid.Bootstrap.Common;
 
 namespace Apterid.Bootstrap.Generate
@@ -17,9 +19,9 @@ namespace Apterid.Bootstrap.Generate
     {
         public Context Context { get; }
         public GenerationUnit Unit { get; }
-        public Analyze.Module Module { get; }
+        public Analyze.Abstract.Module Module { get; }
 
-        public ApteridGenerator(Context context, GenerationUnit generationUnit, Analyze.Module module)
+        public ApteridGenerator(Context context, GenerationUnit generationUnit, Analyze.Abstract.Module module)
         {
             Context = context;
             Unit = generationUnit;
@@ -48,7 +50,7 @@ namespace Apterid.Bootstrap.Generate
             public IList<FieldInitInfo> FieldsToInit = new List<FieldInitInfo>();
             public IList<FieldInitInfo> StaticFieldsToInit = new List<FieldInitInfo>();
 
-            public IDictionary<Analyze.Expression, MemberInfo> Bindings = new Dictionary<Analyze.Expression, MemberInfo>();
+            public IDictionary<Expression, MemberInfo> Bindings = new Dictionary<Expression, MemberInfo>();
         }
 
         GenerateModuleInfo moduleInfo;
@@ -143,29 +145,29 @@ namespace Apterid.Bootstrap.Generate
             }
         }
 
-        void GenerateType(GenerateTypeInfo info, Analyze.Type type)
+        void GenerateType(GenerateTypeInfo info, AType type)
         {
         }
 
-        void GenerateBinding(GenerateTypeInfo typeInfo, Analyze.Binding binding)
+        void GenerateBinding(GenerateTypeInfo typeInfo, Binding binding)
         {
             if (binding.Expression != null)
             {
-                Analyze.Expressions.Literal literal;
+                Literal literal;
 
                 // literal -> static field
-                if ((literal = binding.Expression as Analyze.Expressions.Literal) != null)
+                if ((literal = binding.Expression as Literal) != null)
                 {
                     GenerateLiteralBinding(typeInfo, binding, literal);
                 }
             }
         }
 
-        void GenerateField(TypeBuilder tb, Analyze.Expression expression)
+        void GenerateField(TypeBuilder tb, Expression expression)
         {
         }
 
-        void GenerateLiteralBinding(GenerateTypeInfo typeInfo, Analyze.Binding binding, Analyze.Expressions.Literal literal)
+        void GenerateLiteralBinding(GenerateTypeInfo typeInfo, Binding binding, Literal literal)
         {
             if (literal.ResolvedType == null)
             {
@@ -202,17 +204,17 @@ namespace Apterid.Bootstrap.Generate
             }
         }
 
-        void EmitLoadLiteral(ILGenerator il, Analyze.Expressions.Literal literal, Type tgtType)
+        void EmitLoadLiteral(ILGenerator il, Literal literal, Type tgtType)
         {
             MarkSequencePoint(il, literal.SyntaxNode, literal.SyntaxNode);
 
-            Analyze.Expressions.Literal<bool> boolLiteral;
-            Analyze.Expressions.IntegerLiteral intLiteral;
-            if ((intLiteral = literal as Analyze.Expressions.IntegerLiteral) != null)
+            Literal<bool> boolLiteral;
+            IntegerLiteral intLiteral;
+            if ((intLiteral = literal as IntegerLiteral) != null)
             {
                 EmitLoadIntegerLiteral(il, intLiteral, tgtType);
             }
-            else if ((boolLiteral = literal as Analyze.Expressions.Literal<bool>) != null)
+            else if ((boolLiteral = literal as Literal<bool>) != null)
             {
                 if (boolLiteral.TypedValue == true)
                     il.Emit(OpCodes.Ldc_I4_1);
@@ -225,7 +227,7 @@ namespace Apterid.Bootstrap.Generate
             }
         }
 
-        void EmitLoadIntegerLiteral(ILGenerator il, Analyze.Expressions.IntegerLiteral literal, Type tgtType)
+        void EmitLoadIntegerLiteral(ILGenerator il, IntegerLiteral literal, Type tgtType)
         {
             var bigval = literal.IntValue;
 
