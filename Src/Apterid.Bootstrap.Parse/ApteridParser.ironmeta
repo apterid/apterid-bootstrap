@@ -56,7 +56,7 @@ ironmeta ApteridParser<char, Syntax.Node>
     /////////////////////////////////////////////////////////////////
     // Bindings
 
-    ModuleBinding :indent = (Keyword("public") SC)?:vis Identifier:name WS? EQ WS? Expression:body SE ->
+    ModuleBinding :indent = (Keyword("public") SC)?:vis Identifier:name WS? EQ WS? Expression(indent):body SE ->
         {
             var args = new 
             {
@@ -72,9 +72,57 @@ ironmeta ApteridParser<char, Syntax.Node>
     /////////////////////////////////////////////////////////////////
     // Expressions
 
-    Expression = Literal;
+    Expression :indent = ApplyExp(indent);
 
-    Literal = BooleanLiteral
+    ApplyExp :indent = ApplyExp(indent) ' ' IndexExp(indent);
+    ApplyExp :indent = IndexExp(indent);
+
+    IndexExp :indent = IndexExp(indent) '|' EWS(indent) Expression(indent) EWS(indent) '|';
+    IndexExp :indent = IndexExp(indent) '[' EWS(indent) Expression(indent) EWS(indent) ']';
+    IndexExp :indent = QualifyExp(indent);
+
+    QualifyExp :indent = QualifyExp(indent) EWS(indent) '.' Identifier;
+    QualifyExp :indent = UnaryPrefixExp(indent);
+
+    UnaryPrefixExp :indent = CastExp(indent);
+    UnaryPrefixExp :indent = ['+' '-' '~' '!'] UnaryPrefixExp(indent);
+    UnaryPrefixExp :indent = MultExp(indent);
+
+    CastExp :indent = '<' TypeName(indent) '>' EWS(indent) CastExp(indent);
+    CastExp :indent = MultExp(indent);
+
+    MultExp :indent = MultExp(indent) EWS(indent) ['*' '/' '%'] EWS(indent) AddExp(indent);
+    MultExp :indent = AddExp(indent);
+
+    AddExp :indent = AddExp(indent) EWS(indent) ['+' '-'] EWS(indent) ShiftExp(indent);
+    AddExp :indent = ShiftExp(indent);
+
+    ShiftExp :indent = ShiftExp(indent) EWS(indent) ("<<" | ">>") EWS(indent) CompExp(indent);
+    ShiftExp :indent = CompExp(indent);
+
+    CompExp :indent = CompExp(indent) EWS(indent) ("<=" | ">=" | '<' | '>') EWS(indent) EqExp(indent);
+    CompExp :indent = EqExp(indent);
+
+    EqExp :indent = EqExp(indent) EWS(indent) ("==" | "!=") EWS(indent) BitwiseExp(indent);
+    EqExp :indent = BitwiseExp(indent);
+
+    BitwiseExp :indent = BitwiseExp(indent) EWS(indent) ['&' '|' '^'] EWS(indent) LogicalExp(indent);
+    BitwiseExp :indent = LogicalExp(indent);
+
+    LogicalExp :indent = LogicalExp(indent) EWS(indent) ("&&" | "||") EWS(indent) PipeExp(indent);
+    LogicalExp :indent = PipeExp(indent);
+
+    PipeExp :indent = PipeExp(indent) EWS(indent) ("|>" | "<|") EWS(indent) AssignExp(indent);
+    PipeExp :indent = AssignExp(indent);
+
+    AssignExp :indent = LiteralExp(indent) EWS(indent) '=' EWS(indent) AssignExp(indent);
+    AssignExp :indent = LiteralExp(indent);
+
+    LiteralExp :indent = '(' EWS(indent) Expression(indent) EWS(indent) ')';
+    LiteralExp :indent = Literal(indent);
+
+    Literal (:indent)? = 
+          BooleanLiteral
         | IntegerLiteral;
 
     BooleanLiteral = /true|false/ -> 
@@ -102,6 +150,7 @@ ironmeta ApteridParser<char, Syntax.Node>
 
     QualifiedIdentifier = (Identifier DOT)* Identifier:i -> { return Make<Syntax.QualifiedIdentifier>(_IM_Result); };
 
+    TypeName :indent = QualifiedIdentifier ('<' EWS(indent) TypeName (',' EWS(indent) TypeName)* EWS(indent) '>')?;
 
     /////////////////////////////////////////////////////////////////
     // Punctuation
@@ -127,6 +176,10 @@ ironmeta ApteridParser<char, Syntax.Node>
                 Make<Syntax.EndOfLine>(eol),
             }
         };
+
+    EWS :indent = ' '* EOL ' '*:s ?(s.Length() > indent.Length());
+    EWS :indent = ' '* EOL ' '*:s !"source code in an expression must be indented";
+    EWS :indent = ' '+;
 
     WS = ' '+ -> { Make<Syntax.Whitespace>(_IM_Result) };
     WS = '\t'+ !"tabs are not allowed in Apterid source";
