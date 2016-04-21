@@ -3,6 +3,7 @@
 using System;
 using System.Linq;
 using System.Numerics;
+using Apterid.Bootstrap.Parse.Parser;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Apterid.Bootstrap.Parse.Tests
@@ -16,12 +17,12 @@ namespace Apterid.Bootstrap.Parse.Tests
         public void Parser_Lexicon_IntegerLiteral()
         {
             const string s1 = "123";
-            var m1 = parser.GetMatch(s1, parser.DecimalInteger);
+            var m1 = parser.GetMatch(s1, parser.Expressions.DecimalInteger);
             Assert.IsTrue(m1.Success);
             Assert.AreEqual(123, (int)((Syntax.Literal<BigInteger>)m1.Result).Value);
 
             const string s2 = "34_56";
-            var m2 = parser.GetMatch(s2, parser.DecimalInteger);
+            var m2 = parser.GetMatch(s2, parser.Expressions.DecimalInteger);
             Assert.IsTrue(m2.Success);
             Assert.AreEqual(3456, (int)((Syntax.Literal<BigInteger>)m2.Result).Value);
         }
@@ -35,7 +36,7 @@ namespace Apterid.Bootstrap.Parse.Tests
                 SourceFile = new MemorySourceFile(s1)
             };
 
-            var m1 = parser.GetMatch(s1, parser.QualifiedIdentifier);
+            var m1 = parser.GetMatch(s1, parser.Lexicon.QualifiedIdentifier);
             Assert.IsTrue(m1.Success);
             Assert.IsInstanceOfType(m1.Result, typeof(Syntax.QualifiedIdentifier));
 
@@ -56,34 +57,34 @@ namespace Apterid.Bootstrap.Parse.Tests
         public void Parser_Lexicon_Identifier()
         {
             const string s1 = "_";
-            var m1 = parser.GetMatch(s1, parser.Identifier);
+            var m1 = parser.GetMatch(s1, parser.Lexicon.Identifier);
             Assert.IsTrue(m1.Success);
             Assert.AreEqual(s1.Length, m1.NextIndex);
 
             const string s2 = "_1a";
-            var m2 = parser.GetMatch(s2, parser.Identifier);
+            var m2 = parser.GetMatch(s2, parser.Lexicon.Identifier);
             Assert.IsTrue(m2.Success);
             Assert.AreEqual(s2.Length, m2.NextIndex);
 
             const string s4 = "a3_b4";
-            var m4 = parser.GetMatch(s4, parser.Identifier);
+            var m4 = parser.GetMatch(s4, parser.Lexicon.Identifier);
             Assert.IsTrue(m4.Success);
             Assert.AreEqual(s4.Length, m4.NextIndex);
 
             const string s3 = "123b_c";
-            var m3 = parser.GetMatch(s3, parser.Identifier);
+            var m3 = parser.GetMatch(s3, parser.Lexicon.Identifier);
             Assert.IsFalse(m3.Success);
 
             const string s5 = " ";
-            var m5 = parser.GetMatch(s5, parser.Identifier);
+            var m5 = parser.GetMatch(s5, parser.Lexicon.Identifier);
             Assert.IsFalse(m5.Success);
 
             const string s6 = "";
-            var m6 = parser.GetMatch(s6, parser.Identifier);
+            var m6 = parser.GetMatch(s6, parser.Lexicon.Identifier);
             Assert.IsFalse(m6.Success);
 
             const string s7 = "a";
-            var m7 = parser.GetMatch(s7, parser.Identifier);
+            var m7 = parser.GetMatch(s7, parser.Lexicon.Identifier);
             Assert.IsTrue(m7.Success);
             Assert.AreEqual(s7.Length, m7.NextIndex);
         }
@@ -92,13 +93,13 @@ namespace Apterid.Bootstrap.Parse.Tests
         public void Parser_Lexicon_InlineComment()
         {
             const string s1 = "/* baz */ foo */";
-            var m1 = parser.GetMatch(s1, parser.InlineComment);
+            var m1 = parser.GetMatch(s1, parser.Lexicon.InlineComment);
             Assert.IsTrue(m1.Success);
             Assert.AreEqual(0, m1.StartIndex);
             Assert.AreEqual(9, m1.NextIndex);
 
             const string s2 = "foo */";
-            var m2 = parser.GetMatch(s2, parser.InlineComment);
+            var m2 = parser.GetMatch(s2, parser.Lexicon.InlineComment);
             Assert.IsFalse(m2.Success);
         }
 
@@ -106,27 +107,27 @@ namespace Apterid.Bootstrap.Parse.Tests
         public void Parser_Lexicon_LineComment()
         {
             const string s1 = "// comment\nblahblahblah";
-            var m1 = parser.GetMatch(s1, parser.LineComment);
+            var m1 = parser.GetMatch(s1, parser.Lexicon.LineComment);
             Assert.IsTrue(m1.Success);
             Assert.AreEqual(0, m1.StartIndex);
             Assert.AreEqual(11, m1.NextIndex);
 
             const string s2 = "// comment";
-            var m2 = parser.GetMatch(s2, parser.LineComment);
+            var m2 = parser.GetMatch(s2, parser.Lexicon.LineComment);
             Assert.IsTrue(m2.Success);
             Assert.AreEqual(0, m2.StartIndex);
             Assert.AreEqual(10, m2.NextIndex);
 
             const string s3 = "ghuwrbgu8 48h2 //";
-            var m3 = parser.GetMatch(s3, parser.LineComment);
+            var m3 = parser.GetMatch(s3, parser.Lexicon.LineComment);
             Assert.IsFalse(m3.Success);
 
             const string s4 = "//\nhghg";
-            var m4 = parser.GetMatch(s4, parser.LineComment);
+            var m4 = parser.GetMatch(s4, parser.Lexicon.LineComment);
             Assert.IsTrue(m4.Success);
 
             const string s5 = "";
-            var m5 = parser.GetMatch(s5, parser.LineComment);
+            var m5 = parser.GetMatch(s5, parser.Lexicon.LineComment);
             Assert.IsFalse(m5.Success);
         }
     }

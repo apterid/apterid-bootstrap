@@ -1,0 +1,61 @@
+﻿// Copyright (C) 2015 The Apterid Developers - See LICENSE
+
+ironmeta ApteridLexicon<char, Syntax.Node> : ApteridParserBase
+{
+    Keyword :text = text -> { Make<Syntax.Keyword>(_IM_Result) };
+    
+    Identifier = /_|_[_0-9a-zA-Z]+|[a-zA-Z][_0-9a-zA-Z]*/ -> { Make<Syntax.Identifier>(_IM_Result) };
+
+    QualifiedIdentifier = (Identifier DOT)* Identifier:i -> { return Make<Syntax.QualifiedIdentifier>(_IM_Result); };
+
+    TypeName :indent = QualifiedIdentifier ('<' IWS(indent) TypeName (',' IWS(indent) TypeName)* IWS(indent) '>')?;
+
+    UNIT = "()";
+
+
+    // Punctuation
+
+    DOT = '.'  -> { Make<Syntax.Punct>(_IM_Result) };
+    EQ  = '='  -> { Make<Syntax.Punct>(_IM_Result) };
+    MKF = "=>" -> { Make<Syntax.Punct>(_IM_Result) };
+
+
+    // Comments & Whitespace
+
+    SC = (WS | InlineComment)+;                     // space or inline comment
+    SE = (InlineComment | WS)* (LineComment | EOL); // space or comment at the end of a line (includes the EOL)
+
+    InlineComment = "/*" (EOL | ~"*/" .)* "*/" -> { Make<Syntax.InlineComment>(_IM_Result) };
+    InlineComment = "/*" (EOL | ~(EOF | "*/") .)* EOF !"unterminated comment";
+
+    LineComment = ("//" (~EOL .)*):ec (EOL | EOF):eol ->
+        {
+            new Syntax.Node[]
+            {
+                Make<Syntax.EndComment>(ec),
+                Make<Syntax.EndOfLine>(eol),
+            }
+        };
+
+    // indented whitespace
+    IWS :indent = WS? EOL WS?:s ?(s.Length() > indent.Length());
+    IWS :indent = WS? EOL WS?:s !"source code in an expression must be indented";
+    IWS :indent = WS;
+
+    WS = ' '+ -> { Make<Syntax.Whitespace>(_IM_Result) };
+    WS = '\t'+ !"tabs are not allowed in Apterid source";
+
+
+    // End-of-Line and End-of-File
+    EOL = '\r'? '\n' ->
+        {
+            _memo.Positions.Add(_IM_Result.NextIndex);
+            return Make<Syntax.EndOfLine>(_IM_Result);
+        };
+
+    EOF = ~. ->
+        {
+            _memo.Positions.Add(_IM_Result.NextIndex);
+            return Make<Syntax.EndOfFile>(_IM_Result);
+        };
+}

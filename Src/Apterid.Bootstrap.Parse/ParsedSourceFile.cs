@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Apterid.Bootstrap.Parse.Syntax;
+using Apterid.Bootstrap.Parse.Parser;
 
 namespace Apterid.Bootstrap.Parse
 {
@@ -16,18 +16,18 @@ namespace Apterid.Bootstrap.Parse
         public IronMeta.Matcher.MatchState<char, Syntax.Node> MatchState { get; set; }
         public IronMeta.Matcher.MatchResult<char, Syntax.Node> MatchResult { get; set; }
 
-        public Node ParseTree { get; set; }
+        public Syntax.Node ParseTree { get; set; }
 
         public IEnumerable<T> GetNodes<T>()
-            where T : Node
+            where T : Syntax.Node
         {
             return ParseTree != null
                 ? GetNodes<T>(ParseTree)
                 : Enumerable.Empty<T>();
         }
 
-        IEnumerable<T> GetNodes<T>(Node node)
-            where T : Node
+        IEnumerable<T> GetNodes<T>(Syntax.Node node)
+            where T : Syntax.Node
         {
             var tnode = node as T;
             if (tnode != null) yield return tnode;

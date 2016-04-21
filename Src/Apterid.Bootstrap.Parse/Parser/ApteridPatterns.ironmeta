@@ -1,0 +1,11 @@
+﻿// Copyright (C) 2015 The Apterid Developers - See LICENSE
+
+ironmeta ApteridPatterns<char, Syntax.Node> : ApteridParserBase
+{
+    /////////////////////////////////////////////////////////////////
+    // Patterns
+
+    Pattern :indent = UnitPattern(indent);
+
+    UnitPattern :indent = lex.UNIT lex.IWS(indent) -> { Make<Syntax.UnitPattern>(_IM_Result) };
+}

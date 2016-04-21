@@ -1,0 +1,77 @@
+﻿// Copyright (C) 2015 The Apterid Developers - See LICENSE
+
+using System.Numerics;
+
+ironmeta ApteridParser<char, Syntax.Node> : ApteridParserBase
+{
+    ApteridSource = SourcePart* lex.EOF -> { Make<Syntax.Source>(_IM_Result) };
+
+    SourcePart = Directive | TopLevelModule | lex.SE+ | ErrorSection+;
+
+    /////////////////////////////////////////////////////////////////
+    // Directives
+
+    Directive = '#' lex.WS? DirectiveExpression;
+
+    DirectiveExpression = "if" lex.SC '!'? lex.SC lex.Identifier;
+    DirectiveExpression = "endif";
+
+
+    /////////////////////////////////////////////////////////////////
+    // Modules
+
+    TopLevelModule = lex.SC?:indent (lex.Keyword("public") lex.SC)?:vis lex.Keyword("module") lex.SC lex.QualifiedIdentifier:name lex.SC? lex.EQ lex.SE ModuleBody(indent):body ->
+        { 
+            Make<Syntax.Module>(_IM_Result, new 
+            {
+                flags = GetFlags(vis.Results),
+                name = name.Results.SingleOrDefault(), 
+                body = body.Results 
+            }) 
+        };
+
+    ModuleBody :outer =
+        (
+            (lex.SC:inner lex.SE) ?(inner.Length() > outer.Length())
+            | !"the contents of a module must be indented -- even comments"
+        )*
+        (
+            (lex.SC:inner ModuleItem(inner)) ?(inner.Length() > outer.Length()) 
+            | !"the contents of a module must be indented"
+        )
+        ModulePart(inner)*;
+
+    // these all include the initial indent and go to the end of the part's last line
+    ModulePart :indent = lex.SE;
+    ModulePart :indent = (lex.SC:ws ModuleItem(indent) lex.SE) ?(ws.Length() == indent.Length());
+    ModulePart :indent = (lex.SC:ws ModuleItem(indent) lex.SE) !"parts of a module must indented and aligned";
+    ModulePart :indent = Directive lex.SE;
+    ModulePart :indent = ErrorSection;
+
+    /////////////////////////
+
+    ModuleItem :indent = ModuleBinding(indent);
+
+
+    /////////////////////////////////////////////////////////////////
+    // Bindings
+
+    ModuleBinding :indent = (lex.Keyword("public") lex.SC)?:vis lex.Identifier:name lex.WS? lex.EQ lex.WS? exp.Expression(indent):body lex.SE ->
+        {
+            var args = new 
+            {
+                flags = GetFlags(vis.Results),
+                name = name.Results.SingleOrDefault(), 
+                pattern = (Syntax.Pattern)null, 
+                body = body.Results 
+            };
+            return Make<Syntax.Binding>(_IM_Result, args);
+        };
+    
+
+    /////////////////////////////////////////////////////////////////
+    // ErrorSection
+
+    ErrorSection :indent = (~DoubleReturn .)+ DoubleReturn -> { Make<Syntax.ErrorSection>(_IM_Result) };
+    DoubleReturn = lex.EOL lex.WS? (lex.EOL | lex.EOF);
+}

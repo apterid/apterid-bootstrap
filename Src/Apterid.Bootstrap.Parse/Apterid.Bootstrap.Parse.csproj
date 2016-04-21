@@ -49,12 +49,30 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="ApteridParser.cs" />
-    <Compile Include="ApteridParser.g.cs">
+    <Compile Include="Parser\ApteridExpressions.g.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ApteridExpressions.ironmeta</DependentUpon>
+    </Compile>
+    <Compile Include="Parser\ApteridLexicon.g.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ApteridLexicon.ironmeta</DependentUpon>
+    </Compile>
+    <Compile Include="Parser\ApteridParser.cs" />
+    <Compile Include="Parser\ApteridParser.g.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>ApteridParser.ironmeta</DependentUpon>
     </Compile>
+    <Compile Include="Parser\ApteridParserBase.cs" />
+    <Compile Include="Parser\ApteridPatterns.g.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ApteridPatterns.ironmeta</DependentUpon>
+    </Compile>
+    <Compile Include="Parser\MatchItemExtensions.cs" />
+    <Compile Include="ParseException.cs" />
     <Compile Include="ParseUnit.cs" />
     <Compile Include="NodeError.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -72,11 +90,23 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="ApteridParser.ironmeta">
+    <None Include="Parser\ApteridExpressions.ironmeta">
+      <Generator>IronMetaGenerator</Generator>
+      <LastGenOutput>ApteridExpressions.g.cs</LastGenOutput>
+    </None>
+    <None Include="Parser\ApteridLexicon.ironmeta">
+      <Generator>IronmetaGenerator</Generator>
+      <LastGenOutput>ApteridLexicon.g.cs</LastGenOutput>
+    </None>
+    <None Include="Parser\ApteridParser.ironmeta">
       <Generator>IronMetaGenerator</Generator>
       <LastGenOutput>ApteridParser.g.cs</LastGenOutput>
     </None>
     <None Include="packages.config" />
+    <None Include="Parser\ApteridPatterns.ironmeta">
+      <Generator>IronmetaGenerator</Generator>
+      <LastGenOutput>ApteridPatterns.g.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Apterid.Bootstrap.Common\Apterid.Bootstrap.Common.csproj">

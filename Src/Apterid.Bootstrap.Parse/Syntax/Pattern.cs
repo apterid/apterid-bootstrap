@@ -22,4 +22,12 @@ namespace Apterid.Bootstrap.Parse.Syntax
             base.FormatDetails(sb, ms);
         }
     }
+
+    public class UnitPattern : Node
+    {
+        public UnitPattern(NodeArgs args, params Node[] children)
+            : base(args, children)
+        {
+        }
+    }
 }

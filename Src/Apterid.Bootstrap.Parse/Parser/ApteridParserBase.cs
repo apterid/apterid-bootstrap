@@ -1,21 +1,47 @@
-// Copyright (C) 2015 The Apterid Developers - See LICENSE
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 using Apterid.Bootstrap.Common;
 using IronMeta.Matcher;
 
-namespace Apterid.Bootstrap.Parse
+namespace Apterid.Bootstrap.Parse.Parser
 {
     using SyntaxItem = MatchItem<char, Syntax.Node>;
 
-    public partial class ApteridParser
+    public class ApteridParserBase : Matcher<char, Syntax.Node>
     {
-        public ParsedSourceFile SourceFile { get; set; }
+        protected readonly IList<ApteridParserBase> Children = new List<ApteridParserBase>();
+
+        ParsedSourceFile sourceFile;
+
+        public ParsedSourceFile SourceFile
+        {
+            get { return sourceFile; }
+            set
+            {
+                sourceFile = value;
+                foreach (var child in Children)
+                    child.sourceFile = sourceFile;
+            }
+        }
+
+        public ApteridParserBase()
+            : base()
+        {
+            Init();
+        }
+
+        public ApteridParserBase(bool handleLR)
+            : base(handleLR)
+        {
+            Init();
+        }
+
+        protected virtual void Init()
+        {
+        }
 
         protected Syntax.Flags GetFlags(IEnumerable<Syntax.Node> keywords)
         {
@@ -64,7 +90,7 @@ namespace Apterid.Bootstrap.Parse
             where T : Syntax.Node
         {
             return Make<T>(item, parms, children.ToArray());
-        }    
+        }
 
         protected T Make<T>(SyntaxItem item, object parms, params Syntax.Node[] children)
             where T : Syntax.Node
@@ -121,40 +147,6 @@ namespace Apterid.Bootstrap.Parse
             }
 
             throw new InternalException(string.Format(ErrorMessages.E_0003_ParserImpl_MakeNodeNoCtor, typeof(T).FullName));
-        }
-    }
-
-    public class ParseException : ApteridException
-    {
-        public NodeError Error { get; }
-
-        public ParseException(NodeError error)
-            : base(ErrorCode.Parser, error.Message)
-        {
-            Error = error;
-        }
-    }
-
-    internal static class MatchItemExtensions
-    {
-        public static int Length(this SyntaxItem item)
-        {
-            return Math.Max(0, item.NextIndex - item.StartIndex);
-        }
-
-        public static IEnumerable<T> ResultsOf<T>(this SyntaxItem item)
-        {
-            return item.Results.OfType<T>();
-        }
-
-        public static T ResultOf<T>(this SyntaxItem item)
-        {
-            return item.Results.OfType<T>().Single();
-        }
-
-        public static Syntax.Node Result(this SyntaxItem item)
-        {
-            return item.Results.First();
         }
     }
 }

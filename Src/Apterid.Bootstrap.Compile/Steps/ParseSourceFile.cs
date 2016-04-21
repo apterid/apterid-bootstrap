@@ -44,7 +44,7 @@ namespace Apterid.Bootstrap.Compile.Steps
                         lock (this)
                         {
                             if (Unit.Parser == null)
-                                Unit.Parser = new ApteridParser(handle_left_recursion: true);
+                                Unit.Parser = new Parse.Parser.ApteridParser(handle_left_recursion: true);
                         }
                     }
 

@@ -2,6 +2,7 @@
 
 using System;
 using System.Linq;
+using Apterid.Bootstrap.Parse.Parser;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Apterid.Bootstrap.Parse.Tests

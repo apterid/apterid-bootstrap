@@ -1,0 +1,36 @@
+﻿// Copyright (C) 2015 The Apterid Developers - See LICENSE
+
+using System.Numerics;
+
+ironmeta ApteridExpressions<char, Syntax.Node> : ApteridParserBase
+{
+    /////////////////////////////////////////////////////////////////
+    // Expressions
+
+    Expression :indent = FuncDefExp(indent);
+
+    FuncDefExp :indent = pat.Pattern(indent) lex.IWS(indent) "=>" lex.IWS(indent) LiteralExp(indent);
+    FuncDefExp :indent = LiteralExp(indent);
+
+    LiteralExp :indent = '(' lex.IWS(indent) Expression(indent) lex.IWS(indent) ')';
+    LiteralExp :indent = Literal(indent);
+
+    Literal (:indent)? = 
+          BooleanLiteral
+        | IntegerLiteral;
+
+    BooleanLiteral = /true|false/ -> 
+        {
+            var str = new string (_IM_Result.Inputs.ToArray());
+            return Make<Syntax.Literal<bool>>(_IM_Result, new { value = bool.Parse(str) });
+        };
+
+    IntegerLiteral = DecimalInteger;
+
+    DecimalInteger = /[0-9]+(_?[0-9]+)*/ -> 
+        {
+            var str = new string(_IM_Result.Inputs.ToArray());
+            var value = BigInteger.Parse(str.Replace("_", ""));
+            return Make<Syntax.Literal<BigInteger>>(_IM_Result, new { value = value });
+        };
+}
