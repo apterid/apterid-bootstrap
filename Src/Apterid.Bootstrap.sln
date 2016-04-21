@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apterid.Bootstrap.Compile", "Apterid.Bootstrap.Compile\Apterid.Bootstrap.Compile.csproj", "{42D5B408-B7F5-41B8-9E6E-D45D96608FCB}"
 EndProject
@@ -20,6 +20,13 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apterid.Bootstrap.Common", "Apterid.Bootstrap.Common\Apterid.Bootstrap.Common.csproj", "{297B34BA-C406-44DB-BC9E-7463EFE53385}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Apterid.Bootstrap.Compile.Tests", "Apterid.Bootstrap.Compile.Tests\Apterid.Bootstrap.Compile.Tests.csproj", "{D1B6C42F-6000-4E28-B26F-38CCF823A4FC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{13E6D63D-91BE-4981-AAE8-C0FB9D4E104D}"
+	ProjectSection(SolutionItems) = preProject
+		..\.gitignore = ..\.gitignore
+		..\LICENSE = ..\LICENSE
+		..\README.md = ..\README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
