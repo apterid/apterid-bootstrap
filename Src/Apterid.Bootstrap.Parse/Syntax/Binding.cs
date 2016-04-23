@@ -13,14 +13,14 @@ namespace Apterid.Bootstrap.Parse.Syntax
     {
         public Identifier Name { get; }
         public Pattern Pattern { get; }
-        public IEnumerable<Node> Body { get; }
+        public IList<Node> Body { get; }
 
         public Binding(NodeArgs args, Flags flags, Identifier name, Pattern pattern, IEnumerable<Node> body, params Node[] children)
             : base(args, flags, children)
         {
             Name = name;
             Pattern = pattern;
-            Body = body;
+            Body = body.ToArray();
         }
 
         protected override IEnumerable<Node> ChildrenToFormat => new Node[] { Name, Pattern }.Concat(Body);

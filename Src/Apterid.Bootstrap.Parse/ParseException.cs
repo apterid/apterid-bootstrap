@@ -16,5 +16,16 @@ namespace Apterid.Bootstrap.Parse
         {
             Error = error;
         }
+
+        public ParseException(Syntax.NodeArgs args, string message)
+            : base(ErrorCode.Parser, message)
+        {
+            Error = new NodeError
+            {
+                Message = message,
+                SourceFile = args.SourceFile,
+                ErrorIndex = args.Item.StartIndex,                
+            };
+        }
     }
 }

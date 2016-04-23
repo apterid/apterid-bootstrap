@@ -62,7 +62,7 @@ namespace Apterid.Bootstrap.Parse.Syntax
                 if (text == null)
                 {
                     if (SourceFile == null || SourceFile.Buffer == null)
-                        text = "";
+                        text = "?nosource";
                     else
                         text = string.Concat(SourceFile.Buffer.Skip(StartIndex).Take(Length));
                 }
@@ -110,31 +110,6 @@ namespace Apterid.Bootstrap.Parse.Syntax
             var sb = new StringBuilder();
             FormatString(sb, "");
             return sb.ToString();
-        }
-    }
-
-    [Flags]
-    public enum Flags
-    {
-        None = 0,
-        IsPublic = 1 << 0,
-    }
-
-    public abstract class FlaggedNode : Node
-    {
-        public Flags Flags { get; }
-
-        public FlaggedNode(NodeArgs args, Flags flags, params Node[] children)
-            : base(args, children)
-        {
-            Flags = flags;
-        }
-
-        protected override void FormatDetails(StringBuilder sb, MatchState<char, Node> ms = null)
-        {
-            if ((Flags & Flags.IsPublic) != 0)
-                sb.AppendFormat("public ");
-            base.FormatDetails(sb, ms);
         }
     }
 }

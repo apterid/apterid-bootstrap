@@ -50,6 +50,10 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Abstract\Annotation.cs" />
+    <Compile Include="Analyzer\Analyzer.cs" />
+    <Compile Include="Analyzer\BindingAnalyzer.cs" />
+    <Compile Include="Analyzer\ModuleAnalyzer.cs" />
+    <Compile Include="Analyzer\SourceAnalyzer.cs" />
     <Compile Include="ApteridAnalyzer.cs" />
     <Compile Include="AnalysisUnit.cs" />
     <Compile Include="Abstract\Binding.cs" />

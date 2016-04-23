@@ -7,10 +7,20 @@ ironmeta ApteridExpressions<char, Syntax.Node> : ApteridParserBase
     /////////////////////////////////////////////////////////////////
     // Expressions
 
-    Expression :indent = FuncDefExp(indent);
+    Expression :indent = FunctionLiteral(indent);
 
-    FuncDefExp :indent = pat.Pattern(indent) lex.IWS(indent) "=>" lex.IWS(indent) LiteralExp(indent);
-    FuncDefExp :indent = LiteralExp(indent);
+    FunctionLiteral :indent = 
+        (pat.Pattern(indent):p lex.IWS(indent) | !"expected pattern")
+        (lex.MKF lex.IWS(indent)               | !"expected \"=>\"")
+        (LiteralExp(indent):e                  | !"expected expression") ->
+        {
+            Make<Syntax.FunctionLiteral>(_IM_Result, new
+            {
+                pattern = p.Results.FirstOrDefault(),
+                body = e.Results
+            })
+        };
+    FunctionLiteral :indent = LiteralExp(indent);
 
     LiteralExp :indent = '(' lex.IWS(indent) Expression(indent) lex.IWS(indent) ')';
     LiteralExp :indent = Literal(indent);

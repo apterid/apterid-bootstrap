@@ -50,30 +50,27 @@ namespace Apterid.Bootstrap.Parse.Syntax
 
     public class QualifiedIdentifier : Node
     {
-        public IEnumerable<Identifier> Qualifiers { get; private set; }
-        public Identifier Identifier { get; private set; }
+        public IList<Identifier> Qualifiers { get; private set; }
+        public Identifier Name { get; private set; }
 
-        public QualifiedIdentifier(NodeArgs args, params Node[] children)
+        public QualifiedIdentifier(NodeArgs args, IEnumerable<Node> q, Identifier n, params Node[] children)
             : base(args, children)
         {
-            Qualifiers = children
-                .Take(children.Length - 1)
-                .OfType<Identifier>()
-                .ToArray();
-            Identifier = (Identifier)children.Last();
+            Qualifiers = q.OfType<Identifier>().ToArray();
+            Name = n;
         }
 
         public override string Text
         {
-            get { return Identifier.Text; }
+            get { return Name.Text; }
         }
 
         protected override void FormatDetails(StringBuilder sb, MatchState<char, Node> ms = null)
         {
             if (Qualifiers != null)
-                sb.AppendFormat("qid {0}{1} ", string.Join(".", Qualifiers.Select(q => q.Text)), Identifier.Text);
+                sb.AppendFormat("qid {0}{1} ", string.Join(".", Qualifiers.Select(q => q.Text)), Name.Text);
             else
-                sb.AppendFormat("qid {0} ", Identifier.Text);
+                sb.AppendFormat("qid {0} ", Name.Text);
             base.FormatDetails(sb, ms);
         }
     }

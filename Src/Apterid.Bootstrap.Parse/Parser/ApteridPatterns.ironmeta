@@ -7,5 +7,5 @@ ironmeta ApteridPatterns<char, Syntax.Node> : ApteridParserBase
 
     Pattern :indent = UnitPattern(indent);
 
-    UnitPattern :indent = lex.UNIT lex.IWS(indent) -> { Make<Syntax.UnitPattern>(_IM_Result) };
+    UnitPattern :indent = lex.UNIT -> { Make<Syntax.UnitPattern>(_IM_Result) };
 }

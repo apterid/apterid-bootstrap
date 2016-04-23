@@ -5,36 +5,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Apterid.Bootstrap.Common;
 using IronMeta.Matcher;
 
 namespace Apterid.Bootstrap.Parse.Syntax
 {
     public class Module : FlaggedNode
     {
-        QualifiedIdentifier qualId;
-
-        public Identifier Name { get; private set; }
-        public IEnumerable<Identifier> Qualifiers
-        {
-            get { return qualId != null ? qualId.Qualifiers : Enumerable.Empty<Identifier>(); }
-        }
-
-        public IEnumerable<Node> Body { get; private set; }
+        public QualifiedIdentifier Name { get; private set; }
+        public IList<Node> Body { get; private set; }
 
         public Module(NodeArgs args, Flags flags, QualifiedIdentifier name, IEnumerable<Node> body, params Node[] children)
             : base(args, flags, children)
         {
+            if (name == null) throw new ParseException(args, ErrorMessages.E_0021_ParserImpl_NoModuleName);
 
-            qualId = name;
-            Name = qualId.Identifier;
-            Body = body;
-        }
-
-        public Module(NodeArgs args, Flags flags, Identifier name, IEnumerable<Node> body, params Node[] children)
-            : base(args, flags, children)
-        {
             Name = name;
-            Body = body;
+            Body = body.ToArray();
         }
 
         protected override void FormatDetails(StringBuilder sb, MatchState<char, Node> ms = null)
@@ -43,6 +30,6 @@ namespace Apterid.Bootstrap.Parse.Syntax
             base.FormatDetails(sb, ms);
         }
 
-        protected override IEnumerable<Node> ChildrenToFormat => new Node[] { qualId }.Concat(Body);
+        protected override IEnumerable<Node> ChildrenToFormat => new Node[] { Name }.Concat(Body);
     }
 }

@@ -239,5 +239,14 @@ namespace Apterid.Bootstrap.Common {
                 return ResourceManager.GetString("E_0020_Analyzer_UnableToResolveType", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A module node&apos;s name must be a valid QualifiedIdentifier..
+        /// </summary>
+        public static string E_0021_ParserImpl_NoModuleName {
+            get {
+                return ResourceManager.GetString("E_0021_ParserImpl_NoModuleName", resourceCulture);
+            }
+        }
     }
 }

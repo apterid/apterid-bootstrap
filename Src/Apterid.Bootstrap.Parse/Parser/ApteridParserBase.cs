@@ -111,10 +111,12 @@ namespace Apterid.Bootstrap.Parse.Parser
                 children = item.Results.ToArray();
 
             var arguments = new List<object>();
+            int argsNeeded = parmValues.Count;
             foreach (var ctor in ctors)
             {
-                bool failed = false;
-                foreach (var parm in ctor.GetParameters())
+                var ctorParms = ctor.GetParameters();
+                var found = true;
+                foreach (var parm in ctorParms)
                 {
                     object parmValue;
 
@@ -123,12 +125,14 @@ namespace Apterid.Bootstrap.Parse.Parser
                         if (parm.Name != "args")
                             throw new InternalException(ErrorMessages.E_0001_ParserImpl_MakeNodeArgs);
                         arguments.Add(nodeArgs);
+                        argsNeeded++;
                     }
                     else if (typeof(Syntax.Node[]).IsAssignableFrom(parm.ParameterType))
                     {
                         if (parm.Name != "children")
                             throw new InternalException(ErrorMessages.E_0002_ParserImpl_MakeNodeChildren);
                         arguments.Add(children);
+                        argsNeeded++;
                     }
                     else if (parmValues.TryGetValue(parm.Name, out parmValue))
                     {
@@ -136,12 +140,13 @@ namespace Apterid.Bootstrap.Parse.Parser
                     }
                     else
                     {
-                        failed = true;
+                        found = false;
                         break;
                     }
                 }
 
-                if (failed) continue;
+                if (!found || arguments.Count != argsNeeded)
+                    continue;
 
                 return (T)ctor.Invoke(arguments.ToArray());
             }

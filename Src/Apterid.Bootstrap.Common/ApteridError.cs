@@ -12,7 +12,7 @@ namespace Apterid.Bootstrap.Common
     {
         string message;
 
-        public string Message
+        public virtual string Message
         {
             get { return message ?? (Exception != null ? Exception.Message : ""); }
             set { message = value; }

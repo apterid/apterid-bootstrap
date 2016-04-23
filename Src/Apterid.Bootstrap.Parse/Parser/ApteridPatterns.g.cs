@@ -1,5 +1,5 @@
 ﻿//
-// IronMeta ApteridPatterns Parser; Generated 2016-04-21 18:22:22Z UTC
+// IronMeta ApteridPatterns Parser; Generated 2016-04-23 22:39:43Z UTC
 //
 
 using System;
@@ -108,42 +108,12 @@ namespace Apterid.Bootstrap.Parse.Parser
                 goto label0;
             }
 
-            // AND 4
-            int _start_i4 = _index;
-
             // CALLORVAR lex.UNIT
-            _ApteridPatterns_Item _r5;
+            _ApteridPatterns_Item _r4;
 
-            _r5 = _MemoCall(_memo, "lex.UNIT", _index, lex.UNIT, null);
+            _r4 = _MemoCall(_memo, "lex.UNIT", _index, lex.UNIT, null);
 
-            if (_r5 != null) _index = _r5.NextIndex;
-
-            // AND shortcut
-            if (_memo.Results.Peek() == null) { _memo.Results.Push(null); goto label4; }
-
-            // CALL lex.IWS
-            var _start_i6 = _index;
-            _ApteridPatterns_Item _r6;
-
-            _ApteridPatterns_Args _actual_args6 = new _ApteridPatterns_Item[] { indent };
-            if (_args != null) _actual_args6 = _actual_args6.Concat(_args.Skip(_arg_index));
-            _r6 = _MemoCall(_memo, "lex.IWS", _index, lex.IWS, _actual_args6);
-
-            if (_r6 != null) _index = _r6.NextIndex;
-
-        label4: // AND
-            var _r4_2 = _memo.Results.Pop();
-            var _r4_1 = _memo.Results.Pop();
-
-            if (_r4_1 != null && _r4_2 != null)
-            {
-                _memo.Results.Push( new _ApteridPatterns_Item(_start_i4, _index, _memo.InputEnumerable, _r4_1.Results.Concat(_r4_2.Results).Where(_NON_NULL), true) );
-            }
-            else
-            {
-                _memo.Results.Push(null);
-                _index = _start_i4;
-            }
+            if (_r4 != null) _index = _r4.NextIndex;
 
             // ACT
             var _r3 = _memo.Results.Peek();

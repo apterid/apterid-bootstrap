@@ -20,32 +20,34 @@ ironmeta ApteridParser<char, Syntax.Node> : ApteridParserBase
     /////////////////////////////////////////////////////////////////
     // Modules
 
-    TopLevelModule = lex.SC?:indent (lex.Keyword("public") lex.SC)?:vis lex.Keyword("module") lex.SC lex.QualifiedIdentifier:name lex.SC? lex.EQ lex.SE ModuleBody(indent):body ->
+    TopLevelModule = 
+        lex.SC?:indent 
+        (lex.Keyword("public") lex.SC)?:vis 
+        lex.Keyword("module") (lex.SC | !"expected qualified identifier")
+        lex.QualifiedIdentifier:name lex.SC?
+        lex.EQ (lex.SE | !"expected new line then module body")
+        ModuleBody(indent):body ->
         { 
             Make<Syntax.Module>(_IM_Result, new 
             {
                 flags = GetFlags(vis.Results),
-                name = name.Results.SingleOrDefault(), 
+                name = name.Results.FirstOrDefault(), 
                 body = body.Results 
             }) 
         };
 
+    /////////////////////////
+
     ModuleBody :outer =
-        (
-            (lex.SC:inner lex.SE) ?(inner.Length() > outer.Length())
-            | !"the contents of a module must be indented -- even comments"
-        )*
-        (
-            (lex.SC:inner ModuleItem(inner)) ?(inner.Length() > outer.Length()) 
-            | !"the contents of a module must be indented"
-        )
+        &(lex.SC:inner ?(inner.Length() > outer.Length()) | !"the contents of a module must be indented")
         ModulePart(inner)*;
 
-    // these all include the initial indent and go to the end of the part's last line
-    ModulePart :indent = lex.SE;
-    ModulePart :indent = (lex.SC:ws ModuleItem(indent) lex.SE) ?(ws.Length() == indent.Length());
-    ModulePart :indent = (lex.SC:ws ModuleItem(indent) lex.SE) !"parts of a module must indented and aligned";
     ModulePart :indent = Directive lex.SE;
+    ModulePart :indent = lex.SE;
+    ModulePart :indent =
+        (lex.SC:ws ?(ws.Length() == indent.Length()) | !"parts of a module must be indented and aligned")
+        ModuleItem(indent)
+        lex.SE;
     ModulePart :indent = ErrorSection;
 
     /////////////////////////
@@ -56,12 +58,16 @@ ironmeta ApteridParser<char, Syntax.Node> : ApteridParserBase
     /////////////////////////////////////////////////////////////////
     // Bindings
 
-    ModuleBinding :indent = (lex.Keyword("public") lex.SC)?:vis lex.Identifier:name lex.WS? lex.EQ lex.WS? exp.Expression(indent):body lex.SE ->
+    ModuleBinding :indent = 
+        (lex.Keyword("public") lex.SC)?:vis 
+        (lex.Identifier:name lex.WS? | !"expected binding name")
+        (lex.EQ lex.WS?              | !"expected \"=\"")
+        (exp.Expression(indent):body | !"expected expression") ->
         {
             var args = new 
             {
                 flags = GetFlags(vis.Results),
-                name = name.Results.SingleOrDefault(), 
+                name = name.Results.FirstOrDefault(), 
                 pattern = (Syntax.Pattern)null, 
                 body = body.Results 
             };

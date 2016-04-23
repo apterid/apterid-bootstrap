@@ -6,7 +6,8 @@ ironmeta ApteridLexicon<char, Syntax.Node> : ApteridParserBase
     
     Identifier = /_|_[_0-9a-zA-Z]+|[a-zA-Z][_0-9a-zA-Z]*/ -> { Make<Syntax.Identifier>(_IM_Result) };
 
-    QualifiedIdentifier = (Identifier DOT)* Identifier:i -> { return Make<Syntax.QualifiedIdentifier>(_IM_Result); };
+    QualifiedIdentifier = (Identifier DOT)*:q Identifier:n -> 
+        { return Make<Syntax.QualifiedIdentifier>(_IM_Result, new { q = q.Results, n = n.Results.FirstOrDefault() }); };
 
     TypeName :indent = QualifiedIdentifier ('<' IWS(indent) TypeName (',' IWS(indent) TypeName)* IWS(indent) '>')?;
 
@@ -21,7 +22,6 @@ ironmeta ApteridLexicon<char, Syntax.Node> : ApteridParserBase
 
 
     // Comments & Whitespace
-
     SC = (WS | InlineComment)+;                     // space or inline comment
     SE = (InlineComment | WS)* (LineComment | EOL); // space or comment at the end of a line (includes the EOL)
 

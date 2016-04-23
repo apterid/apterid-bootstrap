@@ -1,5 +1,5 @@
 ﻿//
-// IronMeta ApteridExpressions Parser; Generated 2016-04-21 18:17:20Z UTC
+// IronMeta ApteridExpressions Parser; Generated 2016-04-23 22:41:57Z UTC
 //
 
 using System;
@@ -73,13 +73,13 @@ namespace Apterid.Bootstrap.Parse.Parser
                 goto label0;
             }
 
-            // CALL FuncDefExp
+            // CALL FunctionLiteral
             var _start_i3 = _index;
             _ApteridExpressions_Item _r3;
 
             _ApteridExpressions_Args _actual_args3 = new _ApteridExpressions_Item[] { indent };
             if (_args != null) _actual_args3 = _actual_args3.Concat(_args.Skip(_arg_index));
-            _r3 = _MemoCall(_memo, "FuncDefExp", _index, FuncDefExp, _actual_args3);
+            _r3 = _MemoCall(_memo, "FunctionLiteral", _index, FunctionLiteral, _actual_args3);
 
             if (_r3 != null) _index = _r3.NextIndex;
 
@@ -89,13 +89,15 @@ namespace Apterid.Bootstrap.Parse.Parser
         }
 
 
-        public void FuncDefExp(_ApteridExpressions_Memo _memo, int _index, _ApteridExpressions_Args _args)
+        public void FunctionLiteral(_ApteridExpressions_Memo _memo, int _index, _ApteridExpressions_Args _args)
         {
 
             int _arg_index = 0;
             int _arg_input_index = 0;
 
             _ApteridExpressions_Item indent = null;
+            _ApteridExpressions_Item p = null;
+            _ApteridExpressions_Item e = null;
 
             // OR 0
             int _start_i0 = _index;
@@ -116,60 +118,122 @@ namespace Apterid.Bootstrap.Parse.Parser
                 goto label1;
             }
 
-            // AND 4
-            int _start_i4 = _index;
-
             // AND 5
             int _start_i5 = _index;
 
             // AND 6
             int _start_i6 = _index;
 
-            // AND 7
+            // OR 7
             int _start_i7 = _index;
 
+            // AND 8
+            int _start_i8 = _index;
+
             // CALL pat.Pattern
-            var _start_i8 = _index;
-            _ApteridExpressions_Item _r8;
+            var _start_i10 = _index;
+            _ApteridExpressions_Item _r10;
 
-            _ApteridExpressions_Args _actual_args8 = new _ApteridExpressions_Item[] { indent };
-            if (_args != null) _actual_args8 = _actual_args8.Concat(_args.Skip(_arg_index));
-            _r8 = _MemoCall(_memo, "pat.Pattern", _index, pat.Pattern, _actual_args8);
+            _ApteridExpressions_Args _actual_args10 = new _ApteridExpressions_Item[] { indent };
+            if (_args != null) _actual_args10 = _actual_args10.Concat(_args.Skip(_arg_index));
+            _r10 = _MemoCall(_memo, "pat.Pattern", _index, pat.Pattern, _actual_args10);
 
-            if (_r8 != null) _index = _r8.NextIndex;
+            if (_r10 != null) _index = _r10.NextIndex;
+
+            // BIND p
+            p = _memo.Results.Peek();
 
             // AND shortcut
-            if (_memo.Results.Peek() == null) { _memo.Results.Push(null); goto label7; }
+            if (_memo.Results.Peek() == null) { _memo.Results.Push(null); goto label8; }
 
             // CALL lex.IWS
-            var _start_i9 = _index;
-            _ApteridExpressions_Item _r9;
+            var _start_i11 = _index;
+            _ApteridExpressions_Item _r11;
 
-            _ApteridExpressions_Args _actual_args9 = new _ApteridExpressions_Item[] { indent };
-            if (_args != null) _actual_args9 = _actual_args9.Concat(_args.Skip(_arg_index));
-            _r9 = _MemoCall(_memo, "lex.IWS", _index, lex.IWS, _actual_args9);
+            _ApteridExpressions_Args _actual_args11 = new _ApteridExpressions_Item[] { indent };
+            if (_args != null) _actual_args11 = _actual_args11.Concat(_args.Skip(_arg_index));
+            _r11 = _MemoCall(_memo, "lex.IWS", _index, lex.IWS, _actual_args11);
 
-            if (_r9 != null) _index = _r9.NextIndex;
+            if (_r11 != null) _index = _r11.NextIndex;
 
-        label7: // AND
-            var _r7_2 = _memo.Results.Pop();
-            var _r7_1 = _memo.Results.Pop();
+        label8: // AND
+            var _r8_2 = _memo.Results.Pop();
+            var _r8_1 = _memo.Results.Pop();
 
-            if (_r7_1 != null && _r7_2 != null)
+            if (_r8_1 != null && _r8_2 != null)
             {
-                _memo.Results.Push( new _ApteridExpressions_Item(_start_i7, _index, _memo.InputEnumerable, _r7_1.Results.Concat(_r7_2.Results).Where(_NON_NULL), true) );
+                _memo.Results.Push( new _ApteridExpressions_Item(_start_i8, _index, _memo.InputEnumerable, _r8_1.Results.Concat(_r8_2.Results).Where(_NON_NULL), true) );
             }
             else
             {
                 _memo.Results.Push(null);
-                _index = _start_i7;
+                _index = _start_i8;
             }
+
+            // OR shortcut
+            if (_memo.Results.Peek() == null) { _memo.Results.Pop(); _index = _start_i7; } else goto label7;
+
+            // FAIL
+            _memo.Results.Push(null);
+            _memo.ClearErrors();
+            _memo.AddError(_index, () => "expected pattern");
+
+        label7: // OR
+            int _dummy_i7 = _index; // no-op for label
 
             // AND shortcut
             if (_memo.Results.Peek() == null) { _memo.Results.Push(null); goto label6; }
 
-            // LITERAL "=>"
-            _ParseLiteralString(_memo, ref _index, "=>");
+            // OR 13
+            int _start_i13 = _index;
+
+            // AND 14
+            int _start_i14 = _index;
+
+            // CALLORVAR lex.MKF
+            _ApteridExpressions_Item _r15;
+
+            _r15 = _MemoCall(_memo, "lex.MKF", _index, lex.MKF, null);
+
+            if (_r15 != null) _index = _r15.NextIndex;
+
+            // AND shortcut
+            if (_memo.Results.Peek() == null) { _memo.Results.Push(null); goto label14; }
+
+            // CALL lex.IWS
+            var _start_i16 = _index;
+            _ApteridExpressions_Item _r16;
+
+            _ApteridExpressions_Args _actual_args16 = new _ApteridExpressions_Item[] { indent };
+            if (_args != null) _actual_args16 = _actual_args16.Concat(_args.Skip(_arg_index));
+            _r16 = _MemoCall(_memo, "lex.IWS", _index, lex.IWS, _actual_args16);
+
+            if (_r16 != null) _index = _r16.NextIndex;
+
+        label14: // AND
+            var _r14_2 = _memo.Results.Pop();
+            var _r14_1 = _memo.Results.Pop();
+
+            if (_r14_1 != null && _r14_2 != null)
+            {
+                _memo.Results.Push( new _ApteridExpressions_Item(_start_i14, _index, _memo.InputEnumerable, _r14_1.Results.Concat(_r14_2.Results).Where(_NON_NULL), true) );
+            }
+            else
+            {
+                _memo.Results.Push(null);
+                _index = _start_i14;
+            }
+
+            // OR shortcut
+            if (_memo.Results.Peek() == null) { _memo.Results.Pop(); _index = _start_i13; } else goto label13;
+
+            // FAIL
+            _memo.Results.Push(null);
+            _memo.ClearErrors();
+            _memo.AddError(_index, () => "expected \"=>\"");
+
+        label13: // OR
+            int _dummy_i13 = _index; // no-op for label
 
         label6: // AND
             var _r6_2 = _memo.Results.Pop();
@@ -188,15 +252,32 @@ namespace Apterid.Bootstrap.Parse.Parser
             // AND shortcut
             if (_memo.Results.Peek() == null) { _memo.Results.Push(null); goto label5; }
 
-            // CALL lex.IWS
-            var _start_i11 = _index;
-            _ApteridExpressions_Item _r11;
+            // OR 18
+            int _start_i18 = _index;
 
-            _ApteridExpressions_Args _actual_args11 = new _ApteridExpressions_Item[] { indent };
-            if (_args != null) _actual_args11 = _actual_args11.Concat(_args.Skip(_arg_index));
-            _r11 = _MemoCall(_memo, "lex.IWS", _index, lex.IWS, _actual_args11);
+            // CALL LiteralExp
+            var _start_i20 = _index;
+            _ApteridExpressions_Item _r20;
 
-            if (_r11 != null) _index = _r11.NextIndex;
+            _ApteridExpressions_Args _actual_args20 = new _ApteridExpressions_Item[] { indent };
+            if (_args != null) _actual_args20 = _actual_args20.Concat(_args.Skip(_arg_index));
+            _r20 = _MemoCall(_memo, "LiteralExp", _index, LiteralExp, _actual_args20);
+
+            if (_r20 != null) _index = _r20.NextIndex;
+
+            // BIND e
+            e = _memo.Results.Peek();
+
+            // OR shortcut
+            if (_memo.Results.Peek() == null) { _memo.Results.Pop(); _index = _start_i18; } else goto label18;
+
+            // FAIL
+            _memo.Results.Push(null);
+            _memo.ClearErrors();
+            _memo.AddError(_index, () => "expected expression");
+
+        label18: // OR
+            int _dummy_i18 = _index; // no-op for label
 
         label5: // AND
             var _r5_2 = _memo.Results.Pop();
@@ -212,31 +293,16 @@ namespace Apterid.Bootstrap.Parse.Parser
                 _index = _start_i5;
             }
 
-            // AND shortcut
-            if (_memo.Results.Peek() == null) { _memo.Results.Push(null); goto label4; }
-
-            // CALL LiteralExp
-            var _start_i12 = _index;
-            _ApteridExpressions_Item _r12;
-
-            _ApteridExpressions_Args _actual_args12 = new _ApteridExpressions_Item[] { indent };
-            if (_args != null) _actual_args12 = _actual_args12.Concat(_args.Skip(_arg_index));
-            _r12 = _MemoCall(_memo, "LiteralExp", _index, LiteralExp, _actual_args12);
-
-            if (_r12 != null) _index = _r12.NextIndex;
-
-        label4: // AND
-            var _r4_2 = _memo.Results.Pop();
-            var _r4_1 = _memo.Results.Pop();
-
-            if (_r4_1 != null && _r4_2 != null)
+            // ACT
+            var _r4 = _memo.Results.Peek();
+            if (_r4 != null)
             {
-                _memo.Results.Push( new _ApteridExpressions_Item(_start_i4, _index, _memo.InputEnumerable, _r4_1.Results.Concat(_r4_2.Results).Where(_NON_NULL), true) );
-            }
-            else
+                _memo.Results.Pop();
+                _memo.Results.Push( new _ApteridExpressions_Item(_r4.StartIndex, _r4.NextIndex, _memo.InputEnumerable, _Thunk(_IM_Result => { return Make<Syntax.FunctionLiteral>(_IM_Result, new
             {
-                _memo.Results.Push(null);
-                _index = _start_i4;
+                pattern = p.Results.FirstOrDefault(),
+                body = e.Results
+            }); }, _r4), true) );
             }
 
         label1: // ARGS 1
@@ -245,7 +311,7 @@ namespace Apterid.Bootstrap.Parse.Parser
             // OR shortcut
             if (_memo.Results.Peek() == null) { _memo.Results.Pop(); _index = _start_i0; } else goto label0;
 
-            // ARGS 13
+            // ARGS 22
             _arg_index = 0;
             _arg_input_index = 0;
 
@@ -258,20 +324,20 @@ namespace Apterid.Bootstrap.Parse.Parser
             if (_memo.ArgResults.Pop() == null)
             {
                 _memo.Results.Push(null);
-                goto label13;
+                goto label22;
             }
 
             // CALL LiteralExp
-            var _start_i16 = _index;
-            _ApteridExpressions_Item _r16;
+            var _start_i25 = _index;
+            _ApteridExpressions_Item _r25;
 
-            _ApteridExpressions_Args _actual_args16 = new _ApteridExpressions_Item[] { indent };
-            if (_args != null) _actual_args16 = _actual_args16.Concat(_args.Skip(_arg_index));
-            _r16 = _MemoCall(_memo, "LiteralExp", _index, LiteralExp, _actual_args16);
+            _ApteridExpressions_Args _actual_args25 = new _ApteridExpressions_Item[] { indent };
+            if (_args != null) _actual_args25 = _actual_args25.Concat(_args.Skip(_arg_index));
+            _r25 = _MemoCall(_memo, "LiteralExp", _index, LiteralExp, _actual_args25);
 
-            if (_r16 != null) _index = _r16.NextIndex;
+            if (_r25 != null) _index = _r25.NextIndex;
 
-        label13: // ARGS 13
+        label22: // ARGS 22
             _arg_input_index = _arg_index; // no-op for label
 
         label0: // OR

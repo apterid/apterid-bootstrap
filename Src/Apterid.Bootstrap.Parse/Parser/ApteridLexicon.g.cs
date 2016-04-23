@@ -1,5 +1,5 @@
 ﻿//
-// IronMeta ApteridLexicon Parser; Generated 2016-04-21 18:33:37Z UTC
+// IronMeta ApteridLexicon Parser; Generated 2016-04-23 21:32:56Z UTC
 //
 
 using System;
@@ -137,74 +137,78 @@ namespace Apterid.Bootstrap.Parse.Parser
             int _arg_index = 0;
             int _arg_input_index = 0;
 
-            _ApteridLexicon_Item i = null;
+            _ApteridLexicon_Item q = null;
+            _ApteridLexicon_Item n = null;
 
             // AND 1
             int _start_i1 = _index;
 
-            // STAR 2
-            int _start_i2 = _index;
-            var _res2 = Enumerable.Empty<Syntax.Node>();
-        label2:
-
-            // AND 3
+            // STAR 3
             int _start_i3 = _index;
+            var _res3 = Enumerable.Empty<Syntax.Node>();
+        label3:
+
+            // AND 4
+            int _start_i4 = _index;
 
             // CALLORVAR Identifier
-            _ApteridLexicon_Item _r4;
-
-            _r4 = _MemoCall(_memo, "Identifier", _index, Identifier, null);
-
-            if (_r4 != null) _index = _r4.NextIndex;
-
-            // AND shortcut
-            if (_memo.Results.Peek() == null) { _memo.Results.Push(null); goto label3; }
-
-            // CALLORVAR DOT
             _ApteridLexicon_Item _r5;
 
-            _r5 = _MemoCall(_memo, "DOT", _index, DOT, null);
+            _r5 = _MemoCall(_memo, "Identifier", _index, Identifier, null);
 
             if (_r5 != null) _index = _r5.NextIndex;
 
-        label3: // AND
-            var _r3_2 = _memo.Results.Pop();
-            var _r3_1 = _memo.Results.Pop();
+            // AND shortcut
+            if (_memo.Results.Peek() == null) { _memo.Results.Push(null); goto label4; }
 
-            if (_r3_1 != null && _r3_2 != null)
+            // CALLORVAR DOT
+            _ApteridLexicon_Item _r6;
+
+            _r6 = _MemoCall(_memo, "DOT", _index, DOT, null);
+
+            if (_r6 != null) _index = _r6.NextIndex;
+
+        label4: // AND
+            var _r4_2 = _memo.Results.Pop();
+            var _r4_1 = _memo.Results.Pop();
+
+            if (_r4_1 != null && _r4_2 != null)
             {
-                _memo.Results.Push( new _ApteridLexicon_Item(_start_i3, _index, _memo.InputEnumerable, _r3_1.Results.Concat(_r3_2.Results).Where(_NON_NULL), true) );
+                _memo.Results.Push( new _ApteridLexicon_Item(_start_i4, _index, _memo.InputEnumerable, _r4_1.Results.Concat(_r4_2.Results).Where(_NON_NULL), true) );
             }
             else
             {
                 _memo.Results.Push(null);
-                _index = _start_i3;
+                _index = _start_i4;
             }
 
-            // STAR 2
-            var _r2 = _memo.Results.Pop();
-            if (_r2 != null)
+            // STAR 3
+            var _r3 = _memo.Results.Pop();
+            if (_r3 != null)
             {
-                _res2 = _res2.Concat(_r2.Results);
-                goto label2;
+                _res3 = _res3.Concat(_r3.Results);
+                goto label3;
             }
             else
             {
-                _memo.Results.Push(new _ApteridLexicon_Item(_start_i2, _index, _memo.InputEnumerable, _res2.Where(_NON_NULL), true));
+                _memo.Results.Push(new _ApteridLexicon_Item(_start_i3, _index, _memo.InputEnumerable, _res3.Where(_NON_NULL), true));
             }
+
+            // BIND q
+            q = _memo.Results.Peek();
 
             // AND shortcut
             if (_memo.Results.Peek() == null) { _memo.Results.Push(null); goto label1; }
 
             // CALLORVAR Identifier
-            _ApteridLexicon_Item _r7;
+            _ApteridLexicon_Item _r8;
 
-            _r7 = _MemoCall(_memo, "Identifier", _index, Identifier, null);
+            _r8 = _MemoCall(_memo, "Identifier", _index, Identifier, null);
 
-            if (_r7 != null) _index = _r7.NextIndex;
+            if (_r8 != null) _index = _r8.NextIndex;
 
-            // BIND i
-            i = _memo.Results.Peek();
+            // BIND n
+            n = _memo.Results.Peek();
 
         label1: // AND
             var _r1_2 = _memo.Results.Pop();
@@ -225,7 +229,7 @@ namespace Apterid.Bootstrap.Parse.Parser
             if (_r0 != null)
             {
                 _memo.Results.Pop();
-                _memo.Results.Push( new _ApteridLexicon_Item(_r0.StartIndex, _r0.NextIndex, _memo.InputEnumerable, _Thunk(_IM_Result => { return Make<Syntax.QualifiedIdentifier>(_IM_Result); }, _r0), true) );
+                _memo.Results.Push( new _ApteridLexicon_Item(_r0.StartIndex, _r0.NextIndex, _memo.InputEnumerable, _Thunk(_IM_Result => { return Make<Syntax.QualifiedIdentifier>(_IM_Result, new { q = q.Results, n = n.Results.FirstOrDefault() }); }, _r0), true) );
             }
 
         }

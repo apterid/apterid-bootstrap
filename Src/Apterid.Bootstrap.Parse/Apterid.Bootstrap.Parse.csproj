@@ -79,8 +79,10 @@
     <Compile Include="ParsedSourceFile.cs" />
     <Compile Include="Syntax\ErrorSection.cs" />
     <Compile Include="Syntax\Binding.cs" />
+    <Compile Include="Syntax\FlaggedNode.cs" />
     <Compile Include="Syntax\Leaf.cs" />
     <Compile Include="Syntax\Literal.cs" />
+    <Compile Include="Syntax\FunctionLiteral.cs" />
     <Compile Include="Syntax\Module.cs" />
     <Compile Include="Syntax\Node.cs" />
     <Compile Include="Syntax\Pattern.cs" />

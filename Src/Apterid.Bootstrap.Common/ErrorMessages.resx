@@ -177,4 +177,7 @@
   <data name="E_0020_Analyzer_UnableToResolveType" xml:space="preserve">
     <value>Unable to resolve type '{0}'.</value>
   </data>
+  <data name="E_0021_ParserImpl_NoModuleName" xml:space="preserve">
+    <value>A module node's name must be a valid QualifiedIdentifier.</value>
+  </data>
 </root>
